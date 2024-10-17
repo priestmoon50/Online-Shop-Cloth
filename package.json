@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NODE_ENV=production next build",
     "start": "next start",
     "export": "next export",
     "lint": "next lint"
@@ -25,7 +25,6 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.5",
     "@nestjs/serve-static": "^4.0.2",
-    "@nestjs/testing": "^10.4.5",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-query-devtools": "^5.56.2",
     "axios": "^1.7.7",
@@ -52,10 +51,10 @@
     "react-select": "^5.8.1",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "supertest": "^7.0.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@nestjs/testing": "^10.4.5",
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.13",
     "@types/json-schema": "^7.0.15",
@@ -70,6 +69,7 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.15",
+    "supertest": "^7.0.0",
     "typescript": "^5.6.3"
   }
 }
