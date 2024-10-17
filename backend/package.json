@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "NODE_ENV=production nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "prod_start": "NODE_ENV=production node server.js",
@@ -61,7 +61,7 @@
     "@types/multer": "^1.4.12",
     "@types/node": "^22.7.5",
     "@types/passport-jwt": "^4.0.1",
-    "@types/supertest": "^6.0.0",
+    "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
