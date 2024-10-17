@@ -31,7 +31,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/passport": "^10.0.3",
-    "@nestjs/platform-express": "^10.4.4",
+    "@nestjs/platform-express": "^10.4.5",
     "@nestjs/serve-static": "^4.0.2",
     "@nestjs/throttler": "^6.2.1",
     "axios": "^1.7.7",
