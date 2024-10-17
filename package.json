@@ -21,6 +21,7 @@
     "@nestjs/core": "^10.4.4",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.4.5",
+    "@nestjs/serve-static": "^4.0.2",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-query-devtools": "^5.56.2",
     "axios": "^1.7.7",
