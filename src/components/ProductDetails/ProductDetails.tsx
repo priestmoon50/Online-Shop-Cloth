@@ -24,10 +24,12 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoriteContext";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
+import { useRouter } from "next/router";
 
 const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState<number>(1); // انتخاب تعداد پیش‌فرض
   const [openSizeGuide, setOpenSizeGuide] = useState(false);
   const { addFavorite, removeFavorite, favorites } = useFavorites();
@@ -45,48 +47,52 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   // تابع برای تغییر وضعیت پسندیدن
   const toggleLike = () => {
     const productId = (product.id || product._id)?.toString();
-  
+
     if (!productId) {
       console.error("Product ID is undefined");
       console.log("Favorites:", favorites.items);
       console.log("Is Liked:", isLiked);
       return;
     }
-  
+
     const favoriteItem = {
       id: productId,
       name: product.name,
       price: product.price,
-      imageUrl: product.images && product.images.length > 0 ? product.images[0] : '/placeholder.jpg', // استفاده از اولین تصویر یا placeholder
+      imageUrl:
+        product.images && product.images.length > 0
+          ? product.images[0]
+          : "/placeholder.jpg", // استفاده از اولین تصویر یا placeholder
       images: product.images || [], // ارسال کل آرایه تصاویر
-      description: product.description || '', // ارسال توضیحات
-      category: product.category || 'N/A', // ارسال کتگوری
+      description: product.description || "", // ارسال توضیحات
+      category: product.category || "N/A", // ارسال کتگوری
     };
-  
+
     if (isLiked) {
       removeFavorite(productId);
-      console.log("Removed from favorites:", favorites); 
+      console.log("Removed from favorites:", favorites);
     } else {
       addFavorite(favoriteItem);
       console.log("Added to favorites:", favorites);
     }
   };
-  
-  
+
+  const handleContinueShopping = () => {
+    window.location.href = "/products"; // انتقال به صفحه محصولات
+    handleCloseModal(); // بستن مودال
+  };
+
+  const handleCheckout = () => {
+    window.location.href = "/cart"; // انتقال به صفحه سبد خرید
+    handleCloseModal(); // بستن مودال
+  };
 
   const handleAddToCart = () => {
-    const productId = product.id || product._id; // بررسی هر دو فیلد id و _id
-
-    if (!productId) {
-      console.error("Product ID is undefined");
-      return;
-    }
-
-    if (!selectedSize || !selectedColor) {
+    const productId = product.id || product._id;
+    if (!productId || !selectedSize || !selectedColor) {
       alert("Please select a size and color");
       return;
     }
-    console.log(product);
 
     addItem({
       id: productId.toString(),
@@ -96,6 +102,13 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
       size: selectedSize,
       color: selectedColor,
     });
+
+    setOpenModal(true); // باز کردن مودال بعد از اضافه شدن به سبد خرید
+  };
+
+  // تابع برای بستن مودال
+  const handleCloseModal = () => {
+    setOpenModal(false); // بستن مودال
   };
 
   return (
@@ -116,7 +129,6 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
           </Button>
         </Link>
       </Box>
-
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <ProductImages images={imagesArray} />
@@ -159,7 +171,6 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
             <Typography variant="body2" sx={{ ml: 1 }}>
               {isLiked ? "Added to Favorites" : "Add to Favorites"}
             </Typography>
-
           </Box>
 
           {/* انتخاب سایز */}
@@ -314,7 +325,6 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
                   mt: "10%",
                 }}
               >
-                {/* استفاده از داده‌های پویا برای نمایش راهنمای اندازه */}
                 {product.sizeGuide && product.sizeGuide.length > 0 ? (
                   <SizeGuide sizeGuide={product.sizeGuide} />
                 ) : (
@@ -328,6 +338,53 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
           </Box>
         </Grid>
       </Grid>
+      {/* مودال برای پیام موفقیت */}
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="success-modal-title"
+        aria-describedby="success-modal-description"
+      >
+        <Box
+          sx={{
+            p: 4,
+            backgroundColor: "white",
+            borderRadius: 2,
+            maxWidth: 400,
+            margin: "auto",
+            mt: "10%",
+            textAlign: "center",
+          }}
+        >
+          <Typography id="success-modal-title" variant="h6">
+            Product Added to Cart
+          </Typography>
+          <Typography id="success-modal-description" sx={{ mt: 2 }}>
+            The product has been successfully added to your cart.
+          </Typography>
+
+          {/* دکمه ادامه خرید */}
+          <Button
+            onClick={handleContinueShopping}
+            sx={{ mt: 2, mr: 2 }}
+            variant="contained"
+            color="primary"
+          >
+            Continue Shopping
+          </Button>
+
+          {/* دکمه تسویه حساب */}
+          <Button
+            onClick={handleCheckout}
+            sx={{ mt: 2 }}
+            variant="contained"
+            color="secondary"
+          >
+            Checkout
+          </Button>
+        </Box>
+      </Modal>
+      ;
     </Container>
   );
 };

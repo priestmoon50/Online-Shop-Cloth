@@ -1,103 +1,144 @@
-/* PhoneVerification.module.css */
-
 .container {
-  max-width: 400px; /* حداکثر عرض */
-  margin: 50px auto; /* فاصله از بالا و مرکز */
-  padding: 40px; /* فضای داخلی بیشتر */
-
-  background-color: #ffffff; /* پس‌زمینه سفید */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* سایه ملایم */
-  transition: box-shadow 0.3s ease; /* افکت سایه نرم */
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.0);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
 }
 
 .container:hover {
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15); /* سایه بیشتر هنگام هاور */
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
 }
 
 .formContainer {
   display: flex;
-  flex-direction: column; /* چینش عمودی */
-  align-items: center; /* مرکز چینش */
+  padding-top: 100px;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header {
-  font-size: 28px; /* سایز بزرگتر برای عنوان */
-  font-weight: 700; /* بولد */
-  color: #2c3e50; /* رنگ تیره و مدرن */
-  margin-bottom: 20px; /* فاصله زیر عنوان */
-  text-align: center; /* مرکز متن */
+  text-shadow: 1px 1px 3px rgba(5, 7, 15, 0.966);
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-top: -100px;
+  margin-bottom: 100px;
+  text-align: center;
 }
 
 .inputGroup {
+  margin-top: 50px;
   display: flex;
-  flex-direction: column; /* چینش عمودی */
-  margin-bottom: 20px; /* فاصله زیر گروه ورودی */
-  width: 100%; /* عرض کامل */
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.inputWithIcon {
+  position: relative;
+  width: 100%;
 }
 
 .input {
-  padding: 12px; /* فضای داخلی بیشتر */
-  font-size: 16px; /* سایز فونت */
-  margin-bottom: 10px; /* فاصله بین ورودی‌ها */
-  border: 1px solid #dcdcdc; /* حاشیه ملایم */
-
-  transition: border-color 0.3s ease; /* افکت تغییر رنگ حاشیه */
+  padding: 12px;
+  padding-left: 45px; /* فضای بیشتر برای آیکون */
+  font-size: 18px;
+  margin-bottom: 10px;
+  border: 1px solid #dcdcdc;
+  transition: border-color 0.3s ease;
+  width: 100%;
 }
 
 .input:focus {
-  border-color: #007bff; /* تغییر رنگ حاشیه هنگام فوکوس */
-  outline: none; /* حذف حاشیه پیش‌فرض مرورگر */
+  border-color: #007bff;
+  outline: none;
 }
 
+.icon {
+  position: absolute;
+  left: 15px; /* فاصله آیکون از چپ */
+  top: 50%; /* قرار گرفتن آیکون وسط از لحاظ عمودی */
+  transform: translateY(-80%);
+  color: #888;
+  font-size: 20px; /* سایز آیکون */
+}
+
+
 .button {
-  padding: 12px; /* فضای داخلی بیشتر */
-  font-size: 16px; /* سایز فونت */
-  background-color: #007bff; /* رنگ پس‌زمینه دکمه */
-  color: white; /* رنگ متن */
-  border: none; /* بدون حاشیه */
-  border-radius: 2px; /* حاشیه نرم */
-  cursor: pointer; /* نشانه گر ماوس */
-  transition: background-color 0.3s ease, transform 0.2s; /* افکت تغییر رنگ و حرکت */
-  width: 100%; /* عرض کامل */
+  padding: 12px;
+  font-size: 16px;
+  background-color: rgba(0, 123, 255, 0.9);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  width: 100%;
 }
 
 .button:hover:not(:disabled) {
-  background-color: #0056b3; /* تغییر رنگ دکمه هنگام هاور */
-  transform: translateY(-2px); /* حرکت جزئی هنگام هاور */
+  background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 .button:disabled {
-  background-color: #a0a0a0; /* رنگ دکمه غیرفعال */
-  cursor: not-allowed; /* نشانه گر غیرقابل استفاده */
+  background-color: #a0a0a0;
+  cursor: not-allowed;
 }
 
 .errorMessage {
-  color: red; /* رنگ قرمز برای پیام خطا */
-  margin-bottom: 10px; /* فاصله زیر پیام خطا */
-  font-weight: 500; /* وزن متوسط */
+  color: rgb(251, 255, 8);
+  font-size: 22px; /* اندازه بزرگ‌تر */
+  font-weight: bold; /* ضخیم‌تر */
+  margin-bottom: 10px; /* فاصله بیشتر از عناصر دیگر */
+  text-align: center; /* متن در وسط */
 }
+
 
 .successMessage {
-  color: green; /* رنگ سبز برای پیام موفقیت */
-  margin-top: 10px; /* فاصله بالای پیام موفقیت */
-  font-weight: 500; /* وزن متوسط */
-}
-
-.timer {
-  margin-top: 10px; /* فاصله بالای تایمر */
+  color: green;
+  margin-top: 10px;
+  font-weight: 500;
 }
 
 .resendButton {
-  margin-top: 10px; /* فاصله بالای دکمه ارسال دوباره */
-  background-color: #28a745; /* رنگ سبز برای دکمه ارسال دوباره */
-  color: white; /* رنگ متن */
-  padding: 10px; /* فضای داخلی */
-  border: none; /* بدون حاشیه */
-  
-  cursor: pointer; /* نشانه گر ماوس */
-  transition: background-color 0.3s ease; /* افکت تغییر رنگ */
+  margin-top: 10px;
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .resendButton:hover {
-  background-color: #218838; /* تغییر رنگ هنگام هاور */
+  background-color: #218838;
+}
+
+.timer {
+  margin-top: 10px;
+}
+
+
+
+.phoneIcon {
+  color: #007bff; /* آبی */
+}
+
+.emailIcon {
+  color: #28a745; /* سبز */
+}
+
+.addressIcon {
+  color: #ffc107; /* زرد */
+}
+
+.userIcon {
+  color: #fd7e14; /* نارنجی */
+}
+
+.keyIcon {
+  color: #17a2b8; /* فیروزه‌ای */
 }
