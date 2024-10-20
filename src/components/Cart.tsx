@@ -22,7 +22,7 @@ const Cart: React.FC = () => {
       await updateItem(id, newQuantity);
       setLoading(false);  // پایان لودینگ
       setError(null);  // پاک کردن خطا
-    } catch  {
+    } catch {
       setError(t('error.updateFailed'));
       setLoading(false); // لودینگ به پایان
     }
@@ -33,7 +33,7 @@ const Cart: React.FC = () => {
     try {
       await removeItem(id);
       setLoading(false);
-    } catch  {
+    } catch {
       setError(t('error.failedToRemoveItem'));
       setLoading(false);
     }
@@ -58,6 +58,16 @@ const Cart: React.FC = () => {
           <List className={styles.cartList}>
             {cart.items.map((item: CartItem) => (
               <ListItem key={item.id} className={styles.cartListItem}>
+                {/* نمایش تصویر محصول */}
+                <Box>
+                  <img 
+                    src={item.image || "/placeholder.jpg"} 
+                    alt={item.name} 
+                    style={{ width: "100px", height: "100px", objectFit: "cover", marginRight: "20px" }} 
+                  />
+                </Box>
+
+                {/* نمایش نام و جزئیات محصول */}
                 <ListItemText
                   primary={
                     <Typography variant="h6" className={styles.itemName}>
@@ -83,6 +93,7 @@ const Cart: React.FC = () => {
                     <span className={styles.productDetailValue}>{item.color || "N/A"}</span>
                   </Typography>
                 </Box>
+
                 <Box className={styles.buttonContainer}>
                   <Button
                     variant="contained"

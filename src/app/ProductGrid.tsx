@@ -6,13 +6,13 @@ import Slider from "react-slick";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
+import { useRouter } from "next/router"; // اضافه کردن این برای ناوبری
 import styles from "./ProductGrid.module.css";
 
 // تابع fetch محصولات
 const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("http://localhost:3001/products");
 
-  // بررسی اینکه آیا API لیستی از محصولات را برمی‌گرداند
   if (Array.isArray(data)) {
     return data.map((product: Product) => ({
       ...product,
@@ -28,8 +28,8 @@ export default function ProductGrid() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+ 
 
-  // استفاده از React Query برای دریافت محصولات
   const { data: products = [], isLoading, error } = useQuery<Product[], Error>({
     queryKey: ["products"],
     queryFn: fetchProducts,
@@ -51,7 +51,6 @@ export default function ProductGrid() {
     );
   }
 
-  // تنظیمات اسلایدر بر اساس سایز صفحه
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -59,20 +58,29 @@ export default function ProductGrid() {
     slidesToShow: isMobile ? 2 : isTablet ? 3 : 6,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
-    rtl: true, // راست به چپ
-    centerMode: true, // اضافه کردن این گزینه برای وسط‌چین کردن اسلایدر
-    centerPadding: "0", // جلوگیری از padding اضافه در حالت راست‌چین
+    autoplaySpeed: 1500,
+    rtl: true,
+    centerMode: true,
+    centerPadding: "0",
   };
+
+  const handleProductClick = (id: string | number) => {
+    window.location.href = `/product/${id}`;
+ }
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Slider {...sliderSettings}>
         {products.map((product) => (
-          <Box key={product.id} className={styles.productCard}>
+          <Box
+            key={product.id}
+            className={styles.productCard}
+            onClick={() => handleProductClick(product.id)}
+            sx={{ cursor: 'pointer' }} // نمایش دست در هنگام هاور
+          >
             <Box sx={{ position: "relative", height: "300px", mb: 2 }}>
               <Image
-                src={product.images?.[0] || "/placeholder.jpg"} // نمایش اولین تصویر یا placeholder
+                src={product.images?.[0] || "/placeholder.jpg"}
                 alt={product.name}
                 fill
                 style={{ objectFit: "cover" }}

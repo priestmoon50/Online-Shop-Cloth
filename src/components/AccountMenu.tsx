@@ -10,10 +10,10 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import styles from "./AccountMenu.module.css";
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const AccountMenu: React.FC = () => {
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { logout, isAuthenticated } = useAuth();
 
@@ -30,10 +30,10 @@ const AccountMenu: React.FC = () => {
 
   const handleLogout = useCallback(() => {
     logout();
-    localStorage.removeItem('cart'); // پاک کردن سبد خرید از localStorage
+    localStorage.removeItem("cart"); // پاک کردن سبد خرید از localStorage
     window.location.reload(); // رفرش کل صفحه
   }, [logout]);
-  
+
   return (
     <Box
       onMouseEnter={handleMouseEnter}
@@ -111,6 +111,16 @@ const AccountMenu: React.FC = () => {
               <AccountCircleIcon sx={{ marginRight: "10px" }} />
               {t("logout")}
             </MenuItem>
+            {/* لینک علاقه‌مندی‌ها برای کاربر وارد شده */}
+            <Link href="/favorites" passHref>
+              <MenuItem
+                onClick={handleMouseLeave}
+                className={styles.menuItemHover}
+              >
+                <FavoriteIcon sx={{ marginRight: "10px" }} />
+                {t("favorites")}
+              </MenuItem>
+            </Link>
           </div>
         )}
         <Divider className={styles.divider} />

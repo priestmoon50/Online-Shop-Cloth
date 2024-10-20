@@ -40,11 +40,11 @@ const NextArrow: React.FC<ArrowProps> = ({ onClick }) => (
 const sliderSettings = {
   dots: true,
   infinite: true,
-  speed: 500,
+  speed: 1000,
   slidesToShow: 1,
   slidesToScroll: 1,
   autoplay: true,
-  autoplaySpeed: 5000,
+  autoplaySpeed: 2000,
   nextArrow: <NextArrow />,
   prevArrow: <PreviousArrow />,
   appendDots: (dots: React.ReactNode) => (

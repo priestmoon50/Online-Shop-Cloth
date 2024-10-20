@@ -93,7 +93,11 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
       alert("Please select a size and color");
       return;
     }
-
+  
+    const productImage = product.images && product.images.length > 0 
+      ? product.images[0] 
+      : "/placeholder.jpg"; // استفاده از اولین تصویر یا placeholder
+  
     addItem({
       id: productId.toString(),
       name: product.name,
@@ -101,10 +105,12 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
       quantity: quantity,
       size: selectedSize,
       color: selectedColor,
+      image: productImage,  // اضافه کردن تصویر محصول
     });
-
+  
     setOpenModal(true); // باز کردن مودال بعد از اضافه شدن به سبد خرید
   };
+  
 
   // تابع برای بستن مودال
   const handleCloseModal = () => {
