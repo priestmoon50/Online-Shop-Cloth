@@ -63,7 +63,7 @@ const Cart: React.FC = () => {
                   <img 
                     src={item.image || "/placeholder.jpg"} 
                     alt={item.name} 
-                    style={{ width: "100px", height: "100px", objectFit: "cover", marginRight: "20px" }} 
+                    style={{ width: "250px", height: "250px", objectFit: "cover", }} 
                   />
                 </Box>
 
@@ -126,7 +126,7 @@ const Cart: React.FC = () => {
 
           {error && <Typography color="error">{error}</Typography>} {/* نمایش خطا */}
 
-          <Typography variant="h6" className={styles.totalPrice}>
+          <Typography variant="h4" className={styles.totalPrice}>
             {t('total')}: ${totalAmount.toFixed(2)}
           </Typography> {/* نمایش قیمت کل */}
 
