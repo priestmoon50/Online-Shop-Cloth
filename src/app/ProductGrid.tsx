@@ -6,7 +6,6 @@ import Slider from "react-slick";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
-import { useRouter } from "next/router"; // اضافه کردن این برای ناوبری
 import styles from "./ProductGrid.module.css";
 
 // تابع fetch محصولات
