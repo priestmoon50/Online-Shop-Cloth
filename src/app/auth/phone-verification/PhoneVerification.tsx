@@ -22,7 +22,7 @@ export default function PhoneVerification() {
   const sendPhone = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(`${baseURL}/auth/verify-phone`, {
+      const _response = await axios.post(`${baseURL}/auth/verify-phone`, {
         phone,
         email,
         address,
@@ -30,7 +30,7 @@ export default function PhoneVerification() {
       });
       setIsCodeSent(true);
       setError("");
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to send verification code");
     } finally {
       setLoading(false);
@@ -40,23 +40,23 @@ export default function PhoneVerification() {
   const verifyCode = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(`${baseURL}/auth/confirm-code`, {
+      const _response = await axios.post(`${baseURL}/auth/confirm-code`, {
         phone,
         code,
       });
-      if (response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
+      if (_response.data.accessToken) {
+        localStorage.setItem("token", _response.data.accessToken);
         localStorage.setItem("phone", phone);
-        localStorage.setItem("email", response.data.user.email || "");
-        localStorage.setItem("address", response.data.user.address || "");
-        localStorage.setItem("fullname", response.data.user.fullname || "");
-        localStorage.setItem("role", response.data.user.role || "user");
+        localStorage.setItem("email", _response.data.user.email || "");
+        localStorage.setItem("address", _response.data.user.address || "");
+        localStorage.setItem("fullname", _response.data.user.fullname || "");
+        localStorage.setItem("role", _response.data.user.role || "user");
         setIsCodeConfirmed(true);
         setError("");
       } else {
         setError("Invalid code or failed to login");
       }
-    } catch {
+    } catch (_err) {
       setError("Failed to verify code");
     } finally {
       setLoading(false);
