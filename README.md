@@ -23,4 +23,17 @@ This project is a fully responsive online shop built to support selling clothing
 ### User Interface
 - **Responsive Design**: The frontend is fully responsive, ensuring compatibility across various devices, including desktops, tablets, and smartphones.
 - **Product Display**: Products are displayed in a user-friendly format with detailed information to enhance the shopping experience.
-- **Video Showcase**: A dedicated section to showcase a product video, giving customers a closer look at featured items.
+- **Video Showcase**: A dedicated section to showcase a product video, giving customers a closer look at featured items. ( https://www.youtube.com/watch?v=_isYt1dbpSM )
+
+## Installation and Setup
+
+### Prerequisites
+- **Node.js** and **npm** installed on your system.
+- **MongoDB** instance running for the database.
+
+### Installation Steps
+
+1. Clone the repository:
+   ```bash
+   git clone (https://github.com/priestmoon50/Online-Shop-Cloth.git)
+   cd repository
