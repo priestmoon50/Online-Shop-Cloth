@@ -24,7 +24,7 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoriteContext";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
-import { useRouter } from "next/router";
+
 
 const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);

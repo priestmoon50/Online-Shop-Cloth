@@ -28,9 +28,14 @@ export default function PhoneVerification() {
         address,
         fullname,
       });
-      setIsCodeSent(true);
-      setError("");
+      if (response.status === 200) { // بررسی وضعیت موفقیت‌آمیز بودن درخواست
+        setIsCodeSent(true);
+        setError("");
+      } else {
+        setError("Failed to send verification code");
+      }
     } catch (err) {
+      console.error("Error sending verification code:", err); // استفاده از err برای نمایش در کنسول
       setError("Failed to send verification code");
     } finally {
       setLoading(false);
@@ -56,7 +61,8 @@ export default function PhoneVerification() {
       } else {
         setError("Invalid code or failed to login");
       }
-    } catch {
+    } catch (err) {
+      console.error("Error verifying code:", err); // استفاده از err برای نمایش در کنسول
       setError("Failed to verify code");
     } finally {
       setLoading(false);
