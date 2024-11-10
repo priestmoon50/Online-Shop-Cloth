@@ -23,7 +23,8 @@ This project is a fully responsive online shop built to support selling clothing
 ### User Interface
 - **Responsive Design**: The frontend is fully responsive, ensuring compatibility across various devices, including desktops, tablets, and smartphones.
 - **Product Display**: Products are displayed in a user-friendly format with detailed information to enhance the shopping experience.
-- **Video Showcase**: A dedicated section to showcase a product video, giving customers a closer look at featured items. ( https://www.youtube.com/watch?v=_isYt1dbpSM )
+- **Video Showcase**: A dedicated section to showcase a product video, giving customers a closer look at featured items. 
+  - [Demo Video](https://www.youtube.com/watch?v=_isYt1dbpSM)
 
 ## Installation and Setup
 
@@ -35,5 +36,19 @@ This project is a fully responsive online shop built to support selling clothing
 
 1. Clone the repository:
    ```bash
-   git clone (https://github.com/priestmoon50/Online-Shop-Cloth.git)
-   cd repository
+   git clone https://github.com/priestmoon50/Online-Shop-Cloth.git
+   cd Online-Shop-Cloth
+
+2. Front End:
+   ```bash
+   cd root directory
+   npm install
+   npm install @mui/material @emotion/react @emotion/styled
+   Start the frontend development server and access it on http://localhost:3000
+   npm run dev
+
+2. Backend:
+   ```bash
+   cd backend
+   npm install
+   npm run start:dev
