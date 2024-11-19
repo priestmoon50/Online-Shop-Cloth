@@ -1,16 +1,16 @@
 interface JWTPayload {
-  exp: number; // زمان انقضا
-  iat?: number; // زمان صدور (اختیاری)
-  [key: string]: unknown; // برای پشتیبانی از فیلدهای دلخواه دیگر
+  exp: number; 
+  iat?: number; 
+  [key: string]: unknown; 
 }
 
 class TokenService {
-  private tokenKey = 'token';  // کلید ذخیره توکن در localStorage
+  private tokenKey = 'token';  
 
-  // بررسی وجود window و استفاده از localStorage فقط در مرورگر
+ 
   private isBrowser = typeof window !== 'undefined';
 
-  // ذخیره توکن در localStorage
+
   setToken(token: string): void {
     if (this.isBrowser) {
       try {
@@ -22,7 +22,7 @@ class TokenService {
     }
   }
 
-  // دریافت توکن از localStorage
+
   getToken(): string | null {
     if (this.isBrowser) {
       try {
