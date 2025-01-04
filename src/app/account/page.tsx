@@ -6,9 +6,6 @@ import styles from "./AccountSettings.module.css"; // وارد کردن CSS Modu
 // تعریف نوع داده‌ها
 interface UserData {
   phone: string;
-  email: string;
-  address: string;
-  fullname: string;
 }
 
 interface Action {
@@ -19,9 +16,6 @@ interface Action {
 // وضعیت اولیه
 const initialState: UserData = {
   phone: "",
-  email: "",
-  address: "",
-  fullname: "",
 };
 
 // تابع کاهش‌دهنده (reducer)
@@ -38,9 +32,6 @@ function reducer(state: UserData, action: Action) {
 const loadData = (): Partial<UserData> => {
   return {
     phone: localStorage.getItem("phone") || "",
-    email: localStorage.getItem("email") || "",
-    address: localStorage.getItem("address") || "",
-    fullname: localStorage.getItem("fullname") || "",
   };
 };
 
@@ -54,20 +45,13 @@ const AccountSettings = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Account Settings</h1>
-
+      <h1 className={styles.title}>Account</h1>
 
       <ul className={styles.list}>
-        {Object.entries(state).map(([key, value]) => (
-          <li className={styles.listItem} key={key}>
-            <span className={styles.label}>{`${
-              key.charAt(0).toUpperCase() + key.slice(1)
-            }:`}</span>{" "}
-            {value}
-          </li>
-        ))}
+        <li className={styles.listItem}>
+          <span className={styles.label}>Phone:</span> {state.phone}
+        </li>
       </ul>
-
     </div>
   );
 };
