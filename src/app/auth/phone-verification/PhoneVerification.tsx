@@ -4,15 +4,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./PhoneVerification.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faEnvelope, faHome, faUser, faKey } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faKey } from '@fortawesome/free-solid-svg-icons';
 
 const baseURL = "http://localhost:3001";
 
 export default function PhoneVerification() {
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [fullname, setFullname] = useState("");
   const [code, setCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeConfirmed, setIsCodeConfirmed] = useState(false);
@@ -22,20 +19,15 @@ export default function PhoneVerification() {
   const sendPhone = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(`${baseURL}/auth/verify-phone`, {
-        phone,
-        email,
-        address,
-        fullname,
-      });
-      if (response.status === 200) { // بررسی وضعیت موفقیت‌آمیز بودن درخواست
+      const response = await axios.post(`${baseURL}/auth/verify-phone`, { phone });
+      if (response.status === 200) {
         setIsCodeSent(true);
         setError("");
       } else {
         setError("Failed to send verification code");
       }
     } catch (err) {
-      console.error("Error sending verification code:", err); // استفاده از err برای نمایش در کنسول
+      console.error("Error sending verification code:", err);
       setError("Failed to send verification code");
     } finally {
       setLoading(false);
@@ -45,24 +37,17 @@ export default function PhoneVerification() {
   const verifyCode = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(`${baseURL}/auth/confirm-code`, {
-        phone,
-        code,
-      });
+      const response = await axios.post(`${baseURL}/auth/confirm-code`, { phone, code });
       if (response.data.accessToken) {
         localStorage.setItem("token", response.data.accessToken);
         localStorage.setItem("phone", phone);
-        localStorage.setItem("email", response.data.user.email || "");
-        localStorage.setItem("address", response.data.user.address || "");
-        localStorage.setItem("fullname", response.data.user.fullname || "");
-        localStorage.setItem("role", response.data.user.role || "user");
         setIsCodeConfirmed(true);
         setError("");
       } else {
         setError("Invalid code or failed to login");
       }
     } catch (err) {
-      console.error("Error verifying code:", err); // استفاده از err برای نمایش در کنسول
+      console.error("Error verifying code:", err);
       setError("Failed to verify code");
     } finally {
       setLoading(false);
@@ -90,43 +75,9 @@ export default function PhoneVerification() {
                 onChange={(e) => setPhone(e.target.value)}
                 className={styles.input}
               />
-               <FontAwesomeIcon icon={faPhone} className={`${styles.icon} ${styles.phoneIcon}`} />
+              <FontAwesomeIcon icon={faPhone} className={styles.icon} />
             </div>
-            <div className={styles.inputWithIcon}>
-              <input
-                type="text"
-                placeholder="Your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={styles.input}
-              />
-          <FontAwesomeIcon icon={faEnvelope} className={`${styles.icon} ${styles.emailIcon}`} />
-            </div>
-            <div className={styles.inputWithIcon}>
-              <input
-                type="text"
-                placeholder="Your address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className={styles.input}
-              />
-             <FontAwesomeIcon icon={faHome} className={`${styles.icon} ${styles.addressIcon}`} />
-            </div>
-            <div className={styles.inputWithIcon}>
-              <input
-                type="text"
-                placeholder="Your full name"
-                value={fullname}
-                onChange={(e) => setFullname(e.target.value)}
-                className={styles.input}
-              />
-             <FontAwesomeIcon icon={faUser} className={`${styles.icon} ${styles.userIcon}`} />
-            </div>
-            <button
-              onClick={sendPhone}
-              className={styles.button}
-              disabled={loading}
-            >
+            <button onClick={sendPhone} className={styles.button} disabled={loading}>
               {loading ? "Sending..." : "Send Code"}
             </button>
           </div>
@@ -140,21 +91,15 @@ export default function PhoneVerification() {
                 onChange={(e) => setCode(e.target.value)}
                 className={styles.input}
               />
-         <FontAwesomeIcon icon={faKey} className={`${styles.icon} ${styles.keyIcon}`} />
+              <FontAwesomeIcon icon={faKey} className={styles.icon} />
             </div>
-            <button
-              onClick={verifyCode}
-              className={styles.button}
-              disabled={loading}
-            >
+            <button onClick={verifyCode} className={styles.button} disabled={loading}>
               {loading ? "Verifying..." : "Verify Code"}
             </button>
           </div>
         )}
         {isCodeConfirmed && (
-          <div className={styles.successMessage}>
-            Code confirmed! You are logged in.
-          </div>
+          <div className={styles.successMessage}>Code confirmed! You are logged in.</div>
         )}
       </div>
     </div>
