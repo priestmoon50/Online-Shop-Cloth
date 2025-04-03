@@ -2,7 +2,6 @@ import IAnswer from "../interfaces/IAnswer";
 import IDriverAccount from "../interfaces/IDriverAccount";
 import IKitchenDisplayAccount from "../interfaces/kds/IKitchenDisplayAccount";
 
-// انواع مشخص برای Body و Headers
 type RequestBody = Record<string, unknown> | null;
 type RequestHeaders = Record<string, string>;
 
@@ -13,7 +12,7 @@ export default class ApiController {
     return {
       companyId: this.getCompanyId(),
       "client-agent": this.account.clientAgent,
-      ...(authorization ? { Authorization: "Bearer " + this.account.token } : {}),
+      ...(authorization ? { Authorization: `Bearer ${this.account.token}` } : {}),
     };
   }
 
@@ -49,28 +48,32 @@ export default class ApiController {
       const response = await fetch(url, fetchOptions);
       clearTimeout(timeoutId);
 
-      const data = await response.json();
+      const data = (await response.json()) as IAnswer;
 
       return response.ok
         ? this.fetchSuccess(data)
         : this.fetchError(data, response.statusText);
-    } catch (error) {
+    } catch (error: unknown) {
       clearTimeout(timeoutId);
-      const err = error as { message?: string };
-      return this.fetchError(err, "Network Error");
+      return this.fetchError(error, "Network Error");
     }
   }
 
   fetchSuccess(response: unknown): IAnswer {
-    if (typeof response === "object" && response !== null && "success" in response && (response as IAnswer).success) {
+    if (
+      typeof response === "object" &&
+      response !== null &&
+      "success" in response &&
+      (response as IAnswer).success
+    ) {
       return response as IAnswer;
     }
 
     return {
       success: false,
       data: null,
-      message: "Unknown error",
-      exception: "Unknown error",
+      message: "Invalid response format",
+      exception: "Invalid response format",
     };
   }
 
@@ -83,40 +86,40 @@ export default class ApiController {
     return {
       success: false,
       data: null,
-      message: errorMessage,
       exception: errorMessage,
+      message: errorMessage,
     };
   }
 
-  postWithAuth = async (
+  postWithAuth = (
     url: string,
     body: RequestBody = {},
     headers: RequestHeaders = {}
   ): Promise<IAnswer> => this.fetchRequest(url, "POST", body, headers, true);
 
-  putWithAuth = async (
+  putWithAuth = (
     url: string,
     body: RequestBody,
     headers: RequestHeaders = {}
   ): Promise<IAnswer> => this.fetchRequest(url, "PUT", body, headers, true);
 
-  getWithAuth = async (
+  getWithAuth = (
     url: string,
     headers: RequestHeaders = {}
   ): Promise<IAnswer> => this.fetchRequest(url, "GET", null, headers, true);
 
-  get = async (
+  get = (
     url: string,
     headers: RequestHeaders = {}
   ): Promise<IAnswer> => this.fetchRequest(url, "GET", null, headers, false);
 
-  deleteWithAuth = async (
+  deleteWithAuth = (
     url: string,
     headers: RequestHeaders = {}
   ): Promise<IAnswer> => this.fetchRequest(url, "DELETE", null, headers, true);
 
-  private getCompanyId = (): string => {
-    if (this.account?.companyId) return this.account.companyId + "";
-    return this.account.company.id + "";
-  };
+  private getCompanyId(): string {
+    if (this.account?.companyId) return String(this.account.companyId);
+    return String(this.account.company.id);
+  }
 }

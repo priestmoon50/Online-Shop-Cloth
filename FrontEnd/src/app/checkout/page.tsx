@@ -29,7 +29,7 @@ interface FormData {
 }
 
 const CheckoutPage: React.FC = () => {
-  const { cart } = useCart(); // فقط cart استفاده میشه، بقیه حذف شدن
+  const { cart } = useCart();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
 
@@ -80,39 +80,35 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    try {
-      const orderData = {
-        userId: userData.userId,
-        items: cart.items,
-        totalPrice: cart.items.reduce(
-          (acc, item) => acc + item.price * item.quantity,
-          0
-        ),
-        name: userData.name,
-        address: data.address,
-        phone: userData.phone,
-        status: "Pending",
-      };
+    const orderData = {
+      userId: userData.userId,
+      items: cart.items,
+      totalPrice: cart.items.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+      ),
+      name: userData.name,
+      address: data.address,
+      phone: userData.phone,
+      status: "Pending",
+    };
 
-      window.localStorage.setItem("fullname", userData.name);
-      window.localStorage.setItem("email", userData.email);
-      window.localStorage.setItem("address", data.address);
+    window.localStorage.setItem("fullname", userData.name);
+    window.localStorage.setItem("email", userData.email);
+    window.localStorage.setItem("address", data.address);
 
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
 
-      if (response.ok) {
-        router.push("/confirmation");
-      } else {
-        alert("There was an error placing your order. Please try again.");
-      }
-    } catch (error) {
-      alert("An unexpected error occurred. Please try again later.");
+    if (response.ok) {
+      router.push("/confirmation");
+    } else {
+      alert("There was an error placing your order. Please try again.");
     }
   };
 
@@ -150,7 +146,7 @@ const CheckoutPage: React.FC = () => {
                 fullWidth
                 label="Address"
                 error={!!errors.address}
-                helperText={errors.address ? errors.address.message : ""}
+                helperText={errors.address?.message}
                 sx={{ marginBottom: "10px" }}
               />
             )}
@@ -167,6 +163,7 @@ const CheckoutPage: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           Order Summary
         </Typography>
+
         {cart.items.length === 0 ? (
           <Typography variant="h6">Your cart is currently empty.</Typography>
         ) : (
