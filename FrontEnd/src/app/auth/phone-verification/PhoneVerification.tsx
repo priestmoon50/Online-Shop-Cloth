@@ -1,22 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import styles from "./PhoneVerification.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faKey } from "@fortawesome/free-solid-svg-icons";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
 
-
 export default function PhoneVerification() {
-  const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isCodeConfirmed, setIsCodeConfirmed] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [timer, setTimer] = useState(0);
+  const [phone, setPhone] = useState<string>("");
+  const [code, setCode] = useState<string>("");
+  const [isCodeSent, setIsCodeSent] = useState<boolean>(false);
+  const [isCodeConfirmed, setIsCodeConfirmed] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [timer, setTimer] = useState<number>(0);
 
   // تایمر شمارش معکوس
   useEffect(() => {
@@ -41,13 +40,14 @@ export default function PhoneVerification() {
       const response = await axios.post(`${baseURL}/auth/verify-phone`, { phone });
       if (response.status === 200) {
         setIsCodeSent(true);
-        setTimer(60); // 60 ثانیه قفل برای ارسال مجدد
+        setTimer(60);
       } else {
         setError("Something went wrong while sending the code.");
       }
-    } catch (err: any) {
-      const message = err?.response?.data?.message || "Failed to send verification code";
-      console.error("Error sending verification code:", err);
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ message?: string }>;
+      const message = error?.response?.data?.message || "Failed to send verification code";
+      console.error("Error sending verification code:", error);
       setError(message);
     } finally {
       setLoading(false);
@@ -66,9 +66,10 @@ export default function PhoneVerification() {
       } else {
         setError("Invalid code or failed to login.");
       }
-    } catch (err: any) {
-      const message = err?.response?.data?.message || "Failed to verify code.";
-      console.error("Error verifying code:", err);
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ message?: string }>;
+      const message = error?.response?.data?.message || "Failed to verify code.";
+      console.error("Error verifying code:", error);
       setError(message);
     } finally {
       setLoading(false);
