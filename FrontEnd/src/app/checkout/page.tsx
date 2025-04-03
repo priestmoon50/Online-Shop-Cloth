@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -19,7 +19,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
 import SignInModal from "@/components/SignInModal";
 
-// تعریف schema برای اعتبارسنجی فرم
+// Validation schema
 const validationSchema = yup.object().shape({
   address: yup.string().required("Address is required"),
 });
@@ -29,9 +29,10 @@ interface FormData {
 }
 
 const CheckoutPage: React.FC = () => {
-  const { cart, removeItem, updateItem } = useCart();
+  const { cart } = useCart(); // فقط cart استفاده میشه، بقیه حذف شدن
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+
   const [userData, setUserData] = useState({
     name: "",
     phone: "",
@@ -44,7 +45,6 @@ const CheckoutPage: React.FC = () => {
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
