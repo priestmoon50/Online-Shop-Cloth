@@ -6,11 +6,11 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SmsService } from './sms.service'; // اضافه کردن SmsService
+import { TwilioService } from './twilio.service'; // ✅ اضافه کن
 
 @Module({
   imports: [
-    forwardRef(() => UsersModule),  // جلوگیری از وابستگی چرخه‌ای
+    forwardRef(() => UsersModule),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -22,7 +22,7 @@ import { SmsService } from './sms.service'; // اضافه کردن SmsService
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, SmsService],  // اضافه کردن SmsService به providers
-  exports: [AuthService, JwtModule],  // صادر کردن AuthService و JwtModule
+  providers: [AuthService, JwtStrategy, TwilioService], 
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
