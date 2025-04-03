@@ -6,7 +6,8 @@ import styles from "./PhoneVerification.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faKey } from "@fortawesome/free-solid-svg-icons";
 
-const baseURL = "http://localhost:3001";
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
+
 
 export default function PhoneVerification() {
   const [phone, setPhone] = useState("");
