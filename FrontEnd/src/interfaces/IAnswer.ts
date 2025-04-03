@@ -1,6 +1,7 @@
-export default interface IAnswer {
+export default interface IAnswer<T = unknown> {
     success: boolean;
-    data: any;
+    data: T | null;
     exception?: string;
     message?: string;
-}
+  }
+  
