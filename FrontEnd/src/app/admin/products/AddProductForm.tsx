@@ -14,7 +14,7 @@ import axios from "axios";
 import styles from "./AddProductForm.module.css";
 import GalleryImageSelector from "./GalleryImageSelector"; // وارد کردن GalleryImageSelector برای انتخاب عکس از گالری
 import Image from "next/image"; // وارد کردن Image از next/image
-
+ 
 interface AddProductFormProps {
   onAddProduct: (product: Product) => void; 
   initialProduct?: Product;

@@ -14,7 +14,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({ onAddImage 
   // Fetch images from the backend
   useEffect(() => {
     const fetchImages = async () => {
-      try {
+      try { 
         const response = await axios.get('http://localhost:3001/gallery');
         setImages(response.data); // Store the list of image URLs
       } catch (error) {

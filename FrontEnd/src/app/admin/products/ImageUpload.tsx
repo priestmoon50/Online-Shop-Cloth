@@ -31,7 +31,7 @@ const ImageUpload: React.FC = () => {
         "http://localhost:3001/gallery",
         formData,
         {
-          headers: {
+          headers: { 
             "Content-Type": "multipart/form-data",
           },
         } 
