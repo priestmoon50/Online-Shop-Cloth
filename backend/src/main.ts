@@ -14,13 +14,18 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'https://modapersia.vercel.app', // اینجا آدرس فرانت‌اند اصلی رو بذار
-      'http://localhost:3000', // برای تست لوکال
+      'http://localhost:3000',
     ],
     credentials: true,
   });
 
   await app.init();
+
+  // اضافه کردن پورت برای اجرای سرور
+  const port = process.env.PORT || 3000;
+  server.listen(port, () => {
+    console.log(`🚀 Server is running on port ${port}`);
+  });
 }
 
 bootstrap();
