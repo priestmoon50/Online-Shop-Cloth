@@ -1,7 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server';
 import axios from 'axios';
 
-const API_URL = process.env.API_URL || 'http://localhost:3001/users/account';
+// ✅ اضافه شدن /api و دامنه مناسب برای production
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/users/account`
+  : 'http://localhost:3001/api/users/account';
 
 export async function GET(request: NextRequest) { 
   try {

@@ -5,15 +5,25 @@ import IKitchenDisplayAccount from "../interfaces/kds/IKitchenDisplayAccount";
 type RequestBody = Record<string, unknown> | null;
 type RequestHeaders = Record<string, string>;
 
+// ✅ استفاده از env برای base URL
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+
 export default class ApiController {
-  constructor(private account: IKitchenDisplayAccount & IDriverAccount) {}
+  constructor(private account?: IKitchenDisplayAccount & IDriverAccount) {}
 
   async defaultHeader(authorization = true): Promise<RequestHeaders> {
-    return {
-      companyId: this.getCompanyId(),
-      "client-agent": this.account.clientAgent,
-      ...(authorization ? { Authorization: `Bearer ${this.account.token}` } : {}),
+    const headers: RequestHeaders = {
+      "client-agent": this.account?.clientAgent ?? "public",
     };
+
+    if (authorization && this.account?.token) {
+      headers["Authorization"] = `Bearer ${this.account.token}`;
+    }
+
+    const companyId = this.getCompanyId();
+    if (companyId) headers["companyId"] = companyId;
+
+    return headers;
   }
 
   async fetchRequest(
@@ -45,7 +55,7 @@ export default class ApiController {
     }
 
     try {
-      const response = await fetch(url, fetchOptions);
+      const response = await fetch(`${API_BASE}${url}`, fetchOptions);
       clearTimeout(timeoutId);
 
       const data = (await response.json()) as IAnswer;
@@ -120,6 +130,7 @@ export default class ApiController {
 
   private getCompanyId(): string {
     if (this.account?.companyId) return String(this.account.companyId);
-    return String(this.account.company.id);
+    if (this.account?.company?.id) return String(this.account.company.id);
+    return "";
   }
 }

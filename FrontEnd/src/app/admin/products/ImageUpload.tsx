@@ -34,7 +34,7 @@ const ImageUpload: React.FC = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        } 
       );
       setSnackbarMessage("Image uploaded successfully!");
       setOpenSnackbar(true);

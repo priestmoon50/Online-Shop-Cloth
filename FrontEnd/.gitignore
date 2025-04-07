@@ -128,6 +128,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-backend/gallery/0612d968-789b-453e-acd0-b22c90c98db5.webp
-/backend/gallery
-/public/images

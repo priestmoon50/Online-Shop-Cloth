@@ -12,12 +12,14 @@ import { motion } from "framer-motion";
 
 // تابع fetch محصولات
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("http://localhost:3001/products");
+  const { data } = await axios.get("http://localhost:3001/api/products"); // ← مسیر درست
   return data.map((product: Product) => ({
     ...product,
-    id: product._id, // تبدیل _id به id
+    id: product._id,
   }));
 };
+
+  
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");

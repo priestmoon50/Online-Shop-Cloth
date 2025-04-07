@@ -20,9 +20,12 @@ const nextConfig = {
     defaultLocale: 'en',
   },
 
-  // 👇 اضافه کن برای اینکه ESLint جلوی بیلد رو نگیره
   eslint: {
     ignoreDuringBuilds: true,
+  },
+
+  experimental: {
+    appDir: false, // ❗ فقط از pages استفاده می‌کنی؟ اینو اضافه کن
   },
 };
 

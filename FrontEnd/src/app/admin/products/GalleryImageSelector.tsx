@@ -23,7 +23,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({ onAddImage 
     };
 
     fetchImages();
-  }, []);
+  }, []); 
 
   const handleImageSelect = (image: string) => {
     setSelectedImage(image); // Store the selected image
