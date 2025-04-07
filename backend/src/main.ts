@@ -19,6 +19,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.setGlobalPrefix('api');
+
   await app.init();
 
   // اضافه کردن پورت برای اجرای سرور
