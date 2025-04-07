@@ -10,7 +10,8 @@ import styles from "./ProductGrid.module.css";
 
 // تابع fetch محصولات
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("http://localhost:3001/products");
+  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`);
+
 
   if (Array.isArray(data)) {
     return data.map((product: Product) => ({
