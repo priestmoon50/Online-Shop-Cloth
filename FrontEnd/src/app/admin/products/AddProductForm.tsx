@@ -74,7 +74,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
 
       // ارسال داده به بک‌اند به صورت JSON
       const response = await axios.post(
-        "http://localhost:3001/products",
+        "http://localhost:3002/products",
         productData
       );
 

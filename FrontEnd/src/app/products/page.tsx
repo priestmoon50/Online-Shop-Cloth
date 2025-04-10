@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 
 // تابع fetch محصولات
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("http://localhost:3001/api/products"); // ← مسیر درست
+  const { data } = await axios.get("http://localhost:3002/api/products"); // ← مسیر درست
   return data.map((product: Product) => ({
     ...product,
     id: product._id,

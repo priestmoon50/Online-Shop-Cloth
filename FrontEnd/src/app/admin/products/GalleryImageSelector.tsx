@@ -15,7 +15,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({ onAddImage 
   useEffect(() => {
     const fetchImages = async () => {
       try { 
-        const response = await axios.get('http://localhost:3001/gallery');
+        const response = await axios.get('http://localhost:3002/gallery');
         setImages(response.data); // Store the list of image URLs
       } catch (error) {
         console.error('Error fetching images:', error);
@@ -38,7 +38,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({ onAddImage 
   const handleDeleteImage = async (imageUrl: string) => {
     const filename = imageUrl.split('/').pop(); // Extract the filename from the URL
     try {
-      await axios.delete(`http://localhost:3001/gallery/${filename}`);
+      await axios.delete(`http://localhost:3002/gallery/${filename}`);
       setImages(images.filter(img => img !== imageUrl)); // Remove the image from the local list
       console.log(`Image ${filename} deleted successfully`);
     } catch (error) {

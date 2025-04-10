@@ -28,7 +28,7 @@ const ImageUpload: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/gallery",
+        "http://localhost:3002/gallery",
         formData,
         {
           headers: { 

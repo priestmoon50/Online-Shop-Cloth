@@ -5,7 +5,7 @@ import Image from 'next/image'; // برای بهینه‌سازی تصاویر
 
 // تابع fetch محصولات
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("http://localhost:3001/products");
+  const { data } = await axios.get("http://localhost:3002/products");
   return data.map((product: Product) => ({
     ...product,
     id: product._id, // تبدیل _id به id

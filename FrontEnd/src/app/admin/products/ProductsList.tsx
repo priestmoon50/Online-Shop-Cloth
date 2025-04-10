@@ -16,7 +16,7 @@ interface ProductsListProps {
 
 
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get('http://localhost:3001/products');
+  const { data } = await axios.get('http://localhost:3002/products');
   return data.map((product: Product) => ({
     ...product,
     id: product._id, // تبدیل _id به id
@@ -24,7 +24,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 };
 
 const deleteProduct = async (id: string) => {
-  await axios.delete(`http://localhost:3001/products/${id}`);
+  await axios.delete(`http://localhost:3002/products/${id}`);
 };
 
 const ProductsList: React.FC<ProductsListProps> = () => {

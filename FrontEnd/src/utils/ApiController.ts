@@ -6,7 +6,7 @@ type RequestBody = Record<string, unknown> | null;
 type RequestHeaders = Record<string, string>;
 
 // ✅ استفاده از env برای base URL
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3002/api";
 
 export default class ApiController {
   constructor(private account?: IKitchenDisplayAccount & IDriverAccount) {}

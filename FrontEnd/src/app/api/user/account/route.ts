@@ -4,7 +4,7 @@ import axios from 'axios';
 // ✅ اضافه شدن /api و دامنه مناسب برای production
 const API_URL = process.env.NEXT_PUBLIC_API_URL
   ? `${process.env.NEXT_PUBLIC_API_URL}/users/account`
-  : 'http://localhost:3001/api/users/account';
+  : 'http://localhost:3002/api/users/account';
 
 export async function GET(request: NextRequest) { 
   try {

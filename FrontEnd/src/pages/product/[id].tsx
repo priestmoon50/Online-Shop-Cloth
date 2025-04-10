@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     // Fetch product from API
 
-    const res = await fetch(`http://localhost:3001/api/products/${id}`);
+    const res = await fetch(`http://localhost:3002/api/products/${id}`);
 
     // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
 

@@ -40,7 +40,7 @@ export class GalleryController {
     });
 
     // ایجاد URL کامل برای هر فایل
-    const imageUrls = files.map(file => `http://localhost:3001/gallery/${file}`);
+    const imageUrls = files.map(file => `http://localhost:3002/gallery/${file}`);
     return imageUrls; // بازگشت لیست URL‌های تصاویر به فرانت‌اند
   }
 

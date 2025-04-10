@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // درخواست برای دریافت محصول با id از API
-    const { data } = await axios.get(`http://localhost:3001/products/${id}`);
+    const { data } = await axios.get(`http://localhost:3002/products/${id}`);
 
     if (data) {
       res.status(200).json(data); // محصول را برمی‌گرداند
