@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import {
   TextField,
@@ -12,16 +14,17 @@ import { useForm, Controller } from "react-hook-form";
 import { Product } from "@/data/types";
 import axios from "axios";
 import styles from "./AddProductForm.module.css";
-import GalleryImageSelector from "./GalleryImageSelector"; // وارد کردن GalleryImageSelector برای انتخاب عکس از گالری
-import Image from "next/image"; // وارد کردن Image از next/image
- 
+import GalleryImageSelector from "./GalleryImageSelector";
+import Image from "next/image";
+
 interface AddProductFormProps {
-  onAddProduct: (product: Product) => void; 
+  onAddProduct: (product: Product) => void;
   initialProduct?: Product;
 }
 
 const AddProductForm: React.FC<AddProductFormProps> = ({
   initialProduct,
+  onAddProduct,
 }) => {
   const { control, handleSubmit, reset } = useForm<Product>({
     defaultValues: {
@@ -32,34 +35,34 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       sizes: [],
       category: "",
       images: [],
-      sizeGuide: [],// فیلد جدید برای سایز
+      sizeGuide: [],
     },
   });
 
-  const [addedImages, setAddedImages] = useState<string[]>([]); // ذخیره URL تصاویر انتخاب‌شده
-  const [customColor, setCustomColor] = useState<string>(""); // ذخیره رنگ دلخواه وارد شده
-  const [customSize, setCustomSize] = useState<string>(""); // ذخیره سایز دلخواه وارد شده
+  const [addedImages, setAddedImages] = useState<string[]>([]);
+  const [customColor, setCustomColor] = useState<string>("");
+  const [customSize, setCustomSize] = useState<string>("");
   const [availableColors, setAvailableColors] = useState<string[]>([
     "Red",
     "Blue",
     "Green",
     "Yellow",
-  ]); // ذخیره لیست رنگ‌های موجود
+  ]);
   const [availableSizes, setAvailableSizes] = useState<string[]>([
     "S",
     "M",
     "L",
     "XL",
     "2X Large",
-  ]); // ذخیره لیست سایزهای موجود
+  ]);
 
   useEffect(() => {
     if (initialProduct) {
       reset(initialProduct);
+      setAddedImages(initialProduct.images || []);
     }
   }, [initialProduct, reset]);
 
-  // اضافه کردن تصویر انتخاب‌شده به لیست تصاویر محصول
   const handleAddImage = (imageUrl: string) => {
     setAddedImages([...addedImages, imageUrl]);
   };
@@ -68,19 +71,19 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
     try {
       const productData = {
         ...data,
-        images: addedImages, // اضافه کردن URL تصاویر به داده‌های محصول
+        images: addedImages,
         sizeGuide: data.sizeGuide,
       };
 
-      // ارسال داده به بک‌اند به صورت JSON
-      const response = await axios.post(
-        "http://localhost:3002/products",
-        productData
-      );
+      const response = initialProduct
+      ? await axios.put(`/api/products/${initialProduct.id}`, productData)
+      : await axios.post("/api/products", productData);
+
 
       console.log("Product added successfully:", response.data);
+      onAddProduct(response.data); // ارسال به لیست اصلی محصولات
       reset();
-      setAddedImages([]); // پاک کردن تصاویر انتخاب‌شده بعد از افزودن محصول
+      setAddedImages([]);
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -100,6 +103,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
           <TextField {...field} label="Product Name" required />
         )}
       />
+
       <Controller
         name="price"
         control={control}
@@ -108,6 +112,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
           <TextField {...field} label="Price" type="number" required />
         )}
       />
+
       <Controller
         name="description"
         control={control}
@@ -125,9 +130,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
             {...field}
             multiple
             value={field.value || []}
-            onChange={(event) =>
-              field.onChange(event.target.value as string[])
-            } // تبدیل به string[]
+            onChange={(event) => field.onChange(event.target.value as string[])}
             renderValue={(selected) => (selected as string[]).join(", ")}
           >
             {availableColors.map((color) => (
@@ -150,7 +153,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         )}
       />
 
-      {/* افزودن رنگ دلخواه */}
       <TextField
         label="Add Custom Color"
         value={customColor}
@@ -180,9 +182,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
             {...field}
             multiple
             value={field.value || []}
-            onChange={(event) =>
-              field.onChange(event.target.value as string[])
-            } // تبدیل به string[]
+            onChange={(event) => field.onChange(event.target.value as string[])}
             renderValue={(selected) => (selected as string[]).join(", ")}
           >
             {availableSizes.map((size) => (
@@ -194,7 +194,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         )}
       />
 
-      {/* افزودن سایز دلخواه */}
       <TextField
         label="Add Custom Size"
         value={customSize}
@@ -235,10 +234,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         render={({ field }) => <TextField {...field} label="Category" />}
       />
 
-      {/* اضافه کردن GalleryImageSelector برای انتخاب عکس */}
       <GalleryImageSelector onAddImage={handleAddImage} />
 
-      {/* نمایش تصاویر انتخاب‌شده */}
       <Box sx={{ marginTop: "20px" }}>
         <Typography variant="h6">Selected Images for this Product:</Typography>
         <Grid container spacing={2}>

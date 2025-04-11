@@ -10,22 +10,16 @@ import axios from "axios";
 import { Product } from "@/data/types";
 import { motion } from "framer-motion";
 
-// تابع fetch محصولات
+// ✅ اصلاح fetch: استفاده از API داخلی
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("http://localhost:3002/api/products"); // ← مسیر درست
-  return data.map((product: Product) => ({
-    ...product,
-    id: product._id,
-  }));
+  const { data } = await axios.get("/api/products");
+  return data;
 };
-
-  
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<number[]>([1, 200]);
 
-  // دریافت محصولات از API با استفاده از React Query
   const { data: allProducts = [], isLoading, error } = useQuery<Product[], Error>({
     queryKey: ["products"],
     queryFn: fetchProducts,
@@ -33,18 +27,19 @@ export default function Home() {
 
   useEffect(() => {
     if (allProducts.length > 0) {
-      console.log("Products fetched successfully:", allProducts);
+      console.log("✅ Products loaded:", allProducts);
     }
   }, [allProducts]);
 
   if (isLoading) return <div>Loading...</div>;
+
   if (error) {
     console.error("Error fetching products:", error.message);
     return <div>Error fetching products. Please try again later.</div>;
   }
 
-  // فیلتر کردن محصولات بر اساس دسته‌بندی و محدوده قیمت
-  const filteredProducts = allProducts.filter((product: Product) => {
+  // 🎯 فیلتر محصولات
+  const filteredProducts = allProducts.filter((product) => {
     const isInSelectedCategory =
       selectedCategory === "all" ||
       product.category === selectedCategory ||
@@ -71,7 +66,7 @@ export default function Home() {
       )}
 
       <Grid container spacing={2}>
-        {filteredProducts.map((product: Product) => (
+        {filteredProducts.map((product) => (
           <Grid item key={product.id} xs={6} sm={4} md={4} lg={3}>
             <motion.div
               initial={{ opacity: 0, y: 50 }}

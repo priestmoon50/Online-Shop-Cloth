@@ -20,6 +20,7 @@ export default function PhoneVerification() {
     // ذخیره در localStorage
     localStorage.setItem("token", "mock-token");
     localStorage.setItem("phone", phone);
+  
 
     // هدایت به صفحه حساب کاربری
     window.location.href = "/account";

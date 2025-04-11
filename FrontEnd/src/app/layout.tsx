@@ -41,6 +41,7 @@ const Layout: React.FC<{ children: React.ReactNode; dehydratedState?: unknown }>
             </AuthProvider>
           </HydrationBoundary>
         </QueryClientProvider>
+        
       </body>
     </html>
   );

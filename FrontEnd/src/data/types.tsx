@@ -15,7 +15,7 @@ export interface Product {
   rating?: number;
   stock?: number;
   sizeGuide?: string[];
-  
+  status?: string;
   reviews?: string[];
   discount?: number;
   imageUrl?: string;

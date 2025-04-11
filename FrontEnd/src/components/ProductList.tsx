@@ -5,28 +5,20 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
 
-// تابع fetch محصولات
+// ✅ گرفتن محصولات از API داخلی Next.js
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("http://localhost:3002/products");
+  const { data } = await axios.get("/api/products");
 
-  // بررسی اینکه آیا API لیستی از محصولات را برمی‌گرداند
   if (Array.isArray(data)) {
-    return data.map((product: Product) => ({
-      ...product,
-      id: product._id, // تبدیل _id به id
-    }));
+    return data;
   } else {
-    console.error("Error: API did not return an array");
+    console.error("API did not return an array.");
     return [];
   }
 };
 
 const ProductList: React.FC = () => {
-  // دریافت محصولات از API با استفاده از React Query
-  const { data: allProducts = [], isLoading, error } = useQuery<
-    Product[],
-    Error
-  >({
+  const { data: allProducts = [], isLoading, error } = useQuery<Product[], Error>({
     queryKey: ["products"],
     queryFn: fetchProducts,
   });
@@ -42,7 +34,7 @@ const ProductList: React.FC = () => {
   if (error) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="400px">
-        <Alert severity="error">Error fetching products. Please try again later.</Alert>
+        <Alert severity="error">خطا در دریافت محصولات</Alert>
       </Box>
     );
   }
@@ -55,20 +47,20 @@ const ProductList: React.FC = () => {
             <ProductCard
               id={product.id}
               _id={product._id}
-              image={product.images?.[0] || "/placeholder.jpg"} // استفاده از اولین تصویر یا placeholder
+              image={product.images?.[0] || "/placeholder.jpg"}
               name={product.name}
               price={product.price}
               discount={product.discount}
               sizes={product.sizes}
-              description={product.description} // اضافه کردن توضیحات
-              category={product.category} // اضافه کردن کتگوری
-              colors={product.colors} // اضافه کردن رنگ‌ها
+              description={product.description}
+              category={product.category}
+              colors={product.colors}
             />
           </Grid>
         ))
       ) : (
         <Box display="flex" justifyContent="center" alignItems="center" width="100%">
-          <Alert severity="info">No products available.</Alert>
+          <Alert severity="info">محصولی برای نمایش وجود ندارد</Alert>
         </Box>
       )}
     </Grid>

@@ -1,0 +1,41 @@
+[
+  {
+    "name": "warcraft",
+    "price": "200",
+    "description": "heelllooo",
+    "colors": [
+      "Blue",
+      "Green",
+      "Yellow",
+      "Red"
+    ],
+    "sizes": [],
+    "category": "xs",
+    "images": [
+      "/uploads/88408c7481c256784d0c80e00.jpeg"
+    ],
+    "sizeGuide": "Small , Large",
+    "id": 1744383426655
+  },
+  {
+    "name": "Mahsole 2",
+    "price": "100",
+    "description": "Descriptest",
+    "colors": [
+      "Green"
+    ],
+    "sizes": [
+      "XL",
+      "2X Large",
+      "L",
+      "M",
+      "S"
+    ],
+    "category": "test category",
+    "images": [
+      "/uploads/88408c7481c256784d0c80e00.jpeg"
+    ],
+    "sizeGuide": "this is test only!",
+    "id": 1744384583249
+  }
+]
