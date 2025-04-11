@@ -1,12 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
 import styles from "./PhoneVerification.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faKey } from "@fortawesome/free-solid-svg-icons";
-
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function PhoneVerification() {
   const [phone, setPhone] = useState<string>("");
@@ -28,7 +25,7 @@ export default function PhoneVerification() {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const sendPhone = async () => {
+  const sendPhone = () => {
     setError("");
     if (!phone.startsWith("+")) {
       setError("Phone number must start with + and country code (e.g. +49)");
@@ -36,44 +33,26 @@ export default function PhoneVerification() {
     }
 
     setLoading(true);
-    try {
-      const response = await axios.post(`${baseURL}/auth/verify-phone`, { phone });
-      if (response.status === 200) {
-        setIsCodeSent(true);
-        setTimer(60);
-      } else {
-        setError("Something went wrong while sending the code.");
-      }
-    } catch (err: unknown) {
-      const error = err as AxiosError<{ message?: string }>;
-      const message = error?.response?.data?.message || "Failed to send verification code";
-      console.error("Error sending verification code:", error);
-      setError(message);
-    } finally {
+    setTimeout(() => {
+      setIsCodeSent(true);
+      setTimer(60);
       setLoading(false);
-    }
+    }, 1000); // شبیه‌سازی تاخیر
   };
 
-  const verifyCode = async () => {
+  const verifyCode = () => {
     setLoading(true);
     setError("");
-    try {
-      const response = await axios.post(`${baseURL}/auth/confirm-code`, { phone, code });
-      if (response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
+    setTimeout(() => {
+      if (code === "1234") {
+        localStorage.setItem("token", "mock-token-abc123");
         localStorage.setItem("phone", phone);
         setIsCodeConfirmed(true);
       } else {
-        setError("Invalid code or failed to login.");
+        setError("کد وارد شده صحیح نیست. کد تستی: 1234");
       }
-    } catch (err: unknown) {
-      const error = err as AxiosError<{ message?: string }>;
-      const message = error?.response?.data?.message || "Failed to verify code.";
-      console.error("Error verifying code:", error);
-      setError(message);
-    } finally {
       setLoading(false);
-    }
+    }, 1000); // شبیه‌سازی تاخیر
   };
 
   useEffect(() => {
@@ -102,7 +81,7 @@ export default function PhoneVerification() {
               <FontAwesomeIcon icon={faPhone} className={styles.icon} />
             </div>
             <button onClick={sendPhone} className={styles.button} disabled={loading || timer > 0}>
-              {loading ? "Sending..." : timer > 0 ? `Wait ${timer}s` : "Send Code"}
+              {loading ? "در حال ارسال..." : timer > 0 ? `منتظر بمانید ${timer}s` : "ارسال کد"}
             </button>
           </div>
         ) : (
@@ -110,7 +89,7 @@ export default function PhoneVerification() {
             <div className={styles.inputWithIcon}>
               <input
                 type="text"
-                placeholder="Enter verification code"
+                placeholder="کد را وارد کنید"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className={styles.input}
@@ -118,13 +97,13 @@ export default function PhoneVerification() {
               <FontAwesomeIcon icon={faKey} className={styles.icon} />
             </div>
             <button onClick={verifyCode} className={styles.button} disabled={loading}>
-              {loading ? "Verifying..." : "Verify Code"}
+              {loading ? "در حال بررسی..." : "تأیید کد"}
             </button>
           </div>
         )}
 
         {isCodeConfirmed && (
-          <div className={styles.successMessage}>Code confirmed! You are logged in 🎉</div>
+          <div className={styles.successMessage}>کد تایید شد! شما وارد شدید 🎉</div>
         )}
       </div>
     </div>
