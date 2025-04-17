@@ -1,70 +1,88 @@
-// 📁 فایل: pages/api/products.ts (نسخه متصل به MongoDB)
+// 📁 FrontEnd/src/pages/api/products.ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { MongoClient } from 'mongodb';
+import { connectToDatabase } from '@/utils/mongo';
 import { Product } from '@/data/types';
 
-const uri = process.env.MONGODB_URI!;
-const client = new MongoClient(uri);
-const dbName = 'mopastyle';
-const collectionName = 'products';
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection<Product>(collectionName);
+  const { db } = await connectToDatabase();
+  const collection = db.collection<Product>('products');
 
+  try {
     switch (req.method) {
+      // 🔍 دریافت همه محصولات یا یک محصول خاص
       case 'GET': {
         const { id } = req.query;
 
         if (id) {
-          const found = await collection.findOne({ id: Number(id) });
+          const numericId = Number(id);
+          if (isNaN(numericId)) {
+            return res.status(400).json({ message: 'Invalid product ID' });
+          }
+
+          const found = await collection.findOne({ id: numericId });
           if (!found) return res.status(404).json({ message: 'Product not found' });
           return res.status(200).json(found);
         }
 
-        const allProducts = await collection.find({}).toArray();
-        res.status(200).json(allProducts);
-        break;
+        const all = await collection.find({}).toArray();
+        return res.status(200).json(all);
       }
 
+      // ➕ افزودن محصول جدید
       case 'POST': {
         const newProduct: Product = {
           ...req.body,
-          id: Date.now(),
+          id: Date.now(), // شناسه عددی
         };
         await collection.insertOne(newProduct);
-        res.status(201).json(newProduct);
-        break;
+        return res.status(201).json(newProduct);
       }
 
+      // ✏️ ویرایش محصول
       case 'PUT': {
         const updatedProduct: Product = req.body;
-        await collection.updateOne(
+        if (!updatedProduct.id) {
+          return res.status(400).json({ message: 'Product ID is required for update' });
+        }
+
+        const result = await collection.updateOne(
           { id: updatedProduct.id },
           { $set: updatedProduct }
         );
-        res.status(200).json(updatedProduct);
-        break;
+
+        if (result.matchedCount === 0) {
+          return res.status(404).json({ message: 'Product not found' });
+        }
+
+        return res.status(200).json({ success: true, updated: updatedProduct });
       }
 
+      // 🗑 حذف محصول
       case 'DELETE': {
         const { id } = req.query;
-        await collection.deleteOne({ id: Number(id) });
-        res.status(200).json({ success: true });
-        break;
+        const numericId = Number(id);
+
+        if (!id || isNaN(numericId)) {
+          return res.status(400).json({ message: 'Invalid product ID' });
+        }
+
+        const result = await collection.deleteOne({ id: numericId });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ message: 'Product not found' });
+        }
+
+        return res.status(200).json({ success: true });
       }
 
+      // ❌ متدهای غیرمجاز
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-        res.status(405).end(`Method ${req.method} Not Allowed`);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (err: any) {
-    console.error("❌ MongoDB API Error:", err.message);
-    console.error(err); // کل جزئیات رو لاگ کن
+    console.error('❌ MongoDB API Error:', err.message);
     res.status(500).json({ error: 'Internal server error', message: err.message });
   }
-  
 }

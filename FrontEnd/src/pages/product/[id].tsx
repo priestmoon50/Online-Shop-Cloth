@@ -1,3 +1,5 @@
+// 📁 FrontEnd/src/pages/product/[id].tsx
+
 import Layout from '@/app/layout';
 import ProductDetails from '@/components/ProductDetails/ProductDetails';
 import { GetServerSideProps, NextPage } from 'next';
@@ -31,6 +33,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
     const res = await fetch(`${baseUrl}/api/products/${id}`);
 
     if (!res.ok) {
@@ -45,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error('❌ Error fetching product:', error);
     return {
       props: {
         product: null,
