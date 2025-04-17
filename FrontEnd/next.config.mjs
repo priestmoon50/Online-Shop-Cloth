@@ -12,7 +12,11 @@ const nextConfig = {
   },
 
   experimental: {
-    appDir: false, 
+    appDir: false,
+  },
+
+  images: {
+    domains: ['res.cloudinary.com'],
   },
 };
 

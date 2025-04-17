@@ -1,41 +1,20 @@
 [
   {
-    "name": "warcraft",
-    "price": "200",
-    "description": "heelllooo",
+    "name": "Test",
+    "price": "320",
+    "description": "test image",
     "colors": [
       "Blue",
       "Green",
-      "Yellow",
-      "Red"
+      "Red",
+      "Yellow"
     ],
     "sizes": [],
-    "category": "xs",
+    "category": "22",
     "images": [
-      "/uploads/88408c7481c256784d0c80e00.jpeg"
+      "https://res.cloudinary.com/dvfsl3sym/image/upload/v1744889523/modastyle-gallery/pfkv544fcau9azadcjru.jpg"
     ],
-    "sizeGuide": "Small , Large",
-    "id": 1744383426655
-  },
-  {
-    "name": "Mahsole 2",
-    "price": "100",
-    "description": "Descriptest",
-    "colors": [
-      "Green"
-    ],
-    "sizes": [
-      "XL",
-      "2X Large",
-      "L",
-      "M",
-      "S"
-    ],
-    "category": "test category",
-    "images": [
-      "/uploads/88408c7481c256784d0c80e00.jpeg"
-    ],
-    "sizeGuide": "this is test only!",
-    "id": 1744384583249
+    "sizeGuide": "sm , LG",
+    "id": 1744889949291
   }
 ]

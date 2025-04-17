@@ -20,18 +20,25 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        // 📌 فعلاً داده‌های فرضی چون API GET gallery هنوز نداره
-        const mockImages = JSON.parse(localStorage.getItem("gallery") || "[]");
-        setImages(mockImages);
-      } catch (error) {
-        console.error("Error fetching gallery images:", error);
-      }
-    };
+  const fetchImages = async () => {
+    try {
+      const response = await axios.get("/api/gallery");
+      setImages(response.data || []);
+    } catch (error) {
+      console.error("Error fetching gallery images:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchImages();
+
+    // 👂 گوش دادن برای event رفرش
+    const refreshHandler = () => fetchImages();
+    window.addEventListener("gallery-updated", refreshHandler);
+
+    return () => {
+      window.removeEventListener("gallery-updated", refreshHandler);
+    };
   }, []);
 
   const handleImageSelect = (image: GalleryImage) => {
@@ -40,7 +47,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
 
   const handleAddImage = () => {
     if (selectedImage) {
-      onAddImage(selectedImage.url); // فقط URL برای محصول لازمه
+      onAddImage(selectedImage.url);
     }
   };
 

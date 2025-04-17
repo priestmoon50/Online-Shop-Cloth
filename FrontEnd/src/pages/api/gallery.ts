@@ -5,20 +5,24 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import streamifier from 'streamifier';
 
+// ✅ تنظیمات اتصال به Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
+// ❗ جلوگیری از پارس خودکار بدنه
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
+// 📦 حافظه موقت فایل با multer
 const upload = multer({ storage: multer.memoryStorage() });
 
+// 📌 اجرای middleware به صورت Promise
 function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
@@ -38,22 +42,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const file = (req as any).file;
     if (!file) return res.status(400).json({ error: 'No image uploaded' });
 
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: 'modastyle-gallery' },
-      (error, result) => {
-        if (error || !result) {
-          console.error('Upload error:', error);
-          return res.status(500).json({ error: 'Upload failed' });
-        }
+    try {
+      const result = await new Promise<any>((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'modastyle-gallery' },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream);
+      });
 
-        return res.status(201).json({
-          url: result.secure_url,
-          public_id: result.public_id,
-        });
-      }
-    );
-
-    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+      return res.status(201).json({
+        url: result.secure_url,
+        public_id: result.public_id,
+      });
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
+      return res.status(500).json({ error: 'Upload failed' });
+    }
   }
 
   // -----------------------
