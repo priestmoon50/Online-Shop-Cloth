@@ -29,7 +29,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
   const { control, handleSubmit, reset } = useForm<Product>({
     defaultValues: {
       name: "",
-      price: 0,
+      price: undefined,
+
       description: "",
       colors: [],
       sizes: [],
