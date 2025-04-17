@@ -61,8 +61,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
         res.status(405).end(`Method ${req.method} Not Allowed`);
     }
-  } catch (err) {
-    console.error('MongoDB API Error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (err: any) {
+    console.error("❌ MongoDB API Error:", err.message);
+    console.error(err); // کل جزئیات رو لاگ کن
+    res.status(500).json({ error: 'Internal server error', message: err.message });
   }
+  
 }
