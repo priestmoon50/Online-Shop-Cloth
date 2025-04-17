@@ -5,10 +5,15 @@ import { Box, Button, Input, Snackbar, Alert } from "@mui/material";
 import Image from "next/image";
 import axios from "axios";
 
+interface UploadResult {
+  url: string;
+  public_id: string;
+}
+
 const ImageUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [uploaded, setUploaded] = useState<UploadResult | null>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
@@ -16,11 +21,8 @@ const ImageUpload: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setSelectedFile(file);
-      setUploadedUrl(null); // پاک‌سازی آدرس قبلی
-
-      // پیش‌نمایش موقت
-      const fileUrl = URL.createObjectURL(file);
-      setPreviewUrl(fileUrl);
+      setUploaded(null);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -37,21 +39,19 @@ const ImageUpload: React.FC = () => {
         },
       });
 
-      const { url } = response.data;
-      setUploadedUrl(url); // آدرس نهایی تصویر در public/uploads
+      const { url, public_id } = response.data;
+      setUploaded({ url, public_id });
       setSnackbarMessage("Image uploaded successfully!");
       setOpenSnackbar(true);
-      console.log("Image uploaded:", url);
+      console.log("✅ Image uploaded:", { url, public_id });
     } catch (error) {
       setSnackbarMessage("Error uploading image.");
       setOpenSnackbar(true);
-      console.error("Upload error:", error);
+      console.error("❌ Upload error:", error);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
+  const handleCloseSnackbar = () => setOpenSnackbar(false);
 
   return (
     <Box
@@ -64,7 +64,6 @@ const ImageUpload: React.FC = () => {
     >
       <Input type="file" onChange={handleFileChange} />
 
-      {/* پیش‌نمایش تصویر قبل از ارسال */}
       {previewUrl && (
         <Box sx={{ marginTop: "20px" }}>
           <Image
@@ -87,13 +86,14 @@ const ImageUpload: React.FC = () => {
         Upload Image
       </Button>
 
-      {/* نمایش تصویر نهایی بارگذاری شده */}
-      {uploadedUrl && (
+      {uploaded && (
         <Box sx={{ marginTop: "20px" }}>
           <strong>Final Image URL:</strong>
-          <div>{uploadedUrl}</div>
+          <div>{uploaded.url}</div>
+          <strong>Public ID:</strong>
+          <div>{uploaded.public_id}</div>
           <Image
-            src={uploadedUrl}
+            src={uploaded.url}
             alt="Uploaded"
             width={300}
             height={300}

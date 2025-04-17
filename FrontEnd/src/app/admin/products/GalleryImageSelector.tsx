@@ -9,17 +9,23 @@ interface GalleryImageSelectorProps {
   onAddImage: (imageUrl: string) => void;
 }
 
+interface GalleryImage {
+  url: string;
+  public_id: string;
+}
+
 const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
   onAddImage,
 }) => {
-  const [images, setImages] = useState<string[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get("/api/gallery");
-        setImages(response.data || []);
+        // 📌 فعلاً داده‌های فرضی چون API GET gallery هنوز نداره
+        const mockImages = JSON.parse(localStorage.getItem("gallery") || "[]");
+        setImages(mockImages);
       } catch (error) {
         console.error("Error fetching gallery images:", error);
       }
@@ -28,24 +34,23 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
     fetchImages();
   }, []);
 
-  const handleImageSelect = (image: string) => {
+  const handleImageSelect = (image: GalleryImage) => {
     setSelectedImage(image);
   };
 
   const handleAddImage = () => {
     if (selectedImage) {
-      onAddImage(selectedImage);
+      onAddImage(selectedImage.url); // فقط URL برای محصول لازمه
     }
   };
 
-  const handleDeleteImage = async (imageUrl: string) => {
-    const filename = imageUrl.split("/").pop();
+  const handleDeleteImage = async (image: GalleryImage) => {
     try {
-      await axios.delete(`/api/gallery?filename=${filename}`);
-      setImages(images.filter((img) => img !== imageUrl));
-      console.log(`Image ${filename} deleted successfully`);
+      await axios.delete(`/api/gallery?public_id=${image.public_id}`);
+      setImages(images.filter((img) => img.public_id !== image.public_id));
+      console.log(`✅ Image deleted from Cloudinary: ${image.public_id}`);
     } catch (error) {
-      console.error("Error deleting image:", error);
+      console.error("❌ Error deleting image:", error);
     }
   };
 
@@ -64,7 +69,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
 
       <Grid container spacing={1}>
         {images.map((image, index) => (
-          <Grid item xs={6} sm={4} md={3} lg={1} key={index}>
+          <Grid item xs={6} sm={4} md={3} lg={1} key={image.public_id}>
             <Box
               sx={{
                 position: "relative",
@@ -76,13 +81,16 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
               }}
             >
               <Image
-                src={image}
+                src={image.url}
                 alt={`Gallery Image ${index}`}
                 width={85}
                 height={85}
                 style={{
                   cursor: "pointer",
-                  border: selectedImage === image ? "2px solid blue" : "none",
+                  border:
+                    selectedImage?.public_id === image.public_id
+                      ? "2px solid blue"
+                      : "none",
                   borderRadius: "4px",
                   marginBottom: "4px",
                   objectFit: "cover",
@@ -107,7 +115,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
         <Box mt={2}>
           <Typography variant="h6">Selected Image:</Typography>
           <Image
-            src={selectedImage}
+            src={selectedImage.url}
             alt="Selected"
             width={300}
             height={300}
