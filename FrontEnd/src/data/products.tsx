@@ -4,16 +4,8 @@ import { Product } from "@/data/types";
 import Image from "next/image";
 
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get("/api/products");
-
-  if (Array.isArray(data)) {
-    return data.map((product: any) => ({
-      ...product,
-      id: product.id || product._id?.toString(), // 👈 اطمینان از وجود id از _id
-    }));
-  }
-
-  return [];
+  const { data } = await axios.get("/api/products"); // ✅ استفاده از API داخلی
+  return data;
 };
 
 export const AllProducts = () => {
