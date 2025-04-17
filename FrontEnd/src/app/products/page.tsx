@@ -15,14 +15,18 @@ const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("/api/products");
 
   if (Array.isArray(data)) {
-    return data.map((product: any) => ({
-      ...product,
-      id: product.id || product._id?.toString(), // 👈 تبدیل MongoID به string
-    }));
-  } else {
-    return [];
+    return data.map((product: any) => {
+      return {
+        ...product,
+        id: product.id || product._id?.toString(), // 👈 همیشه یک id داشته باشه
+        price: Number(product.price), // احتیاطی برای اینکه فیلتر درست کار کنه
+      };
+    });
   }
+
+  return [];
 };
+
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
