@@ -10,17 +10,29 @@ import axios from "axios";
 import { Product } from "@/data/types";
 import { motion } from "framer-motion";
 
-// ✅ اصلاح fetch: استفاده از API داخلی
+// ✅ اصلاح fetch: تبدیل _id به id
 const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("/api/products");
-  return data;
+
+  if (Array.isArray(data)) {
+    return data.map((product: any) => ({
+      ...product,
+      id: product.id || product._id?.toString(), // 👈 تبدیل MongoID به string
+    }));
+  } else {
+    return [];
+  }
 };
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<number[]>([1, 200]);
 
-  const { data: allProducts = [], isLoading, error } = useQuery<Product[], Error>({
+  const {
+    data: allProducts = [],
+    isLoading,
+    error,
+  } = useQuery<Product[], Error>({
     queryKey: ["products"],
     queryFn: fetchProducts,
   });

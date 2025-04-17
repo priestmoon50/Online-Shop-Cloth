@@ -29,8 +29,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.params as { id: string };
 
   try {
-    // آدرس درست برای دریافت محصول بر اساس ID
-    const res = await fetch(`http://localhost:3000/api/products/${id}`);
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/products/${id}`);
 
     if (!res.ok) {
       return { notFound: true };

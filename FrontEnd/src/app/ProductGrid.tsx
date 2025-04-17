@@ -20,18 +20,20 @@ import styles from "./ProductGrid.module.css";
 const fetchProducts = async (): Promise<Product[]> => {
   const baseUrl =
     typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL;
+
   const { data } = await axios.get(`${baseUrl}/api/products`);
 
   if (Array.isArray(data)) {
     return data.map((product: any) => ({
       ...product,
-      id: product.id || product._id, // 👈 اطمینان از اینکه id همیشه وجود داره
+      id: product.id || product._id?.toString(), 
     }));
   } else {
-    console.error("Error: API did not return an array");
+    console.error("❌ API did not return an array");
     return [];
   }
 };
+
 
 export default function ProductGrid() {
   const theme = useTheme();
