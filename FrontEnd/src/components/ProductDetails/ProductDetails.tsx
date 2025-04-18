@@ -1,4 +1,6 @@
 // components/ProductDetails/ProductDetails.tsx
+'use client';
+
 import { FC, useState } from "react";
 import {
   Container,
