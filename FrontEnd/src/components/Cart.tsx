@@ -39,7 +39,11 @@ const Cart: React.FC = () => {
     }
   };
 
-  const totalAmount = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalAmount = cart.items.reduce(
+    (total, item) => total + Number(item.price) * item.quantity,
+    0
+  );
+  
 
   return (
     <Box className={styles.cartContainer}>

@@ -1,60 +1,95 @@
-// src/admin/orders/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Snackbar, Alert } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import OrdersList, { OrdersListProps } from './OrdersList';
-import { Order } from '@/data/types';
 import withAdminAccess from '@/hoc/withAdminAccess';
 
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  size?: string;
+  color?: string;
+  image?: string;
+}
+
+interface Order {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  items: OrderItem[];
+  status: 'Pending' | 'Processing' | 'Completed';
+  createdAt: string;
+  totalPrice?: number;
+}
+
 const fetchOrders = async (): Promise<Order[]> => {
-  const response = await fetch('/api/orders'); // فرض می‌کنیم API داریم
-  return response.json();
+  const res = await fetch('/api/orders');
+  if (!res.ok) throw new Error('Failed to fetch orders');
+  return res.json();
 };
 
 const OrdersPage: React.FC = () => {
   const { data: orders, isLoading, error } = useQuery({
-    queryKey: ['orders'],  // تغییر به استفاده از شیء
+    queryKey: ['orders'],
     queryFn: fetchOrders,
   });
 
   const [orderList, setOrderList] = useState<Order[]>([]);
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
-    console.log("Orders data:", orders);  
-    if (orders) {
-      setOrderList(orders);
-    }
+    if (orders) setOrderList(orders);
   }, [orders]);
 
-  const handleUpdateStatus = (id: string, newStatus: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled') => {
+  const handleUpdateStatus = async (_id: string, newStatus: Order['status']) => {
     const updatedOrders = orderList.map((order) =>
-      order.id === id ? { ...order, status: newStatus } : order
+      order._id === _id ? { ...order, status: newStatus } : order
     );
     setOrderList(updatedOrders);
-    setSnackbarMessage('Order status updated successfully');
-    setSnackbarSeverity('success');
+
+    try {
+      const res = await fetch(`/api/orders/${_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error();
+      setSnackbarMessage('وضعیت سفارش با موفقیت تغییر یافت');
+      setSnackbarSeverity('success');
+    } catch {
+      setSnackbarMessage('خطا در تغییر وضعیت سفارش');
+      setSnackbarSeverity('error');
+    }
+
     setSnackbarOpen(true);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading orders</div>;
-  
+  if (isLoading) return <div>در حال بارگذاری...</div>;
+  if (error) return <div>خطا در بارگذاری سفارش‌ها</div>;
+
   return (
     <Container sx={{ marginTop: '100px' }}>
-      <Typography color='white' variant="h4" gutterBottom>
-        Orders Management
+      <Typography variant="h4" gutterBottom color="white">
+        مدیریت سفارش‌ها
       </Typography>
-      <OrdersList orders={orderList} onUpdateStatus={handleUpdateStatus as OrdersListProps['onUpdateStatus']} />
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+
+      <OrdersList
+        orders={orderList}
+        onUpdateStatus={handleUpdateStatus as OrdersListProps['onUpdateStatus']}
+      />
+
+      <Snackbar open={snackbarOpen} autoHideDuration={5000} onClose={handleSnackbarClose}>
         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>

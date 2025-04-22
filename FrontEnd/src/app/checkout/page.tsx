@@ -19,7 +19,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
 import SignInModal from "@/components/SignInModal";
 
-// Validation schema
+// فرم اعتبارسنجی
 const validationSchema = yup.object().shape({
   address: yup.string().required("Address is required"),
 });
@@ -52,8 +52,8 @@ const CheckoutPage: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined" && isAuthenticated) {
-      const storedPhone = window.localStorage.getItem("phone");
-      const userId = window.localStorage.getItem("userId");
+      const storedPhone = localStorage.getItem("phone");
+      const userId = localStorage.getItem("userId");
 
       setUserData({
         name: "",
@@ -81,23 +81,20 @@ const CheckoutPage: React.FC = () => {
     }
 
     const orderData = {
-      userId: userData.userId,
-      items: cart.items,
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone,
+      address: data.address,
       totalPrice: cart.items.reduce(
-        (acc, item) => acc + item.price * item.quantity,
+        (acc, item) => acc + Number(item.price) * item.quantity,
         0
       ),
-      name: userData.name,
-      address: data.address,
-      phone: userData.phone,
-      status: "Pending",
+      
+      items: cart.items,
     };
 
-    window.localStorage.setItem("fullname", userData.name);
-    window.localStorage.setItem("email", userData.email);
-    window.localStorage.setItem("address", data.address);
-
-    const response = await fetch("/api/orders", {
+    // ارسال سفارش به PayPal
+    const response = await fetch("/api/paypal/create-order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -106,9 +103,10 @@ const CheckoutPage: React.FC = () => {
     });
 
     if (response.ok) {
-      router.push("/confirmation");
+      const { approvalUrl } = await response.json();
+      router.push(approvalUrl); // هدایت به درگاه PayPal
     } else {
-      alert("There was an error placing your order. Please try again.");
+      alert("خطا در ارتباط با درگاه پرداخت. لطفاً دوباره تلاش کنید.");
     }
   };
 
@@ -133,7 +131,9 @@ const CheckoutPage: React.FC = () => {
             fullWidth
             label="Email"
             value={userData.email}
-            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+            onChange={(e) =>
+              setUserData({ ...userData, email: e.target.value })
+            }
             sx={{ marginBottom: "10px" }}
           />
           <Controller
@@ -173,7 +173,9 @@ const CheckoutPage: React.FC = () => {
                 <ListItem key={item.id}>
                   <ListItemText
                     primary={`${item.name} - $${item.price} x ${item.quantity}`}
-                    secondary={`Size: ${item.size || "N/A"}, Color: ${item.color || "N/A"}`}
+                    secondary={`Size: ${item.size || "N/A"}, Color: ${
+                      item.color || "N/A"
+                    }`}
                   />
                 </ListItem>
               ))}
@@ -181,10 +183,14 @@ const CheckoutPage: React.FC = () => {
 
             <Box sx={{ marginTop: "20px", textAlign: "center" }}>
               <Button variant="contained" color="primary" type="submit">
-                Place Order
+                Pay with PayPal
               </Button>
               <Link href="/cart" passHref>
-                <Button variant="outlined" color="secondary" sx={{ marginLeft: "10px" }}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{ marginLeft: "10px" }}
+                >
                   Back to Cart
                 </Button>
               </Link>

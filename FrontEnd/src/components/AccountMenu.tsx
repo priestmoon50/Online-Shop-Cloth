@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useCallback } from "react";
 import { Button, Menu, MenuItem, Box, Divider } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -6,16 +8,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SupportIcon from "@mui/icons-material/HelpOutline";
 import ShopIcon from "@mui/icons-material/ShoppingBag";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 import styles from "./AccountMenu.module.css";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const AccountMenu: React.FC = () => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { logout, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
@@ -30,9 +34,9 @@ const AccountMenu: React.FC = () => {
 
   const handleLogout = useCallback(() => {
     logout();
-    localStorage.removeItem("cart"); // پاک کردن سبد خرید از localStorage
-    window.location.reload(); // رفرش کل صفحه
-  }, [logout]);
+    localStorage.removeItem("cart");
+    router.push("/auth/phone-verification"); // یا "/" برای رفتن به صفحه اصلی
+  }, [logout, router]);
 
   return (
     <Box
@@ -77,7 +81,7 @@ const AccountMenu: React.FC = () => {
         }}
       >
         {!isAuthenticated ? (
-          <div>
+          <>
             <Link href="/auth/phone-verification" passHref>
               <MenuItem
                 onClick={handleMouseLeave}
@@ -104,14 +108,13 @@ const AccountMenu: React.FC = () => {
                 {t("favorites")}
               </MenuItem>
             </Link>
-          </div>
+          </>
         ) : (
-          <div>
+          <>
             <MenuItem onClick={handleLogout} className={styles.menuItemHover}>
               <AccountCircleIcon sx={{ marginRight: "10px" }} />
               {t("logout")}
             </MenuItem>
-            {/* لینک علاقه‌مندی‌ها برای کاربر وارد شده */}
             <Link href="/favorites" passHref>
               <MenuItem
                 onClick={handleMouseLeave}
@@ -121,11 +124,14 @@ const AccountMenu: React.FC = () => {
                 {t("favorites")}
               </MenuItem>
             </Link>
-          </div>
+          </>
         )}
         <Divider className={styles.divider} />
         <Link href="/account" passHref>
-          <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+          <MenuItem
+            onClick={handleMouseLeave}
+            className={styles.menuItemHover}
+          >
             <SettingsIcon sx={{ marginRight: "10px" }} />
             {t("accountSettings")}
           </MenuItem>
