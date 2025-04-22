@@ -8,32 +8,39 @@ import { useCart } from "@/context/CartContext";
 export default function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<"success" | "error" | "">("");
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
 
   useEffect(() => {
     const token = searchParams?.get("token");
- // همان orderId از PayPal
+    console.log("📦 PayPal token (orderId):", token);
 
     if (!token) {
       setStatus("error");
+      setErrorMessage("کد سفارش نامعتبر است.");
       setLoading(false);
       return;
     }
 
     const confirmPayment = async () => {
       try {
-        // مرحله 1: تایید پرداخت در PayPal
+        // ▶ مرحله 1: تایید پرداخت در PayPal
         const res = await fetch("/api/paypal/complete-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderId: token }),
         });
 
-        if (!res.ok) throw new Error("Payment capture failed");
+        const resData = await res.json();
 
-        // مرحله 2: ذخیره سفارش در دیتابیس
+        if (!res.ok || resData?.data?.status !== "COMPLETED") {
+          console.error("❌ PayPal capture error:", resData);
+          throw new Error("تایید پرداخت موفق نبود.");
+        }
+
+        // ▶ مرحله 2: دریافت اطلاعات کاربر از localStorage
         const name = localStorage.getItem("fullname");
         const email = localStorage.getItem("email");
         const phone = localStorage.getItem("phone");
@@ -41,7 +48,7 @@ export default function ConfirmationPage() {
         const cart = localStorage.getItem("cart");
 
         if (!name || !email || !address || !cart) {
-          throw new Error("Missing localStorage data");
+          throw new Error("اطلاعات سفارش ناقص است.");
         }
 
         const order = {
@@ -53,15 +60,21 @@ export default function ConfirmationPage() {
           createdAt: new Date().toISOString(),
         };
 
+        // ▶ مرحله 3: ذخیره سفارش
         const saveRes = await fetch("/api/orders/save", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(order),
         });
 
-        if (!saveRes.ok) throw new Error("Order save failed");
+        const saveData = await saveRes.json();
 
-        // موفقیت‌آمیز: پاک‌سازی داده‌ها
+        if (!saveRes.ok) {
+          console.error("❌ Order saving error:", saveData);
+          throw new Error("ذخیره سفارش با خطا مواجه شد.");
+        }
+
+        // ▶ موفقیت نهایی
         clearCart();
         localStorage.removeItem("fullname");
         localStorage.removeItem("email");
@@ -69,9 +82,9 @@ export default function ConfirmationPage() {
         localStorage.removeItem("address");
 
         setStatus("success");
-      } catch (err) {
-        console.error("❌", err);
+      } catch (err: any) {
         setStatus("error");
+        setErrorMessage(err.message || "خطای نامشخصی رخ داده است.");
       } finally {
         setLoading(false);
       }
@@ -106,9 +119,14 @@ export default function ConfirmationPage() {
           </Button>
         </>
       ) : (
-        <Typography color="error" variant="h6">
-          خطا در تایید پرداخت یا ثبت سفارش. لطفاً با پشتیبانی تماس بگیرید.
-        </Typography>
+        <>
+          <Typography color="error" variant="h6" gutterBottom>
+            خطا در تایید پرداخت یا ثبت سفارش.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {errorMessage}
+          </Typography>
+        </>
       )}
     </Box>
   );
