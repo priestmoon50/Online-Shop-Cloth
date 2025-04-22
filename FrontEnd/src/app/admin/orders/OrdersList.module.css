@@ -1,20 +1,45 @@
 .tableContainer {
-  height: 400px;
   width: 100%;
-  margin-top: 50px;
-  background-color: rgba(255, 255, 255, 0.9); /* پس‌زمینه‌ی سفید با شفافیت */
-  border-radius: 8px; /* گرد کردن گوشه‌های جدول */
-  padding: 16px; /* اضافه کردن فضای داخلی به جدول */
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* اضافه کردن سایه برای عمق دادن به جدول */
+  margin-top: 40px;
+  padding: 16px;
 }
 
-.buttonSpacing {
-  margin-right: 8px;
+.orderCard {
+  background-color: var(--theme-bg, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: box-shadow 0.2s ease;
+}
+
+.orderCard:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.orderId {
+  font-weight: bold;
+  color: var(--theme-primary, #333333);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.orderInfo {
+  font-size: 14px;
+  color: var(--theme-text, #444444);
+}
+
+.statusSelect {
+  margin-top: 12px;
+  min-width: 160px;
 }
 
 @media (max-width: 600px) {
-  .tableContainer {
-    width: 100%;
+  .orderCard {
     padding: 16px;
+  }
+
+  .statusSelect {
+    width: 100%;
   }
 }
