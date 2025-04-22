@@ -61,8 +61,9 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
             <Grid container spacing={2}>
               <Grid item xs={12} className={styles.orderHeader}>
                 <Typography className={styles.orderId}>
-                  سفارش #{order._id.slice(-8)}...
+                  سفارش #{order._id}
                 </Typography>
+
                 <Typography variant="caption" className={styles.orderDate}>
                   تاریخ: {dayjs(order.createdAt).format("YYYY/MM/DD - HH:mm")}
                 </Typography>
@@ -82,7 +83,9 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                     <ListItem key={item.id} className={styles.itemRow}>
                       <ListItemText
                         primary={`${item.name} × ${item.quantity}`}
-                        secondary={`رنگ: ${item.color || "نامشخص"} | سایز: ${item.size || "نامشخص"} | قیمت: $${item.price}`}
+                        secondary={`رنگ: ${item.color || "نامشخص"} | سایز: ${
+                          item.size || "نامشخص"
+                        } | قیمت: $${item.price}`}
                       />
                     </ListItem>
                   ))}

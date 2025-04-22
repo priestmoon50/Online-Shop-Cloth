@@ -1,9 +1,15 @@
+/* ------------------------------
+   Container Styles
+--------------------------------*/
 .tableContainer {
   width: 100%;
   margin-top: 40px;
   padding: 16px;
 }
 
+/* ------------------------------
+   Order Card Styles
+--------------------------------*/
 .orderCard {
   background-color: var(--theme-bg, #ffffff);
   border-radius: 12px;
@@ -17,6 +23,9 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
+/* ------------------------------
+   Order Details
+--------------------------------*/
 .orderId {
   font-weight: bold;
   color: var(--theme-primary, #333333);
@@ -29,11 +38,17 @@
   color: var(--theme-text, #444444);
 }
 
+/* ------------------------------
+   Status Selector
+--------------------------------*/
 .statusSelect {
   margin-top: 12px;
   min-width: 160px;
 }
 
+/* ------------------------------
+   Responsive Styles
+--------------------------------*/
 @media (max-width: 600px) {
   .orderCard {
     padding: 16px;
