@@ -14,77 +14,61 @@ export default function ConfirmationPage() {
   const { clearCart } = useCart();
 
   useEffect(() => {
-    const token = searchParams?.get("token");
-    console.log("📦 PayPal token (orderId):", token);
+    const paypalToken = searchParams?.get("token");
+    const localOrderId = localStorage.getItem("orderId");
 
-    if (!token) {
+    if (!paypalToken || !localOrderId) {
       setStatus("error");
-      setErrorMessage("کد سفارش نامعتبر است.");
+      setErrorMessage("شناسه پرداخت یا سفارش پیدا نشد.");
       setLoading(false);
       return;
     }
 
     const confirmPayment = async () => {
       try {
-        // ▶ مرحله 1: تایید پرداخت در PayPal
+        // ▶ مرحله ۱: تایید پرداخت در PayPal
         const res = await fetch("/api/paypal/complete-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: token }),
+          body: JSON.stringify({ orderId: paypalToken }),
         });
 
         const resData = await res.json();
 
         if (!res.ok || resData?.data?.status !== "COMPLETED") {
-          console.error("❌ PayPal capture error:", resData);
-          throw new Error("تایید پرداخت موفق نبود.");
+          console.error("❌ PayPal capture failed:", resData);
+          throw new Error("تایید پرداخت با شکست مواجه شد.");
         }
 
-        // ▶ مرحله 2: دریافت اطلاعات کاربر از localStorage
-        const name = localStorage.getItem("fullname");
-        const email = localStorage.getItem("email");
-        const phone = localStorage.getItem("phone");
-        const address = localStorage.getItem("address");
-        const cart = localStorage.getItem("cart");
-
-        if (!name || !email || !address || !cart) {
-          throw new Error("اطلاعات سفارش ناقص است.");
+        const paypalCaptureId = resData.data.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+        if (!paypalCaptureId) {
+          throw new Error("شناسه پرداخت PayPal موجود نیست.");
         }
 
-        const order = {
-          name,
-          email,
-          phone,
-          address,
-          items: JSON.parse(cart),
-          createdAt: new Date().toISOString(),
-        };
-
-        // ▶ مرحله 3: ذخیره سفارش
-        const saveRes = await fetch("/api/orders/save", {
-          method: "POST",
+        // ▶ مرحله ۲: به‌روزرسانی وضعیت سفارش
+        const updateRes = await fetch("/api/orders/update-payment", {
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(order),
+          body: JSON.stringify({
+            orderId: localOrderId,
+            paypalCaptureId,
+          }),
         });
 
-        const saveData = await saveRes.json();
-
-        if (!saveRes.ok) {
-          console.error("❌ Order saving error:", saveData);
-          throw new Error("ذخیره سفارش با خطا مواجه شد.");
+        if (!updateRes.ok) {
+          const updateError = await updateRes.json();
+          console.error("❌ Order update failed:", updateError);
+          throw new Error("به‌روزرسانی سفارش با مشکل مواجه شد.");
         }
 
-        // ▶ موفقیت نهایی
+        // ▶ پاک‌سازی localStorage
         clearCart();
-        localStorage.removeItem("fullname");
-        localStorage.removeItem("email");
-        localStorage.removeItem("phone");
-        localStorage.removeItem("address");
+        localStorage.removeItem("orderId");
 
         setStatus("success");
       } catch (err: any) {
         setStatus("error");
-        setErrorMessage(err.message || "خطای نامشخصی رخ داده است.");
+        setErrorMessage(err.message || "خطای ناشناخته‌ای رخ داده است.");
       } finally {
         setLoading(false);
       }
@@ -104,10 +88,10 @@ export default function ConfirmationPage() {
       ) : status === "success" ? (
         <>
           <Typography variant="h6" color="green" gutterBottom>
-            سفارش شما با موفقیت ثبت شد ✅
+            سفارش شما با موفقیت ثبت و پرداخت شد ✅
           </Typography>
           <Typography variant="body1">
-            پرداخت تایید شده و سفارش شما در حال پردازش است.
+            سفارش شما در حال پردازش است.
           </Typography>
           <Button
             variant="contained"
@@ -121,7 +105,7 @@ export default function ConfirmationPage() {
       ) : (
         <>
           <Typography color="error" variant="h6" gutterBottom>
-            خطا در تایید پرداخت یا ثبت سفارش.
+            خطا در تایید پرداخت یا به‌روزرسانی سفارش
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {errorMessage}

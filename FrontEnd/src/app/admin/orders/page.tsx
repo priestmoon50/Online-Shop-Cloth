@@ -25,11 +25,11 @@ interface Order {
   items: OrderItem[];
   status: 'Pending' | 'Processing' | 'Completed';
   createdAt: string;
-  totalPrice?: number;
+  totalPrice: number;
 }
 
 const fetchOrders = async (): Promise<Order[]> => {
-  const res = await fetch('/api/orders');
+  const res = await fetch('/api/orders', { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch orders');
   return res.json();
 };

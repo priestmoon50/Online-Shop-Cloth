@@ -19,7 +19,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
 import SignInModal from "@/components/SignInModal";
 
-// فرم اعتبارسنجی
 const validationSchema = yup.object().shape({
   address: yup.string().required("Address is required"),
 });
@@ -80,33 +79,71 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
+    const totalPrice = cart.items.reduce(
+      (acc, item) => acc + Number(item.price) * item.quantity,
+      0
+    );
+
     const orderData = {
       name: userData.name,
       email: userData.email,
       phone: userData.phone,
       address: data.address,
-      totalPrice: cart.items.reduce(
-        (acc, item) => acc + Number(item.price) * item.quantity,
-        0
-      ),
-      
+      totalPrice,
       items: cart.items,
+      createdAt: new Date().toISOString(),
+      status: "Pending",
     };
 
-    // ارسال سفارش به PayPal
-    const response = await fetch("/api/paypal/create-order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    });
+    try {
+      // 1. ذخیره سفارش در دیتابیس
+      const saveRes = await fetch("/api/orders/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
 
-    if (response.ok) {
-      const { approvalUrl } = await response.json();
-      router.push(approvalUrl); // هدایت به درگاه PayPal
-    } else {
-      alert("خطا در ارتباط با درگاه پرداخت. لطفاً دوباره تلاش کنید.");
+      if (!saveRes.ok) {
+        const err = await saveRes.json();
+        console.error("❌ Error saving order:", err);
+        alert("خطا در ذخیره سفارش. لطفاً دوباره تلاش کنید.");
+        return;
+      }
+
+      const saveResult = await saveRes.json();
+      const insertedId = saveResult.insertedId;
+
+      if (!insertedId) {
+        alert("خطا در دریافت شناسه سفارش.");
+        return;
+      }
+
+      localStorage.setItem("orderId", insertedId);
+
+      // 2. ساخت سفارش در PayPal
+      const paypalRes = await fetch("/api/paypal/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ totalPrice: orderData.totalPrice })
+      });
+
+      if (!paypalRes.ok) {
+        const err = await paypalRes.json();
+        console.error("❌ PayPal error:", err);
+        alert("خطا در ارتباط با درگاه پرداخت.");
+        return;
+      }
+
+      const { approvalUrl } = await paypalRes.json();
+      if (!approvalUrl) {
+        alert("درگاه پرداخت یافت نشد.");
+        return;
+      }
+
+      router.push(approvalUrl);
+    } catch (error) {
+      console.error("🔥 Unexpected checkout error:", error);
+      alert("مشکلی در ثبت سفارش یا ارتباط با درگاه رخ داد.");
     }
   };
 
@@ -131,9 +168,7 @@ const CheckoutPage: React.FC = () => {
             fullWidth
             label="Email"
             value={userData.email}
-            onChange={(e) =>
-              setUserData({ ...userData, email: e.target.value })
-            }
+            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
             sx={{ marginBottom: "10px" }}
           />
           <Controller
