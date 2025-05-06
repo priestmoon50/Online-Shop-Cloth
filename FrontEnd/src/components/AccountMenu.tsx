@@ -14,13 +14,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import styles from "./AccountMenu.module.css";
+import { useMediaQuery } from "@mui/material";
 
 const AccountMenu: React.FC = () => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { logout, isAuthenticated } = useAuth();
   const router = useRouter();
-
+  const isMobile = useMediaQuery("(max-width: 600px)");
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
@@ -49,15 +50,14 @@ const AccountMenu: React.FC = () => {
         aria-expanded={Boolean(anchorEl) ? "true" : "false"}
         aria-controls="account-menu"
         sx={{
-          color: "#000000",
-          display: "flex",
-          alignItems: "center",
-          padding: "10px 20px",
-          fontSize: "16px",
+          color: "#000",
+          padding: isMobile ? "10px 8px" : "10px 20px",
+          minWidth: isMobile ? "auto" : "64px", 
+          marginRight: isMobile ? "0px" : "8px",
         }}
       >
-        <AccountCircleIcon sx={{ marginRight: "5px" }} />
-        {t("account")}
+        <AccountCircleIcon sx={{ mr: isMobile ? 0 : "5px" }} />
+        {!isMobile && t("account")}
         <ArrowDropDownIcon />
       </Button>
       <Menu
@@ -128,10 +128,7 @@ const AccountMenu: React.FC = () => {
         )}
         <Divider className={styles.divider} />
         <Link href="/account" passHref>
-          <MenuItem
-            onClick={handleMouseLeave}
-            className={styles.menuItemHover}
-          >
+          <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
             <SettingsIcon sx={{ marginRight: "10px" }} />
             {t("accountSettings")}
           </MenuItem>

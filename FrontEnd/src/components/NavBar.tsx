@@ -1,5 +1,5 @@
 "use client";
-
+import { Divider } from "@mui/material";
 import React, { useState } from "react";
 import {
   AppBar,
@@ -112,9 +112,10 @@ const NavBar: React.FC = () => {
               flexShrink: 0,
               display: "flex",
               alignItems: "center",
+              
             }}
           >
-            <AccountMenu />
+         
             <Link href="/cart" passHref>
               <IconButton sx={{ ml: 2 }}>
                 <Badge
@@ -129,6 +130,7 @@ const NavBar: React.FC = () => {
             <IconButton onClick={toggleLanguageModal} sx={{ ml: 1 }}>
               <LanguageIcon sx={{ fontSize: 28, color: "#000" }} />
             </IconButton>
+               <AccountMenu />
           </Box>
         </Toolbar>
       </AppBar>
@@ -141,7 +143,7 @@ const NavBar: React.FC = () => {
           PaperProps={{
             sx: {
               backgroundColor: "#fff",
-              width: "75%",
+              width: "70%",
               boxShadow: 3,
               height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
               mt: `${NAVBAR_HEIGHT}px`,
@@ -154,12 +156,15 @@ const NavBar: React.FC = () => {
               { label: t("collections"), href: "/products" },
               { label: t("shop"), href: "/products" },
               { label: t("viewCart"), href: "/cart" },
-            ].map(({ label, href }) => (
-              <Link key={href} href={href} passHref legacyBehavior>
-                <ListItemButton component="a" sx={{ px: 3 }}>
-                  <ListItemText primary={label} />
-                </ListItemButton>
-              </Link>
+            ].map(({ label, href }, index, array) => (
+              <React.Fragment key={href}>
+                <Link href={href} passHref legacyBehavior>
+                  <ListItemButton component="a" sx={{ px: 3 }}>
+                    <ListItemText primary={label} />
+                  </ListItemButton>
+                </Link>
+                {index < array.length - 1 && <Divider />}
+              </React.Fragment>
             ))}
           </List>
         </Drawer>
