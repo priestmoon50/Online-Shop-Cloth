@@ -84,7 +84,7 @@ const NavBar: React.FC = () => {
                 <Image
                   src="/images/Logo.png"
                   alt="Logo"
-                  width={200}
+                  width={160}
                   height={60}
                   priority={true}
                 />
