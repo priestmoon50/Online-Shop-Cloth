@@ -64,7 +64,7 @@ const NavBar: React.FC = () => {
             <IconButton
               edge="start"
               onClick={() => setDrawerOpen(!drawerOpen)}
-              sx={{ ml: isMobile ? "-34px" : 0 }}
+              sx={{ ml: isMobile ? "-26px" : 0 }}
             >
               <MenuIcon sx={{ color: "#000" }} />
             </IconButton>
@@ -79,7 +79,7 @@ const NavBar: React.FC = () => {
             }}
           >
             <Link href="/" passHref>
-            <Box sx={{ cursor: "pointer", ml: isMobile ? "-85px" : 0 }}>
+            <Box sx={{ cursor: "pointer", ml: isMobile ? "-28px" : 0 }}>
 
                 <Image
                   src="/images/Logo.png"
@@ -112,13 +112,17 @@ const NavBar: React.FC = () => {
             </Box>
           )}
 
-          <Box
-            sx={{
-              flexShrink: 0,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
+<Box
+  sx={{
+    flexShrink: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    ml: isMobile ? 1 : 0,     // فاصله کمی از وسط در موبایل
+    mr: isMobile ? "-16px" : 0 // نزدیک‌تر شدن به راست در موبایل
+  }}
+>
+
             <Link href="/cart" passHref>
               <IconButton sx={{ ml: 0 }}>
                 <Badge

@@ -21,6 +21,7 @@ interface AddProductFormProps {
   onAddProduct: (product: Product) => void;
   initialProduct?: Product;
 }
+const CATEGORY_OPTIONS = ["all", "pants", "shoes", "dress", "accessory"];
 
 const AddProductForm: React.FC<AddProductFormProps> = ({
   initialProduct,
@@ -77,9 +78,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       };
 
       const response = initialProduct
-      ? await axios.put(`/api/products/${initialProduct.id}`, productData)
-      : await axios.post("/api/products", productData);
-
+        ? await axios.put(`/api/products/${initialProduct.id}`, productData)
+        : await axios.post("/api/products", productData);
 
       console.log("Product added successfully:", response.data);
       onAddProduct(response.data); // ارسال به لیست اصلی محصولات
@@ -232,7 +232,24 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       <Controller
         name="category"
         control={control}
-        render={({ field }) => <TextField {...field} label="Category" />}
+        render={({ field }) => (
+          <Select
+            {...field}
+            fullWidth
+            displayEmpty
+            value={field.value || ""}
+            onChange={(e) => field.onChange(e.target.value)}
+          >
+            <MenuItem value="" disabled>
+              Select Category
+            </MenuItem>
+            {CATEGORY_OPTIONS.map((cat) => (
+              <MenuItem key={cat} value={cat}>
+                {cat}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
       />
 
       <GalleryImageSelector onAddImage={handleAddImage} />

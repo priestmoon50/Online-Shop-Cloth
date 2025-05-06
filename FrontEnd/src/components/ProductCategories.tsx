@@ -15,7 +15,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({ setSelectedCatego
     setCategory(selectedValue); // ذخیره دسته‌بندی انتخاب‌شده
     setSelectedCategory(selectedValue); // انتقال دسته‌بندی انتخاب‌شده به کامپوننت والد
   };
-
+   
   return (
     <FormControl fullWidth>
       <InputLabel>{t('category')}</InputLabel> {/* ترجمه برچسب دسته‌بندی */}
