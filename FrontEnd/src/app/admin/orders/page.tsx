@@ -5,6 +5,9 @@ import { Container, Typography, Snackbar, Alert } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import OrdersList, { OrdersListProps } from './OrdersList';
 import withAdminAccess from '@/hoc/withAdminAccess';
+import Link from 'next/link';
+import { Button, Box } from '@mui/material';
+
 
 interface OrderItem {
   id: string;
@@ -79,10 +82,20 @@ const OrdersPage: React.FC = () => {
   if (error) return <div>خطا در بارگذاری سفارش‌ها</div>;
 
   return (
-    <Container sx={{ marginTop: '100px' }}>
-      <Typography variant="h4" gutterBottom color="white">
-        مدیریت سفارش‌ها
-      </Typography>
+    <Container sx={{ mt: 6 }}>
+    {/* دکمه بازگشت به داشبورد */}
+    <Box sx={{ mb: 3 }}>
+      <Link href="/admin" passHref>
+        <Button variant="outlined" color="primary">
+          ← Back to Admin Dashboard
+        </Button>
+      </Link>
+    </Box>
+  
+    <Typography variant="h4" gutterBottom color="white">
+      مدیریت سفارش‌ها
+    </Typography>
+  
 
       <OrdersList
         orders={orderList}

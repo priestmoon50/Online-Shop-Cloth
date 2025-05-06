@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import ProductsList from "./ProductsList";
 import AddProductForm from "./AddProductForm";
 import { Product } from "@/data/types";
 import ImageUpload from "./ImageUpload";
 import withAdminAccess from "@/hoc/withAdminAccess";
 import axios from "axios";
+import Link from "next/link";
+import { Button } from "@mui/material";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,7 +41,6 @@ const ProductsPage: React.FC = () => {
       setProducts((prev) => [...prev, product]);
     }
   };
-  
 
   const handleDeleteProduct = (id: number) => {
     setProducts((prev) => prev.filter((product) => product.id !== id));
@@ -59,8 +60,17 @@ const ProductsPage: React.FC = () => {
   };
 
   return (
-    <Container sx={{ marginTop: "100px" }}>
-      <Typography color="white" variant="h4" gutterBottom>
+    <Container sx={{ marginTop: "50px" }}>
+      {/* دکمه بازگشت به /admin */}
+      <Box sx={{ mb: 1 }}>
+        <Link href="/admin" passHref>
+          <Button variant="outlined" color="primary">
+            ← Back to Admin Dashboard
+          </Button>
+        </Link>
+      </Box>
+
+      <Typography color="white"  gutterBottom>
         Products Management
       </Typography>
 

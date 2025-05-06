@@ -9,7 +9,7 @@ import {
   IconButton,
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   useMediaQuery,
   Badge,
@@ -18,19 +18,19 @@ import Image from "next/image";
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import LanguageIcon from "@mui/icons-material/Language"; // افزودن آیکون زبان
+import LanguageIcon from "@mui/icons-material/Language";
 import AccountMenu from "./AccountMenu";
 import { useCart } from "../context/CartContext";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "@/components/LanguageSelector/LanguageSelector";
 
-import { useTranslation } from 'react-i18next';
-import LanguageSelector from "@/components/LanguageSelector/LanguageSelector"; // اضافه کردن کامپوننت LanguageSelector
+const NAVBAR_HEIGHT = 56;
 
 const NavBar: React.FC = () => {
   const { t } = useTranslation();
-
   const isMobile = useMediaQuery("(max-width: 600px)");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [languageModalOpen, setLanguageModalOpen] = useState(false); // مدیریت حالت باز بودن مودال زبان
+  const [languageModalOpen, setLanguageModalOpen] = useState(false);
   const { cart } = useCart();
 
   const toggleDrawer = (open: boolean) => () => {
@@ -38,7 +38,7 @@ const NavBar: React.FC = () => {
   };
 
   const toggleLanguageModal = () => {
-    setLanguageModalOpen(!languageModalOpen); // تغییر حالت باز بودن مودال زبان
+    setLanguageModalOpen(!languageModalOpen);
   };
 
   return (
@@ -46,12 +46,13 @@ const NavBar: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: "rgba(199, 199, 199, 0.336)",
-          padding: "0 20px",
-          marginTop: "15px",
+          backgroundColor: "#fff",
+          px: 2,
           fontFamily: "Roboto, sans-serif",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-          zIndex: 1300,
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          height: NAVBAR_HEIGHT,
+          justifyContent: "center",
         }}
       >
         <Toolbar
@@ -59,14 +60,11 @@ const NavBar: React.FC = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            minHeight: NAVBAR_HEIGHT,
           }}
         >
           {isMobile && (
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={toggleDrawer(!drawerOpen)}
-            >
+            <IconButton edge="start" onClick={() => setDrawerOpen(!drawerOpen)}>
               <MenuIcon sx={{ color: "#000" }} />
             </IconButton>
           )}
@@ -84,127 +82,96 @@ const NavBar: React.FC = () => {
                 <Image
                   src="/images/Logo.png"
                   alt="Logo"
-                  width={160}
-                  height={60}
-                  priority={true}
+                  width={120}
+                  height={40}
+                  priority
                 />
               </Box>
             </Link>
           </Box>
 
           {!isMobile && (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "20px",
-                fontSize: "16px",
-                color: "#000000",
-              }}
-            >
-              <Link href="/products" passHref>
-                <Button
-                  sx={{
-                    color: "#000000",
-                    "&:hover": {
-                      borderBottom: "2px solid #3f51b5",
-                      transition: "border-bottom 0.3s ease",
-                    },
-                  }}
-                >
-                  {t('newArrivals')}
-                </Button>
-              </Link>
-              <Link href="/products" passHref>
-                <Button
-                  sx={{
-                    color: "#000000",
-                    "&:hover": {
-                      borderBottom: "2px solid #3f51b5",
-                      transition: "border-bottom 0.3s ease",
-                    },
-                  }}
-                >
-                  {t('sale')}
-                </Button>
-              </Link>
-
-              <Link href="/products" passHref>
-                <Button
-                  sx={{
-                    color: "#000000",
-                    "&:hover": {
-                      borderBottom: "2px solid #3f51b5",
-                      transition: "border-bottom 0.3s ease",
-                    },
-                  }}
-                >
-                  {t('shop')}
-                </Button>
-              </Link>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {["newArrivals", "sale", "shop"].map((key) => (
+                <Link key={key} href="/products" passHref>
+                  <Button
+                    sx={{
+                      color: "#000",
+                      "&:hover": {
+                        borderBottom: "2px solid #3f51b5",
+                        transition: "border-bottom 0.3s ease",
+                      },
+                    }}
+                  >
+                    {t(key)}
+                  </Button>
+                </Link>
+              ))}
             </Box>
           )}
 
           <Box
             sx={{
-              flexGrow: isMobile ? 0 : 1,
+              flexShrink: 0,
               display: "flex",
-              justifyContent: "flex-end",
               alignItems: "center",
-              
             }}
           >
             <AccountMenu />
-            <IconButton
-              color="inherit"
-              sx={{ marginLeft: "40px", position: "relative" }}
-            >
-              <Link href="/cart" passHref>
+            <Link href="/cart" passHref>
+              <IconButton sx={{ ml: 2 }}>
                 <Badge
                   badgeContent={cart.items.length}
                   color="error"
                   overlap="circular"
                 >
-                  <ShoppingCartIcon sx={{ fontSize: 32, color: "#000" }} />
+                  <ShoppingCartIcon sx={{ fontSize: 28, color: "#000" }} />
                 </Badge>
-              </Link>
-            </IconButton>
-            {/* دکمه زبان */}
-            <IconButton color="inherit" onClick={toggleLanguageModal} sx={{ marginLeft: "20px" }}>
-              <LanguageIcon sx={{ fontSize: 32, color: "#000" }} />
+              </IconButton>
+            </Link>
+            <IconButton onClick={toggleLanguageModal} sx={{ ml: 1 }}>
+              <LanguageIcon sx={{ fontSize: 28, color: "#000" }} />
             </IconButton>
           </Box>
         </Toolbar>
-
-        {isMobile && (
-          <Drawer
-            anchor="left"
-            open={drawerOpen}
-            onClose={toggleDrawer(false)}
-            PaperProps={{
-              sx: { backgroundColor: "rgba(199, 199, 199, 0.336)", marginTop: "64px" },
-            }}
-          >
-            <List>
-              <ListItem component="a" href="/products">
-                <ListItemText primary={t('newArrivals')} sx={{ color: "#000000" }} />
-              </ListItem>
-              <ListItem component="a" href="/products">
-                <ListItemText primary={t('collections')} sx={{ color: "#000000" }} />
-              </ListItem>
-              <ListItem component="a" href="/products">
-                <ListItemText primary={t('shop')} sx={{ color: "#000000" }} />
-              </ListItem>
-              <ListItem component="a" href="/cart">
-                <ListItemText primary={t('viewCart')} sx={{ color: "#000000" }} />
-              </ListItem>
-            </List>
-          </Drawer>
-        )}
       </AppBar>
 
-      {/* مودال انتخاب زبان */}
-      <LanguageSelector isOpen={languageModalOpen} onClose={() => setLanguageModalOpen(false)} />
+      {isMobile && (
+        <Drawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={toggleDrawer(false)}
+          PaperProps={{
+            sx: {
+              backgroundColor: "#fff",
+              width: "75%",
+              boxShadow: 3,
+              height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
+              mt: `${NAVBAR_HEIGHT}px`,
+            },
+          }}
+        >
+          <List>
+            {[
+              { label: t("newArrivals"), href: "/products" },
+              { label: t("collections"), href: "/products" },
+              { label: t("shop"), href: "/products" },
+              { label: t("viewCart"), href: "/cart" },
+            ].map(({ label, href }) => (
+              <Link key={href} href={href} passHref legacyBehavior>
+                <ListItemButton component="a" sx={{ px: 3 }}>
+                  <ListItemText primary={label} />
+                </ListItemButton>
+              </Link>
+            ))}
+          </List>
+        </Drawer>
+      )}
+
+      <LanguageSelector
+        isOpen={languageModalOpen}
+        onClose={() => setLanguageModalOpen(false)}
+      />
     </>
   );
 };
