@@ -51,16 +51,13 @@ const NavBar: React.FC = () => {
           fontFamily: "Roboto, sans-serif",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          height: NAVBAR_HEIGHT,
-          justifyContent: "center",
         }}
       >
         <Toolbar
           sx={{
+            minHeight: NAVBAR_HEIGHT,
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
-            minHeight: NAVBAR_HEIGHT,
           }}
         >
           {isMobile && (
