@@ -56,7 +56,7 @@ const AccountMenu: React.FC = () => {
           marginRight: isMobile ? "0px" : "8px",
         }}
       >
-        <AccountCircleIcon sx={{ mr: isMobile ? 0 : "5px" }} />
+        <AccountCircleIcon sx={{ mr: isMobile ? 0 : "5px"  ,  ml: 0 , fontSize: "24px"}} />
         {!isMobile && t("account")}
         <ArrowDropDownIcon />
       </Button>

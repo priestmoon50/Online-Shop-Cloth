@@ -61,7 +61,11 @@ const NavBar: React.FC = () => {
           }}
         >
           {isMobile && (
-            <IconButton edge="start" onClick={() => setDrawerOpen(!drawerOpen)}>
+            <IconButton
+              edge="start"
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              sx={{ ml: isMobile ? "-34px" : 0 }}
+            >
               <MenuIcon sx={{ color: "#000" }} />
             </IconButton>
           )}
@@ -75,7 +79,8 @@ const NavBar: React.FC = () => {
             }}
           >
             <Link href="/" passHref>
-              <Box sx={{ cursor: "pointer" }}>
+            <Box sx={{ cursor: "pointer", ml: isMobile ? "-85px" : 0 }}>
+
                 <Image
                   src="/images/Logo.png"
                   alt="Logo"
@@ -112,25 +117,23 @@ const NavBar: React.FC = () => {
               flexShrink: 0,
               display: "flex",
               alignItems: "center",
-              
             }}
           >
-         
             <Link href="/cart" passHref>
-              <IconButton sx={{ ml: 2 }}>
+              <IconButton sx={{ ml: 0 }}>
                 <Badge
                   badgeContent={cart.items.length}
                   color="error"
                   overlap="circular"
                 >
-                  <ShoppingCartIcon sx={{ fontSize: 28, color: "#000" }} />
+                  <ShoppingCartIcon sx={{ fontSize: 24, color: "#000" }} />
                 </Badge>
               </IconButton>
             </Link>
-            <IconButton onClick={toggleLanguageModal} sx={{ ml: 1 }}>
-              <LanguageIcon sx={{ fontSize: 28, color: "#000" }} />
+            <IconButton onClick={toggleLanguageModal} sx={{ ml: 0 }}>
+              <LanguageIcon sx={{ fontSize: 24, color: "#000" }} />
             </IconButton>
-               <AccountMenu />
+            <AccountMenu />
           </Box>
         </Toolbar>
       </AppBar>
