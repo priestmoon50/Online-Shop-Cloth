@@ -36,7 +36,7 @@ const AccountMenu: React.FC = () => {
   const handleLogout = useCallback(() => {
     logout();
     localStorage.removeItem("cart");
-    router.push("/auth/phone-verification"); // یا "/" برای رفتن به صفحه اصلی
+    router.push("/auth/login");
   }, [logout, router]);
 
   return (
@@ -52,11 +52,13 @@ const AccountMenu: React.FC = () => {
         sx={{
           color: "#000",
           padding: isMobile ? "10px 8px" : "10px 20px",
-          minWidth: isMobile ? "auto" : "64px", 
+          minWidth: isMobile ? "auto" : "64px",
           marginRight: isMobile ? "0px" : "8px",
         }}
       >
-        <AccountCircleIcon sx={{ mr: isMobile ? 0 : "5px"  ,  ml: 0 , fontSize: "24px"}} />
+        <AccountCircleIcon
+          sx={{ mr: isMobile ? 0 : "5px", ml: 0, fontSize: "24px" }}
+        />
         {!isMobile && t("account")}
         <ArrowDropDownIcon />
       </Button>
@@ -82,7 +84,7 @@ const AccountMenu: React.FC = () => {
       >
         {!isAuthenticated ? (
           <>
-            <Link href="/auth/phone-verification" passHref>
+            <Link href="/auth/login" passHref>
               <MenuItem
                 onClick={handleMouseLeave}
                 className={styles.logInButton}
@@ -90,7 +92,7 @@ const AccountMenu: React.FC = () => {
                 {t("login")}
               </MenuItem>
             </Link>
-            <Link href="/auth/phone-verification" passHref>
+            <Link href="/auth/register" passHref>
               <MenuItem
                 onClick={handleMouseLeave}
                 className={styles.menuItemHover}
@@ -99,6 +101,7 @@ const AccountMenu: React.FC = () => {
                 {t("signUp")}
               </MenuItem>
             </Link>
+
             <Link href="/favorites" passHref>
               <MenuItem
                 onClick={handleMouseLeave}

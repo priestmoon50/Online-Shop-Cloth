@@ -1,0 +1,46 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #f7faff, #e3f2fd);
+  }
+  
+  .paper {
+    width: 100%;
+    max-width: 400px;
+    padding: 32px 24px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 600;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .inputField {
+    margin-bottom: 16px;
+  }
+  
+  .phoneInputWrapper {
+    margin-bottom: 16px;
+  }
+  
+  
+  .submitButton {
+    margin-top: 20px;
+  }
+  
+  .errorText {
+    color: #d32f2f;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  
