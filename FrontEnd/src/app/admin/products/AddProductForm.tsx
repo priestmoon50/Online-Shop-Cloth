@@ -37,7 +37,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       sizes: [],
       category: "",
       images: [],
-      sizeGuide: [],
     },
   });
 
@@ -74,7 +73,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       const productData = {
         ...data,
         images: addedImages,
-        sizeGuide: data.sizeGuide,
+   
       };
 
       const response = initialProduct
@@ -215,19 +214,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         Add Size
       </Button>
 
-      <Controller
-        name="sizeGuide"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="Size Guide"
-            multiline
-            rows={4}
-            placeholder="Use a comma ( , ) to separate each line"
-          />
-        )}
-      />
+
 
       <Controller
         name="category"

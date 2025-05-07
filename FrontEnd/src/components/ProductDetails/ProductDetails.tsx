@@ -21,7 +21,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { Product } from "@/data/types";
 import Link from "next/link";
 import styles from "./ProductDetails.module.css"; // ایمپورت فایل CSS module
-import SizeGuide from "./SizeGuide";
+
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoriteContext";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -33,7 +33,7 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState<number>(1); // انتخاب تعداد پیش‌فرض
-  const [openSizeGuide, setOpenSizeGuide] = useState(false);
+
   const { addFavorite, removeFavorite, favorites } = useFavorites();
   const isLiked = favorites.items.some(
     (item) => item.id === product.id || item.id === product._id
@@ -43,8 +43,6 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
 
   const imagesArray = product.images ? product.images : [product.image];
 
-  const handleOpenSizeGuide = () => setOpenSizeGuide(true);
-  const handleCloseSizeGuide = () => setOpenSizeGuide(false);
 
   // تابع برای تغییر وضعیت پسندیدن
   const toggleLike = () => {
@@ -309,41 +307,7 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
             </Button>
           </Box>
 
-          {/* نمایش راهنمای اندازه */}
-          <Box sx={{ mt: 2 }}>
-            <Button
-              variant="contained"
-              className={styles.backButton}
-              onClick={handleOpenSizeGuide}
-            >
-              Size Info
-            </Button>
-            <Modal
-              open={openSizeGuide}
-              onClose={handleCloseSizeGuide}
-              disableScrollLock={true}
-            >
-              <Box
-                sx={{
-                  p: 4,
-                  backgroundColor: "white",
-                  borderRadius: 2,
-                  maxWidth: 400,
-                  margin: "auto",
-                  mt: "10%",
-                }}
-              >
-                {product.sizeGuide && product.sizeGuide.length > 0 ? (
-                  <SizeGuide sizeGuide={product.sizeGuide} />
-                ) : (
-                  <Typography>Sizes are not available!</Typography>
-                )}
-                <Button onClick={handleCloseSizeGuide} sx={{ mt: 2 }}>
-                  Close
-                </Button>
-              </Box>
-            </Modal>
-          </Box>
+        
         </Grid>
       </Grid>
       {/* مودال برای پیام موفقیت */}

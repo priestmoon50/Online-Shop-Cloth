@@ -30,7 +30,8 @@ const fetchProducts = async (): Promise<Product[]> => {
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [priceRange, setPriceRange] = useState<number[]>([1, 200]);
+  const [priceRange, setPriceRange] = useState<number[]>([1, 1000]);
+
 
   const {
     data: allProducts = [],
@@ -73,7 +74,8 @@ export default function Home() {
   return (
     <Box sx={{ mt: "100px", px: 2 }}>
       <ProductCategories setSelectedCategory={setSelectedCategory} />
-      <ProductFilters setPriceRange={setPriceRange} />
+      <ProductFilters priceRange={priceRange} setPriceRange={setPriceRange} />
+
 
       {filteredProducts.length === 0 && (
         <Typography variant="h6" align="center">
