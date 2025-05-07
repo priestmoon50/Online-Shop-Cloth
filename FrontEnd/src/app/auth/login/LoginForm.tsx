@@ -1,75 +1,81 @@
+// 📁 src/app/login/LoginForm.tsx
 "use client";
 
 import { useState } from "react";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 import {
   Box,
   Typography,
   Button,
   Paper,
-  useTheme,
-  useMediaQuery,
+  TextField,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
-import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
 
-  const handleLogin = () => {
-    if (!phone.startsWith("+") || phone.length < 6) {
-      setError("Please enter a valid phone number with country code.");
+  const handleRequestCode = async () => {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
       return;
     }
 
-    setError("");
-    localStorage.setItem("token", "mock-token");
-    localStorage.setItem("phone", phone);
-    window.location.href = "/account";
+    try {
+      const res = await fetch("/api/auth/send-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to send code.");
+        return;
+      }
+
+      setSuccess("Verification code sent to your email.");
+      setTimeout(() => {
+        window.location.href = `/verify-code?email=${encodeURIComponent(email.trim())}`;
+      }, 1500);
+    } catch {
+      setError("Server error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   return (
-    <Box className={styles.wrapper} sx={{ mt: isMobile ? 4 : 8 }}>
-      <Paper elevation={4} className={styles.paper}>
-        <Typography variant="h5" className={styles.header}>
-          Login with Phone
-        </Typography>
-
-        <PhoneInput
-          country={"de"}
-          value={phone}
-          onChange={(value) => setPhone("+" + value)}
-          inputProps={{
-            name: "phone",
-            required: true,
-            autoFocus: true,
-          }}
-          inputStyle={{
-            width: "100%",
-            height: "45px",
-            fontSize: "16px",
-            borderRadius: "4px",
-          }}
-          containerStyle={{
-            marginBottom: error ? 0 : "16px",
-          }}
+    <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Paper elevation={4} sx={{ p: 4, width: "100%", maxWidth: 400 }}>
+        <Typography variant="h5" mb={2}>Login with Email</Typography>
+        <TextField
+          fullWidth
+          label="Email"
+          variant="outlined"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{ mb: 2 }}
         />
-
-        {error && <Typography className={styles.errorText}>{error}</Typography>}
-
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
         <Button
           fullWidth
           variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
-          disabled={!phone.trim()}
-          onClick={handleLogin}
+          onClick={handleRequestCode}
+          disabled={loading}
         >
-          Login
+          {loading ? <CircularProgress size={24} /> : "Send Code"}
         </Button>
       </Paper>
     </Box>
