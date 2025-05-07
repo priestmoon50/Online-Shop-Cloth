@@ -41,7 +41,8 @@ const ProductCard: React.FC<Product> = ({
       whileHover={{ scale: 1.05 }}
     >
       <Card sx={{ position: 'relative', overflow: 'hidden', height: '100%' }}>
-        <Box sx={{ width: '100%', height: '300px', position: 'relative' }}>
+      <Box sx={{ width: '100%', height: '300px', position: 'relative', mb: 2 }}>
+
           {imagesArray.length > 1 ? (
             <Slider {...sliderSettings}>
               {imagesArray.map((img, index) => (
