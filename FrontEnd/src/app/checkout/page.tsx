@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemText,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -30,12 +31,13 @@ interface FormData {
 const CheckoutPage: React.FC = () => {
   const { cart } = useCart();
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { token, isAuthenticated, ready } = useAuth();
 
   const [userData, setUserData] = useState({
-    name: "",
-    phone: "",
+    firstName: "",
+    lastName: "",
     email: "",
+    phone: "",
     userId: "",
   });
 
@@ -50,18 +52,29 @@ const CheckoutPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined" && isAuthenticated) {
-      const storedPhone = localStorage.getItem("phone");
-      const userId = localStorage.getItem("userId");
+    if (!ready || !isAuthenticated || !token) return;
 
-      setUserData({
-        name: "",
-        phone: storedPhone || "",
-        email: "",
-        userId: userId || "",
-      });
-    }
-  }, [isAuthenticated]);
+    fetch("/api/user/me", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.user) {
+          const { firstName, lastName, email, phone, _id } = data.user;
+          setUserData({
+            firstName,
+            lastName,
+            email,
+            phone,
+            userId: _id,
+          });
+        }
+      })
+      .catch((err) => console.error("Failed to fetch user data", err));
+  }, [ready, isAuthenticated, token]);
 
   const handlePlaceOrder = async (data: FormData) => {
     if (!isAuthenticated) {
@@ -74,8 +87,9 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    if (!userData.name || !userData.phone) {
-      alert("Please complete all required fields.");
+    const { firstName, lastName, email, phone } = userData;
+    if (!firstName || !lastName || !email || !phone) {
+      alert("Incomplete user profile. Please complete your account info.");
       return;
     }
 
@@ -85,9 +99,9 @@ const CheckoutPage: React.FC = () => {
     );
 
     const orderData = {
-      name: userData.name,
-      email: userData.email,
-      phone: userData.phone,
+      name: `${firstName} ${lastName}`,
+      email,
+      phone,
       address: data.address,
       totalPrice,
       items: cart.items,
@@ -96,7 +110,6 @@ const CheckoutPage: React.FC = () => {
     };
 
     try {
-      // 1. ذخیره سفارش در دیتابیس
       const saveRes = await fetch("/api/orders/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -120,11 +133,10 @@ const CheckoutPage: React.FC = () => {
 
       localStorage.setItem("orderId", insertedId);
 
-      // 2. ساخت سفارش در PayPal
       const paypalRes = await fetch("/api/paypal/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ totalPrice: orderData.totalPrice })
+        body: JSON.stringify({ totalPrice: orderData.totalPrice }),
       });
 
       if (!paypalRes.ok) {
@@ -147,6 +159,8 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
+  if (!ready) return <p>در حال بارگذاری اطلاعات کاربر...</p>;
+
   return (
     <Box sx={{ padding: "20px" }}>
       <Typography variant="h4" gutterBottom>
@@ -159,16 +173,30 @@ const CheckoutPage: React.FC = () => {
         <Box sx={{ marginBottom: "20px" }}>
           <TextField
             fullWidth
-            label="Name"
-            value={userData.name}
-            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+            label="First Name"
+            value={userData.firstName}
+            InputProps={{ readOnly: true }}
+            sx={{ marginBottom: "10px" }}
+          />
+          <TextField
+            fullWidth
+            label="Last Name"
+            value={userData.lastName}
+            InputProps={{ readOnly: true }}
             sx={{ marginBottom: "10px" }}
           />
           <TextField
             fullWidth
             label="Email"
             value={userData.email}
-            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+            InputProps={{ readOnly: true }}
+            sx={{ marginBottom: "10px" }}
+          />
+          <TextField
+            fullWidth
+            label="Phone"
+            value={userData.phone}
+            InputProps={{ readOnly: true }}
             sx={{ marginBottom: "10px" }}
           />
           <Controller
@@ -182,16 +210,9 @@ const CheckoutPage: React.FC = () => {
                 label="Address"
                 error={!!errors.address}
                 helperText={errors.address?.message}
-                sx={{ marginBottom: "10px" }}
+                sx={{ marginBottom: "20px" }}
               />
             )}
-          />
-          <TextField
-            fullWidth
-            label="Phone"
-            value={userData.phone}
-            InputProps={{ readOnly: isAuthenticated }}
-            sx={{ marginBottom: "20px" }}
           />
         </Box>
 
@@ -221,11 +242,7 @@ const CheckoutPage: React.FC = () => {
                 Pay with PayPal
               </Button>
               <Link href="/cart" passHref>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ marginLeft: "10px" }}
-                >
+                <Button variant="outlined" color="secondary" sx={{ marginLeft: "10px" }}>
                   Back to Cart
                 </Button>
               </Link>

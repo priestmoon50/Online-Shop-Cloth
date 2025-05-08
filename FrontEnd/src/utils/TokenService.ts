@@ -1,96 +1,71 @@
+// 📁 src/utils/TokenService.ts
+
 interface JWTPayload {
-  exp: number; 
-  iat?: number; 
-  [key: string]: unknown; 
+  exp: number;
+  iat?: number;
+  [key: string]: unknown;
 }
 
 class TokenService {
-  private tokenKey = 'token';  
-
- 
-  private isBrowser = typeof window !== 'undefined';
-
+  private readonly tokenKey = "token";
+  private readonly isBrowser = typeof window !== "undefined";
 
   setToken(token: string): void {
-    if (this.isBrowser) {
-      try {
-        localStorage.setItem(this.tokenKey, token);
-        console.log('Token successfully stored in localStorage');
-      } catch (error) {
-        console.error('Error saving token in localStorage:', error);
-      }
+    if (!this.isBrowser) return;
+    try {
+      localStorage.setItem(this.tokenKey, token);
+    } catch (error) {
+      console.error("❌ Failed to store token:", error);
     }
   }
-
 
   getToken(): string | null {
-    if (this.isBrowser) {
-      try {
-        return localStorage.getItem(this.tokenKey);
-      } catch (error) {
-        console.error('Error retrieving token from localStorage:', error);
-        return null;
-      }
-    }
-    return null;
-  }
-
-  // حذف توکن از localStorage (برای خروج)
-  removeToken(): void {
-    if (this.isBrowser) {
-      try {
-        localStorage.removeItem(this.tokenKey);
-        console.log('Token removed from localStorage');
-      } catch (error) {
-        console.error('Error removing token from localStorage:', error);
-      }
-    }
-  }
-
-  // بررسی اعتبار توکن (بررسی زمان انقضا و اعتبار JWT)
-  isTokenValid(): boolean {
-    const token = this.getToken();
-    if (!token) {
-      return false;
-    }
-
-    const payload = this.getTokenPayload();
-    if (!payload) {
-      return false;
-    }
-
-    const currentTime = Date.now() / 1000;  // زمان فعلی به ثانیه
-    return payload.exp > currentTime;  // بررسی انقضا توکن
-  }
-
-  // متد برای دریافت payload توکن
-  getTokenPayload(): JWTPayload | null {
-    const token = this.getToken();
-    if (!token) {
+    if (!this.isBrowser) return null;
+    try {
+      return localStorage.getItem(this.tokenKey);
+    } catch (error) {
+      console.error("❌ Failed to retrieve token:", error);
       return null;
     }
-    return this.parseJwt(token);
   }
 
-  // متد کمکی برای دیکد کردن JWT و استخراج payload
-  private parseJwt(token: string): JWTPayload | null {
+  removeToken(): void {
+    if (!this.isBrowser) return;
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      localStorage.removeItem(this.tokenKey);
+    } catch (error) {
+      console.error("❌ Failed to remove token:", error);
+    }
+  }
+
+  isTokenValid(): boolean {
+    const payload = this.getTokenPayload();
+    if (!payload || typeof payload.exp !== "number") return false;
+    const currentTime = Math.floor(Date.now() / 1000);
+    return payload.exp > currentTime;
+  }
+
+  getTokenPayload(): JWTPayload | null {
+    const token = this.getToken();
+    if (!token) return null;
+    return this.decodeJWT(token);
+  }
+
+  private decodeJWT(token: string): JWTPayload | null {
+    try {
+      const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
       const jsonPayload = decodeURIComponent(
         atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+          .split("")
+          .map((c) => `%${("00" + c.charCodeAt(0).toString(16)).slice(-2)}`)
+          .join("")
       );
-      return JSON.parse(jsonPayload) as JWTPayload;
+      return JSON.parse(jsonPayload);
     } catch (error) {
-      console.error('Invalid token format:', error);
+      console.error("❌ Failed to decode JWT:", error);
       return null;
     }
   }
 }
 
-// صادر کردن نمونه مشخص از کلاس
-const tokenServiceInstance = new TokenService();
-export default tokenServiceInstance;
+export default new TokenService();

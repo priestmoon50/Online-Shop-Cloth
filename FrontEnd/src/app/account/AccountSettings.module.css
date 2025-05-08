@@ -1,58 +1,56 @@
-/* AccountSettings.module.css */
-
 .container {
-    max-width: 600px; /* حداکثر عرض */
-    margin: 50px auto; /* فاصله از بالا و مرکز */
-    padding: 40px; /* فضای داخلی بیشتر */
-    border-radius: 12px; /* حاشیه گرد */
-    background-color: #ffffff; /* پس‌زمینه سفید برای تمیزی بیشتر */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* سایه ملایم با عمق بیشتر */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* افکت حرکت نرم */
-}
-
-.container:hover {
-    transform: translateY(-5px); /* حرکت هنگام هاور */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* سایه بیشتر هنگام هاور */
-}
-
-.title {
-    font-size: 28px; /* سایز بزرگتر برای عنوان */
-    font-weight: 600; /* بولد */
-    color: #2c3e50; /* رنگ تیره و مدرن */
-    margin-bottom: 20px; /* فاصله بیشتر از عناصر زیر */
-    text-align: center; /* مرکز متن */
-    text-transform: capitalize; /* حروف اول بزرگ */
-    letter-spacing: 1px; /* فاصله بین حروف */
-}
-
-.list {
-    list-style-type: none; /* حذف لیست نقطه‌ای */
-    padding: 0; /* حذف padding */
-}
-
-.listItem {
-    font-size: 16px; /* سایز مناسب برای اطلاعات */
-    font-weight: 400; /* سبک‌تر برای راحتی خواندن */
-    color: #34495e; /* رنگ ملایم و مدرن */
-    margin: 15px 0; /* فاصله بین آیتم‌ها */
-    padding: 15px; /* فضای داخلی */
-    border: 1px solid #dcdcdc; /* حاشیه ملایم و مدرن */
-    border-radius: 8px; /* حاشیه نرم */
-    background-color: #f8f9fa; /* پس‌زمینه بسیار ملایم برای هر آیتم */
-    transition: background-color 0.3s ease, transform 0.3s ease; /* افکت تغییر رنگ و حرکت نرم */
-}
-
-.listItem:hover {
-    background-color: #e9ecef; /* تغییر رنگ زمینه هنگام هاور */
-    transform: translateY(-2px); /* حرکت جزئی هنگام هاور */
-}
-
-
-.label {
-    font-weight: 600; /* بولد برای برچسب‌ها */
-    color: #2980b9; /* رنگ آبی ملایم برای برچسب‌ها */
-    margin-right: 10px; /* فاصله بین برچسب و متن */
-}
-
-
-
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 32px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #2c3e50;
+    letter-spacing: 0.5px;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .row {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 16px;
+  }
+  
+  .label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2980b9;
+    margin-bottom: 4px;
+  }
+  
+  .value {
+    font-size: 16px;
+    color: #34495e;
+    font-weight: 400;
+  }
+  
+  .error {
+    color: #c0392b;
+    text-align: center;
+    margin-top: 60px;
+  }
+  
+  .loading {
+    color: #888;
+    text-align: center;
+    margin-top: 60px;
+  }
+  

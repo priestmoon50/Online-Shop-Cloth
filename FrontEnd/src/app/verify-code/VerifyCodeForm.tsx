@@ -10,7 +10,8 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface VerifyCodeFormProps {
   email: string;
@@ -20,12 +21,17 @@ export default function VerifyCodeForm({ email }: VerifyCodeFormProps) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams?.get("redirect") || "/account";
+  
+  const { login } = useAuth();
 
   const handleVerify = async () => {
     setError("");
 
-    if (!/^[0-9]{6}$/.test(code)) {
+    if (!/^\d{6}$/.test(code)) {
       setError("Please enter a valid 6-digit code.");
       return;
     }
@@ -46,9 +52,9 @@ export default function VerifyCodeForm({ email }: VerifyCodeFormProps) {
         return;
       }
 
-      localStorage.setItem("authToken", data.token);
-      router.push("/account");
-    } catch (err) {
+      login(data.token); // ثبت توکن
+      router.push(redirectTo); // ریدایرکت شرطی
+    } catch {
       setError("Server error. Please try again later.");
     } finally {
       setLoading(false);

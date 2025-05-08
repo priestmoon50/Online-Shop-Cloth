@@ -1,27 +1,44 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { Button, Menu, MenuItem, Box, Divider } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import SettingsIcon from "@mui/icons-material/Settings";
-import SupportIcon from "@mui/icons-material/HelpOutline";
-import ShopIcon from "@mui/icons-material/ShoppingBag";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Box,
+  Divider,
+  useMediaQuery,
+} from "@mui/material";
+import {
+  AccountCircle,
+  ArrowDropDown,
+  Settings,
+  HelpOutline,
+  ShoppingBag,
+  PersonAdd,
+  Favorite,
+  Logout,
+  Login,
+} from "@mui/icons-material";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import styles from "./AccountMenu.module.css";
-import { useMediaQuery } from "@mui/material";
 
 const AccountMenu: React.FC = () => {
   const { t } = useTranslation();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { logout, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated, ready } = useAuth();
+
   const router = useRouter();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+
   const isMobile = useMediaQuery("(max-width: 600px)");
+
+
+
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
@@ -39,6 +56,8 @@ const AccountMenu: React.FC = () => {
     router.push("/auth/login");
   }, [logout, router]);
 
+  if (!ready) return null;
+
   return (
     <Box
       onMouseEnter={handleMouseEnter}
@@ -47,7 +66,7 @@ const AccountMenu: React.FC = () => {
     >
       <Button
         aria-haspopup="true"
-        aria-expanded={Boolean(anchorEl) ? "true" : "false"}
+        aria-expanded={Boolean(anchorEl)}
         aria-controls="account-menu"
         sx={{
           color: "#000",
@@ -56,93 +75,65 @@ const AccountMenu: React.FC = () => {
           marginRight: isMobile ? "0px" : "8px",
         }}
       >
-        <AccountCircleIcon
-          sx={{ mr: isMobile ? 0 : "5px", ml: 0, fontSize: "24px" }}
-        />
+        <AccountCircle sx={{ mr: isMobile ? 0 : 1, fontSize: 24 }} />
         {!isMobile && t("account")}
-        <ArrowDropDownIcon />
+        <ArrowDropDown />
       </Button>
+
       <Menu
         id="account-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMouseLeave}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        disableScrollLock={true}
-        PaperProps={{
-          sx: {
-            position: "absolute",
-          },
-        }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        transformOrigin={{ vertical: "top", horizontal: "center" }}
+        disableScrollLock
+        PaperProps={{ sx: { position: "absolute" } }}
       >
-        {!isAuthenticated ? (
+        {isAuthenticated ? (
+          <>
+            <Link href="/account" passHref>
+              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+                <Settings sx={{ mr: 1 }} />
+                {t("accountSettings")}
+              </MenuItem>
+            </Link>
+            <Link href="/favorites" passHref>
+              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+                <Favorite sx={{ mr: 1 }} />
+                {t("favorites")}
+              </MenuItem>
+            </Link>
+            <MenuItem onClick={handleLogout} className={styles.menuItemHover}>
+              <Logout sx={{ mr: 1 }} />
+              {t("logout")}
+            </MenuItem>
+          </>
+        ) : (
           <>
             <Link href="/auth/login" passHref>
-              <MenuItem
-                onClick={handleMouseLeave}
-                className={styles.logInButton}
-              >
+              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+                <Login sx={{ mr: 1 }} />
                 {t("login")}
               </MenuItem>
             </Link>
             <Link href="/auth/register" passHref>
-              <MenuItem
-                onClick={handleMouseLeave}
-                className={styles.menuItemHover}
-              >
-                <PersonAddIcon sx={{ marginRight: "10px" }} />
+              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+                <PersonAdd sx={{ mr: 1 }} />
                 {t("signUp")}
-              </MenuItem>
-            </Link>
-
-            <Link href="/favorites" passHref>
-              <MenuItem
-                onClick={handleMouseLeave}
-                className={styles.menuItemHover}
-              >
-                <FavoriteIcon sx={{ marginRight: "10px" }} />
-                {t("favorites")}
-              </MenuItem>
-            </Link>
-          </>
-        ) : (
-          <>
-            <MenuItem onClick={handleLogout} className={styles.menuItemHover}>
-              <AccountCircleIcon sx={{ marginRight: "10px" }} />
-              {t("logout")}
-            </MenuItem>
-            <Link href="/favorites" passHref>
-              <MenuItem
-                onClick={handleMouseLeave}
-                className={styles.menuItemHover}
-              >
-                <FavoriteIcon sx={{ marginRight: "10px" }} />
-                {t("favorites")}
               </MenuItem>
             </Link>
           </>
         )}
+
         <Divider className={styles.divider} />
-        <Link href="/account" passHref>
-          <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
-            <SettingsIcon sx={{ marginRight: "10px" }} />
-            {t("accountSettings")}
-          </MenuItem>
-        </Link>
-        <Divider className={styles.divider} />
+
         <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
-          <SupportIcon sx={{ marginRight: "10px" }} />
+          <HelpOutline sx={{ mr: 1 }} />
           {t("support")}
         </MenuItem>
         <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
-          <ShopIcon sx={{ marginRight: "10px" }} />
+          <ShoppingBag sx={{ mr: 1 }} />
           {t("shop")}
         </MenuItem>
       </Menu>
