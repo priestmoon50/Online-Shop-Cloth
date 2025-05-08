@@ -3,9 +3,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/utils/mongo";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { token } = await req.json();
+    const token = req.nextUrl.searchParams.get("token");
 
     if (!token || typeof token !== "string") {
       return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const updateResult = await users.updateOne(
+    const result = await users.updateOne(
       { _id: user._id },
       {
         $set: { verified: true },
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    if (updateResult.modifiedCount === 0) {
+    if (result.modifiedCount === 0) {
       return NextResponse.json(
         { error: "Failed to verify your account. Please try again later." },
         { status: 500 }
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ message: "Email successfully verified." }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Verification error:", error);
     return NextResponse.json(
       { error: "Internal Server Error. Please try again later." },

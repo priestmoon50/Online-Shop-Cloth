@@ -10,15 +10,17 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export default function VerifyCodeForm() {
+interface VerifyCodeFormProps {
+  email: string;
+}
+
+export default function VerifyCodeForm({ email }: VerifyCodeFormProps) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams?.get("email") || "";
 
   const handleVerify = async () => {
     setError("");
@@ -69,7 +71,11 @@ export default function VerifyCodeForm() {
           sx={{ mb: 2 }}
         />
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
         <Button
           fullWidth

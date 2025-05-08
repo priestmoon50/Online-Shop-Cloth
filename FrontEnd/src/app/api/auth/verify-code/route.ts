@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
     const { email, code } = await req.json();
 
     if (!email || !code) {
-      return NextResponse.json({ error: "Email and code are required." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email and code are required." },
+        { status: 400 }
+      );
     }
 
     const { db } = await connectToDatabase();
@@ -19,18 +22,28 @@ export async function POST(req: NextRequest) {
 
     const user = await users.findOne({ email: email.toLowerCase() });
 
-    if (!user || !user.verificationCode || user.verificationCodeExpires < new Date()) {
-      return NextResponse.json({ error: "Invalid or expired code." }, { status: 400 });
+    if (
+      !user ||
+      !user.loginCode ||
+      !user.loginCodeExpiresAt ||
+      new Date(user.loginCodeExpiresAt) < new Date()
+    ) {
+      return NextResponse.json(
+        { error: "Invalid or expired code." },
+        { status: 400 }
+      );
     }
 
-    if (user.verificationCode !== code) {
-      return NextResponse.json({ error: "Incorrect verification code." }, { status: 401 });
+    if (user.loginCode !== code) {
+      return NextResponse.json(
+        { error: "Incorrect verification code." },
+        { status: 401 }
+      );
     }
 
-    // پاک کردن کد بعد از استفاده
     await users.updateOne(
-      { email: email.toLowerCase() },
-      { $unset: { verificationCode: "", verificationCodeExpires: "" } }
+      { _id: user._id },
+      { $unset: { loginCode: "", loginCodeExpiresAt: "" } }
     );
 
     const token = jwt.sign(
@@ -39,9 +52,12 @@ export async function POST(req: NextRequest) {
       { expiresIn: "30d" }
     );
 
-    return NextResponse.json({ message: "Verified", token });
+    return NextResponse.json({ message: "Login successful", token });
   } catch (error: any) {
     console.error("❌ Code verification failed:", error);
-    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 }
+    );
   }
 }
