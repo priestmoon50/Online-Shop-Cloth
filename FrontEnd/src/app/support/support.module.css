@@ -1,0 +1,141 @@
+
+
+.body {
+  font-family: tahoma;
+  overflow: hidden;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(-45deg, #0d3647, #123e4b, #1a4b5e, #1e1e1e);
+  background-size: 400% 400%;
+  animation: gradientAnimation 12s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.navbar {
+  width: 150px;
+  height: 150px;
+  line-height: 150px;
+  border-radius: 50%;
+  background-color: #d0e3ec;
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #119da7;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* منوی مخفی در حالت عادی */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: -75px;
+  left: -75px;
+  border: 150px solid transparent;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.4s ease;
+  z-index: -1;
+}
+
+/* فعال‌سازی با hover یا active */
+.navbar:hover .menu,
+.navbar.active .menu {
+  transform: scale(1);
+  z-index: 1;
+}
+
+.menu li {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  transform-origin: 100px 100px;
+  transition: transform 0.6s;
+}
+
+.menu li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: white;
+  color: #119da7;
+  font-size: 22px;
+  transition: border 0.3s, transform 0.3s;
+}
+
+/* Hover روی آیکون‌ها */
+.menu li:hover a {
+  border: 2px solid violet;
+  transform: scale(1.1);
+}
+
+/* چرخش‌ها هنگام نمایش */
+.navbar:hover .menu li:nth-child(1),
+.navbar.active .menu li:nth-child(1) { transform: rotate(0deg); }
+.navbar:hover .menu li:nth-child(2),
+.navbar.active .menu li:nth-child(2) { transform: rotate(40deg); }
+.navbar:hover .menu li:nth-child(3),
+.navbar.active .menu li:nth-child(3) { transform: rotate(80deg); }
+.navbar:hover .menu li:nth-child(4),
+.navbar.active .menu li:nth-child(4) { transform: rotate(120deg); }
+.navbar:hover .menu li:nth-child(5),
+.navbar.active .menu li:nth-child(5) { transform: rotate(160deg); }
+.navbar:hover .menu li:nth-child(6),
+.navbar.active .menu li:nth-child(6) { transform: rotate(200deg); }
+.navbar:hover .menu li:nth-child(7),
+.navbar.active .menu li:nth-child(7) { transform: rotate(240deg); }
+.navbar:hover .menu li:nth-child(8),
+.navbar.active .menu li:nth-child(8) { transform: rotate(280deg); }
+.navbar:hover .menu li:nth-child(9),
+.navbar.active .menu li:nth-child(9) { transform: rotate(320deg); }
+
+/* چرخش معکوس آیکون‌ها */
+.navbar:hover .menu li a,
+.navbar.active .menu li a {
+  transition: transform 0.4s;
+}
+
+.navbar:hover .menu li:nth-child(2) a,
+.navbar.active .menu li:nth-child(2) a { transform: rotate(-40deg); }
+.navbar:hover .menu li:nth-child(3) a,
+.navbar.active .menu li:nth-child(3) a { transform: rotate(-80deg); }
+.navbar:hover .menu li:nth-child(4) a,
+.navbar.active .menu li:nth-child(4) a { transform: rotate(-120deg); }
+.navbar:hover .menu li:nth-child(5) a,
+.navbar.active .menu li:nth-child(5) a { transform: rotate(-160deg); }
+.navbar:hover .menu li:nth-child(6) a,
+.navbar.active .menu li:nth-child(6) a { transform: rotate(-200deg); }
+.navbar:hover .menu li:nth-child(7) a,
+.navbar.active .menu li:nth-child(7) a { transform: rotate(-240deg); }
+.navbar:hover .menu li:nth-child(8) a,
+.navbar.active .menu li:nth-child(8) a { transform: rotate(-280deg); }
+.navbar:hover .menu li:nth-child(9) a,
+.navbar.active .menu li:nth-child(9) a { transform: rotate(-320deg); }
+
+
+.navbar,
+.menu li a {
+  user-select: none;     
+  -webkit-tap-highlight-color: transparent; 
+  outline: none;        
+}
+
+
+
+
+

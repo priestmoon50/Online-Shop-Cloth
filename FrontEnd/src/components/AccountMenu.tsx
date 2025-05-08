@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Menu,
@@ -29,45 +29,35 @@ import styles from "./AccountMenu.module.css";
 const AccountMenu: React.FC = () => {
   const { t } = useTranslation();
   const { logout, isAuthenticated, ready } = useAuth();
-
   const router = useRouter();
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-
   const isMobile = useMediaQuery("(max-width: 600px)");
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  const handleMouseEnter = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
-    },
-    []
-  );
-
-  const handleMouseLeave = useCallback(() => {
+  const handleClose = () => {
     setAnchorEl(null);
-  }, []);
+  };
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = () => {
     logout();
     localStorage.removeItem("cart");
     router.push("/auth/login");
-  }, [logout, router]);
+  };
 
   if (!ready) return null;
 
   return (
-    <Box
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      sx={{ display: "inline-block" }}
-    >
+    <Box sx={{ display: "inline-block" }}>
       <Button
         aria-haspopup="true"
-        aria-expanded={Boolean(anchorEl)}
+        aria-expanded={open}
         aria-controls="account-menu"
+        onClick={handleOpen}
         sx={{
           color: "#000",
           padding: isMobile ? "10px 8px" : "10px 20px",
@@ -83,8 +73,8 @@ const AccountMenu: React.FC = () => {
       <Menu
         id="account-menu"
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMouseLeave}
+        open={open}
+        onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         transformOrigin={{ vertical: "top", horizontal: "center" }}
         disableScrollLock
@@ -93,13 +83,13 @@ const AccountMenu: React.FC = () => {
         {isAuthenticated ? (
           <>
             <Link href="/account" passHref>
-              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+              <MenuItem onClick={handleClose} className={styles.menuItemHover}>
                 <Settings sx={{ mr: 1 }} />
                 {t("accountSettings")}
               </MenuItem>
             </Link>
             <Link href="/favorites" passHref>
-              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+              <MenuItem onClick={handleClose} className={styles.menuItemHover}>
                 <Favorite sx={{ mr: 1 }} />
                 {t("favorites")}
               </MenuItem>
@@ -112,13 +102,13 @@ const AccountMenu: React.FC = () => {
         ) : (
           <>
             <Link href="/auth/login" passHref>
-              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+              <MenuItem onClick={handleClose} className={styles.menuItemHover}>
                 <Login sx={{ mr: 1 }} />
                 {t("login")}
               </MenuItem>
             </Link>
             <Link href="/auth/register" passHref>
-              <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
+              <MenuItem onClick={handleClose} className={styles.menuItemHover}>
                 <PersonAdd sx={{ mr: 1 }} />
                 {t("signUp")}
               </MenuItem>
@@ -128,14 +118,19 @@ const AccountMenu: React.FC = () => {
 
         <Divider className={styles.divider} />
 
-        <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
-          <HelpOutline sx={{ mr: 1 }} />
-          {t("support")}
-        </MenuItem>
-        <MenuItem onClick={handleMouseLeave} className={styles.menuItemHover}>
-          <ShoppingBag sx={{ mr: 1 }} />
-          {t("shop")}
-        </MenuItem>
+        <Link href="/support" passHref>
+          <MenuItem onClick={handleClose} className={styles.menuItemHover}>
+            <HelpOutline sx={{ mr: 1 }} />
+            {t("support")}
+          </MenuItem>
+        </Link>
+
+        <Link href="/shop" passHref>
+          <MenuItem onClick={handleClose} className={styles.menuItemHover}>
+            <ShoppingBag sx={{ mr: 1 }} />
+            {t("shop")}
+          </MenuItem>
+        </Link>
       </Menu>
     </Box>
   );
