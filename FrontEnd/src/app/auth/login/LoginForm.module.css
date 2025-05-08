@@ -1,33 +1,37 @@
 .wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  
-  .paper {
-    padding: 32px;
-    width: 100%;
-    max-width: 400px;
-    backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 8px;
-  }
-  
-  .header {
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 32px;
-    text-shadow: 1px 1px 3px rgba(5, 7, 15, 0.8);
-  }
-  
-  .errorText {
-    color: red;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 8px;
-    margin-bottom: 16px;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+
+  /* تصویر پس‌زمینه فشن */
+  background-image: url("/images/red.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.paper {
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+}
+
+.header {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 32px;
+  text-shadow: 1px 1px 3px rgba(5, 7, 15, 0.8);
+}
+
+.errorText {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}

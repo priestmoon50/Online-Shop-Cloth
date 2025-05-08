@@ -1,5 +1,6 @@
 // 📁 src/app/login/LoginForm.tsx
 "use client";
+import styles from "./LoginForm.module.css";
 
 import { useState } from "react";
 import {
@@ -49,11 +50,12 @@ export default function LoginForm() {
         }
         return;
       }
-      
 
       setSuccess("Verification code sent to your email.");
       setTimeout(() => {
-        window.location.href = `/verify-code?email=${encodeURIComponent(email.trim())}`;
+        window.location.href = `/verify-code?email=${encodeURIComponent(
+          email.trim()
+        )}`;
       }, 1500);
     } catch {
       setError("Server error. Please try again.");
@@ -63,9 +65,11 @@ export default function LoginForm() {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+    <Box className={styles.wrapper}>
       <Paper elevation={4} sx={{ p: 4, width: "100%", maxWidth: 400 }}>
-        <Typography variant="h5" mb={2}>Login with Email</Typography>
+        <Typography variant="h5" mb={2}>
+          Login with Email
+        </Typography>
         <TextField
           fullWidth
           label="Email"
@@ -74,8 +78,16 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           sx={{ mb: 2 }}
         />
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-        {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {success}
+          </Alert>
+        )}
         <Button
           fullWidth
           variant="contained"
