@@ -40,9 +40,16 @@ export default function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Failed to send code.");
+        if (res.status === 404) {
+          setError("No account found with this email.");
+        } else if (res.status === 403) {
+          setError("Your account is not verified. Please check your email.");
+        } else {
+          setError(data.error || "Failed to send code.");
+        }
         return;
       }
+      
 
       setSuccess("Verification code sent to your email.");
       setTimeout(() => {

@@ -11,21 +11,37 @@ export async function POST(req: NextRequest) {
     const { email } = await req.json();
 
     if (!email || typeof email !== "string") {
-      return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid email address." },
+        { status: 400 }
+      );
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.toLowerCase())) {
-      return NextResponse.json({ error: "Email format is incorrect." }, { status: 422 });
+      return NextResponse.json(
+        { error: "Email format is incorrect." },
+        { status: 422 }
+      );
     }
 
     const { db } = await connectToDatabase();
     const users = db.collection("users");
 
-    const user = await users.findOne({ email: email.toLowerCase(), verified: true });
+    const user = await users.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      return NextResponse.json({ error: "No verified account found with this email." }, { status: 404 });
+      return NextResponse.json(
+        { error: "No account found with this email." },
+        { status: 404 }
+      );
+    }
+
+    if (!user.verified) {
+      return NextResponse.json(
+        { error: "Your account is not verified. Please check your email." },
+        { status: 403 }
+      );
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -48,7 +64,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ message: "Login code sent to your email." });
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Error sending code:", error);
     return NextResponse.json(
       { error: "Failed to send verification code." },

@@ -64,16 +64,22 @@ export default function RegisterForm() {
       const result = await response.json();
   
       if (!response.ok) {
+        if (result.status === "pending-verification") {
+          setError("You already registered but haven't verified your email. Check your inbox.");
+          return;
+        }
+      
         if (response.status === 409) {
-          setError("An account with this phone or email already exists. Try recovering your password.");
+          setError("An account with this phone or email already exists !  Please login");
         } else {
           setError(result.error || "Something went wrong. Please try again.");
         }
         return;
       }
-  
-      // ✅ Redirect to verify-message page with email param
+      
+      // ✅ فقط وقتی واقعا کاربر جدید ساخته شد
       window.location.href = `/verify-message?email=${encodeURIComponent(email.trim().toLowerCase())}`;
+      
     } catch (err) {
       setError("Server error. Please try again later.");
     } finally {

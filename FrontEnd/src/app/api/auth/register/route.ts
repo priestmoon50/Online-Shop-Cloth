@@ -42,17 +42,22 @@ export async function POST(req: NextRequest) {
     if (existingUser) {
       if (existingUser.verified) {
         return NextResponse.json(
-          { error: "An account with this phone or email already exists. Try recovering your password." },
+          { error: "An account with this phone or email already exists !  Please login" },
           { status: 409 }
         );
       }
-
-      // کاربر قبلاً ثبت‌نام کرده ولی هنوز تأیید نکرده — ایمیل مجدد نفرست
-      return NextResponse.json({
-        message: "User already registered but not verified. Please check your email.",
-        status: "pending-verification"
-      });
+    
+      return NextResponse.json(
+        {
+          message: "User already registered but not verified. Please check your email.",
+          status: "pending-verification"
+        },
+        { status: 409 } 
+      );
+      
     }
+    
+
 
     const verificationToken = crypto.randomUUID();
 
