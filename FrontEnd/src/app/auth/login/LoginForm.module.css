@@ -2,10 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 24px;
   min-height: 100vh;
-  padding: 16px;
-
-  /* تصویر پس‌زمینه فشن */
   background-image: url("/images/red.jpg");
   background-size: cover;
   background-position: center;

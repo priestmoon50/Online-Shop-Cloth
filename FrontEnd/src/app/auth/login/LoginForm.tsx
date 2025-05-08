@@ -66,18 +66,43 @@ export default function LoginForm() {
 
   return (
     <Box className={styles.wrapper}>
-      <Paper elevation={4} sx={{ p: 4, width: "100%", maxWidth: 400 }}>
-        <Typography variant="h5" mb={2}>
-          Login with Email
-        </Typography>
-        <TextField
-          fullWidth
-          label="Email"
-          variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          sx={{ mb: 2 }}
-        />
+    <Paper
+  elevation={4}
+  sx={{
+    p: 4,
+    width: "100%",
+    maxWidth: 400,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
+  }}
+>
+
+<Typography variant="h5" mb={2} sx={{ color: "#fff" }}>
+  Login with Email
+</Typography>
+
+<TextField
+  fullWidth
+  label="Email"
+  variant="outlined"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  sx={{
+    mb: 2,
+    input: { color: "#fff" },
+    label: { color: "#ccc" },
+    "& label.Mui-focused": { color: "#fff" },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": { borderColor: "#aaa" },
+      "&:hover fieldset": { borderColor: "#fff" },
+      "&.Mui-focused fieldset": { borderColor: "#fff" },
+    },
+  }}
+/>
+
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
