@@ -1,7 +1,6 @@
-// 📁 src/app/login/LoginForm.tsx
 "use client";
-import styles from "./LoginForm.module.css";
 
+import styles from "./LoginForm.module.css";
 import { useState } from "react";
 import {
   Box,
@@ -15,48 +14,51 @@ import {
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
 
-  const handleRequestCode = async () => {
+  const handleLogin = async () => {
     setError("");
     setSuccess("");
     setLoading(true);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       setError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
 
+    if (!password) {
+      setError("Please enter your password.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch("/api/auth/send-code", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password,
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 404) {
-          setError("No account found with this email.");
-        } else if (res.status === 403) {
-          setError("Your account is not verified. Please check your email.");
-        } else {
-          setError(data.error || "Failed to send code.");
-        }
+        setError(data.error || "Login failed.");
         return;
       }
 
-      setSuccess("Verification code sent to your email.");
+      localStorage.setItem("token", data.token);
+      setSuccess("Login successful. Redirecting...");
       setTimeout(() => {
-        window.location.href = `/verify-code?email=${encodeURIComponent(
-          email.trim()
-        )}`;
-      }, 1500);
+        window.location.href = "/";
+      }, 1000);
     } catch {
       setError("Server error. Please try again.");
     } finally {
@@ -66,42 +68,60 @@ export default function LoginForm() {
 
   return (
     <Box className={styles.wrapper}>
-    <Paper
-  elevation={4}
-  sx={{
-    p: 4,
-    width: "100%",
-    maxWidth: 400,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    backdropFilter: "blur(10px)",
-    WebkitBackdropFilter: "blur(20px)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
-  }}
->
+      <Paper
+        elevation={4}
+        sx={{
+          p: 4,
+          width: "100%",
+          maxWidth: 400,
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
+        }}
+      >
+        <Typography variant="h5" mb={2} sx={{ color: "#fff" }}>
+          Login
+        </Typography>
 
-<Typography variant="h5" mb={2} sx={{ color: "#fff" }}>
-  Login with Email
-</Typography>
+        <TextField
+          fullWidth
+          label="Email"
+          variant="outlined"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{
+            mb: 2,
+            input: { color: "#fff" },
+            label: { color: "#ccc" },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": { borderColor: "#aaa" },
+              "&:hover fieldset": { borderColor: "#fff" },
+              "&.Mui-focused fieldset": { borderColor: "#fff" },
+            },
+          }}
+        />
 
-<TextField
-  fullWidth
-  label="Email"
-  variant="outlined"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  sx={{
-    mb: 2,
-    input: { color: "#fff" },
-    label: { color: "#ccc" },
-    "& label.Mui-focused": { color: "#fff" },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": { borderColor: "#aaa" },
-      "&:hover fieldset": { borderColor: "#fff" },
-      "&.Mui-focused fieldset": { borderColor: "#fff" },
-    },
-  }}
-/>
+        <TextField
+          fullWidth
+          label="Password"
+          variant="outlined"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{
+            mb: 2,
+            input: { color: "#fff" },
+            label: { color: "#ccc" },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": { borderColor: "#aaa" },
+              "&:hover fieldset": { borderColor: "#fff" },
+              "&.Mui-focused fieldset": { borderColor: "#fff" },
+            },
+          }}
+        />
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -113,13 +133,14 @@ export default function LoginForm() {
             {success}
           </Alert>
         )}
+
         <Button
           fullWidth
           variant="contained"
-          onClick={handleRequestCode}
+          onClick={handleLogin}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : "Send Code"}
+          {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
       </Paper>
     </Box>

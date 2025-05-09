@@ -126,12 +126,6 @@ logout() → حذف توکن و کاربر
 ✅ ذخیره توکن	کامل	با localStorage و sync با context
 ✅ بررسی اولیه session	کامل	در useEffect
 ✅ وضعیت در AccountMenu	کامل	شرطی‌سازی بر اساس isAuthenticated
-⏳ حفاظت سروری از صفحات حساس	پیشنهاد می‌شود	به‌کمک Middleware یا Server Component
-⏳ Session expiration	توصیه‌شده	JWT با exp + auto logout
-⏳ نقش‌ها (admin/user)	قابل افزودن	در payload توکن
-⏳ فراموشی رمز	آینده	ارسال کد بازیابی
-
-اگر بخواهی نقش admin اضافه کنیم، یا مسیر /admin را محافظت کنیم، یا از JWT HttpOnly cookie به جای localStorage استفاده کنیم، اعلام کن.
 
 
 

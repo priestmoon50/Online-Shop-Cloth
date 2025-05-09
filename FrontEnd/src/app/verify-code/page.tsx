@@ -12,3 +12,4 @@ export default function VerifyCodePage() {
 
   return <VerifyCodeForm email={email} />;
 }
+ 

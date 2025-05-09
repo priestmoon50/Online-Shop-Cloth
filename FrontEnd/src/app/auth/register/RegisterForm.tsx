@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -22,6 +21,8 @@ export default function RegisterForm() {
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,6 @@ export default function RegisterForm() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // ✅ Basic validation
     if (!firstName.trim() || !lastName.trim()) {
       setError("First name and last name are required.");
       return;
@@ -48,6 +48,16 @@ export default function RegisterForm() {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -59,6 +69,7 @@ export default function RegisterForm() {
           lastName: lastName.trim(),
           email: email.trim().toLowerCase(),
           phone: phone.trim(),
+          password: password.trim(),
         }),
       });
 
@@ -73,19 +84,14 @@ export default function RegisterForm() {
         }
 
         if (response.status === 409) {
-          setError(
-            "An account with this phone or email already exists !  Please login"
-          );
+          setError("An account with this phone or email already exists! Please login.");
         } else {
           setError(result.error || "Something went wrong. Please try again.");
         }
         return;
       }
 
-      // ✅ فقط وقتی واقعا کاربر جدید ساخته شد
-      window.location.href = `/verify-message?email=${encodeURIComponent(
-        email.trim().toLowerCase()
-      )}`;
+      window.location.href = `/verify-message?email=${encodeURIComponent(email.trim().toLowerCase())}`;
     } catch (err) {
       setError("Server error. Please try again later.");
     } finally {
@@ -99,8 +105,8 @@ export default function RegisterForm() {
   const textFieldSx = {
     mb: 2,
     input: { color: "#fff" },
-    label: { color: "#ccc" }, // حالت پیش‌فرض
-    "& label.Mui-focused": { color: "#fff" }, // وقتی label بالا میره (فوکوس)
+    label: { color: "#ccc" },
+    "& label.Mui-focused": { color: "#fff" },
     "& .MuiOutlinedInput-root": {
       "& fieldset": { borderColor: "#aaa" },
       "&:hover fieldset": { borderColor: "#fff" },
@@ -121,12 +127,7 @@ export default function RegisterForm() {
           boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
         }}
       >
-        <Typography
-          variant="h5"
-          className={styles.header}
-          mb={3}
-          sx={{ color: "#fff" }}
-        >
+        <Typography variant="h5" className={styles.header} mb={3} sx={{ color: "#fff" }}>
           Register
         </Typography>
 
@@ -136,16 +137,7 @@ export default function RegisterForm() {
           variant="outlined"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          sx={{
-            mb: 2,
-            input: { color: "#fff" }, // متن داخل input
-            label: { color: "#ccc" }, // متن label
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": { borderColor: "#aaa" },
-              "&:hover fieldset": { borderColor: "#fff" },
-              "&.Mui-focused fieldset": { borderColor: "#fff" },
-            },
-          }}
+          sx={textFieldSx}
         />
 
         <TextField
@@ -156,6 +148,7 @@ export default function RegisterForm() {
           onChange={(e) => setLastName(e.target.value)}
           sx={textFieldSx}
         />
+
         <TextField
           fullWidth
           label="Email"
@@ -165,6 +158,7 @@ export default function RegisterForm() {
           onChange={(e) => setEmail(e.target.value)}
           sx={textFieldSx}
         />
+
         <Box mb={2}>
           <PhoneInput
             country={"us"}
@@ -188,9 +182,28 @@ export default function RegisterForm() {
               borderBottomLeftRadius: "4px",
             }}
             containerStyle={{ width: "100%", marginBottom: "16px" }}
-         
           />
         </Box>
+
+        <TextField
+          fullWidth
+          label="Password"
+          type="password"
+          variant="outlined"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={textFieldSx}
+        />
+
+        <TextField
+          fullWidth
+          label="Confirm Password"
+          type="password"
+          variant="outlined"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          sx={textFieldSx}
+        />
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -210,11 +223,7 @@ export default function RegisterForm() {
           onClick={handleRegister}
           disabled={loading}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Register"
-          )}
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Register"}
         </Button>
       </Paper>
     </Box>

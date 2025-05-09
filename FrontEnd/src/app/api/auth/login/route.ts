@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/utils/mongo";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    const { email, password } = await req.json();
 
-    if (!email || typeof email !== "string") {
-      return NextResponse.json({ error: "Email is required." }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password are required." },
+        { status: 400 }
+      );
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-
     const { db } = await connectToDatabase();
     const user = await db.collection("users").findOne({ email: normalizedEmail });
 
@@ -28,10 +32,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      message: "Login successful.",
-      userId: user._id.toString(),
-    });
+    if (!user.hashedPassword) {
+      return NextResponse.json(
+        { error: "This account does not support password login." },
+        { status: 400 }
+      );
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+    if (!passwordMatch) {
+      return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        name: user.firstName + " " + user.lastName,
+      },
+      process.env.JWT_SECRET!,
+      { expiresIn: "30d" }
+    );
+
+    return NextResponse.json({ token });
   } catch (error: any) {
     console.error("❌ Login error:", error);
     return NextResponse.json(

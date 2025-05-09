@@ -1,4 +1,3 @@
-// 📁 FrontEnd/src/context/AuthContext.tsx
 "use client";
 
 import React, {
@@ -15,6 +14,7 @@ interface UserInfo {
   userId: string;
   email: string;
   exp?: number;
+  name?: string;
 }
 
 interface AuthContextType {
@@ -29,17 +29,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(TokenService.getToken());
+  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    if (token) {
+  const syncFromStorage = () => {
+    const storedToken = TokenService.getToken();
+    if (storedToken) {
       try {
-        const decoded = jwtDecode<UserInfo>(token);
+        const decoded = jwtDecode<UserInfo>(storedToken);
         if (decoded.exp && decoded.exp * 1000 < Date.now()) {
           logout();
         } else {
+          setToken(storedToken);
           setUser(decoded);
         }
       } catch (err) {
@@ -47,24 +49,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout();
       }
     } else {
-      setUser(null);
+      logout();
     }
-    setReady(true); // ✅ بعد از تلاش برای بررسی توکن
-  }, [token]);
+    setReady(true);
+  };
+
+  useEffect(() => {
+    syncFromStorage();
+  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const storedToken = TokenService.getToken();
-      setToken(storedToken);
+      syncFromStorage();
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const login = (newToken: string) => {
     TokenService.setToken(newToken);
-    setToken(newToken);
+    syncFromStorage();
   };
 
   const logout = () => {

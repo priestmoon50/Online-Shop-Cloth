@@ -1,4 +1,3 @@
-// 📁 src/app/verify/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -27,20 +26,19 @@ export default function VerifyPage() {
 
     const verifyToken = async () => {
       try {
-        const res = await fetch("/api/auth/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
+        const res = await fetch(`/api/auth/verify?token=${encodeURIComponent(token)}`, {
+          method: "GET",
         });
 
         const data = await res.json();
-        if (!res.ok) {
-          setStatus("error");
-          setMessage(data.error || "Verification failed.");
-        } else {
+        if (res.status === 200) {
           setStatus("success");
           setMessage(data.message || "Email verified successfully.");
+        } else {
+          setStatus("error");
+          setMessage(data.error || "Verification failed.");
         }
+        
       } catch (err) {
         setStatus("error");
         setMessage("An unexpected error occurred.");
