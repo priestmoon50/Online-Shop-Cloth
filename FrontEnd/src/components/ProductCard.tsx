@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick'; // اضافه کردن اسلایدر
+import { convertToEuro } from "@/utils/convertCurrency";
 
 const ProductCard: React.FC<Product> = ({
   id,
@@ -83,7 +84,7 @@ const ProductCard: React.FC<Product> = ({
                     fontSize: { xs: '1rem', sm: '0.875rem' },
                   }}
                 >
-                  {t('price')}: ${price}
+       {t('price')}: €{convertToEuro(price)}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -92,13 +93,14 @@ const ProductCard: React.FC<Product> = ({
                     fontSize: { xs: '1.25rem', sm: '1rem' },
                   }}
                 >
-                  {t('discountedPrice')}: ${discountedPrice}
+            {t('discountedPrice')}: €{convertToEuro(discountedPrice)}
                 </Typography>
               </>
             ) : (
               <Typography variant="body2" color="text.secondary">
-                {t('price')}: ${price}
-              </Typography>
+              {t('price')}: €{convertToEuro(price)}
+            </Typography>
+            
             )}
           </Box>
 

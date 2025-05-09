@@ -15,6 +15,7 @@ import {
   Grid,
 } from "@mui/material";
 import dayjs from "dayjs";
+import { convertToEuro } from "@/utils/convertCurrency";
 
 interface OrderItem {
   id: string;
@@ -85,7 +86,7 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                         primary={`${item.name} × ${item.quantity}`}
                         secondary={`رنگ: ${item.color || "نامشخص"} | سایز: ${
                           item.size || "نامشخص"
-                        } | قیمت: $${item.price}`}
+                        } | قیمت: €${convertToEuro(item.price)}`}
                       />
                     </ListItem>
                   ))}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useTranslation } from 'react-i18next'; // اضافه کردن i18n برای ترجمه
 import { Button, TextField, Box, Typography } from '@mui/material';
+import { convertToEuro } from "@/utils/convertCurrency";
 
 const CartManager: React.FC = () => {
   const { cart, addItem, removeItem, updateItem } = useCart();
@@ -74,7 +75,7 @@ const CartManager: React.FC = () => {
       <ul>
         {cart.items.map((item) => (
           <li key={item.id}>
-            {item.name} - ${item.price} x {item.quantity} ({item.size}, {item.color})
+           {item.name} - €{convertToEuro(item.price)} x {item.quantity} ({item.size}, {item.color})
             <Button onClick={() => removeItem(item.id)}>{t('remove')}</Button>
             <Button onClick={() => updateItem(item.id, item.quantity + 1)}>{t('increase')}</Button>
             <Button onClick={() => updateItem(item.id, item.quantity > 1 ? item.quantity - 1 : 1)}>

@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
 import styles from "./ProductGrid.module.css";
+import { convertToEuro } from "@/utils/convertCurrency";
 
 // ✅ گرفتن محصولات از API
 const fetchProducts = async (): Promise<Product[]> => {
@@ -26,14 +27,13 @@ const fetchProducts = async (): Promise<Product[]> => {
   if (Array.isArray(data)) {
     return data.map((product: any) => ({
       ...product,
-      id: product.id || product._id?.toString(), 
+      id: product.id || product._id?.toString(),
     }));
   } else {
     console.error("❌ API did not return an array");
     return [];
   }
 };
-
 
 export default function ProductGrid() {
   const theme = useTheme();
@@ -47,7 +47,12 @@ export default function ProductGrid() {
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -55,8 +60,15 @@ export default function ProductGrid() {
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="400px">
-        <Alert severity="error">Error fetching products. Please try again later.</Alert>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="400px"
+      >
+        <Alert severity="error">
+          Error fetching products. Please try again later.
+        </Alert>
       </Box>
     );
   }
@@ -120,7 +132,7 @@ export default function ProductGrid() {
               {product.category || "No Category"}
             </Typography>
             <Typography variant="h6" color="primary">
-              ${product.price}
+              €{convertToEuro(product.price)}
             </Typography>
           </Box>
         ))}

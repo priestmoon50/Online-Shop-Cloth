@@ -5,7 +5,7 @@ import { useFavorites } from "@/context/FavoriteContext";
 import { Container, Typography, Grid, Button, Box } from "@mui/material";
 import Link from "next/link";
 import ProductImages from "@/components/ProductDetails/ProductImages"; // ایمپورت کامپوننت ProductImages
-
+import { convertToEuro } from "@/utils/convertCurrency";
 const FavoritesPage = () => {
   const { favorites, removeFavorite } = useFavorites();
 
@@ -43,7 +43,7 @@ const FavoritesPage = () => {
                   <Typography variant="h6" component="h2" gutterBottom>
                     {product.name}
                   </Typography>
-                  <Typography variant="body1">${product.price}</Typography>
+                  <Typography variant="body1">€{convertToEuro(product.price)}</Typography>
                   <Button
                     variant="outlined"
                     color="secondary"

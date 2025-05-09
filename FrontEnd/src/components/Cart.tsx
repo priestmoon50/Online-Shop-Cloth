@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import styles from "./Cart.module.css";
 import { CartItem } from "@/data/types";
+import { convertToEuro } from "@/utils/convertCurrency";
 
 const Cart: React.FC = () => {
   const { cart, removeItem, updateItem } = useCart();
@@ -82,7 +83,7 @@ const Cart: React.FC = () => {
                 <Box className={styles.itemDetailsList}>
                   <Typography className={styles.productDetail}>
                     <span className={styles.productDetailLabel}>{t('price')}:</span>
-                    <span className={styles.productDetailValue}>${item.price}</span>
+                    <span className={styles.productDetailValue}>€{convertToEuro(item.price)}</span>
                   </Typography>
                   <Typography className={styles.productDetail}>
                     <span className={styles.productDetailLabel}>{t('quantity')}:</span>
@@ -130,10 +131,9 @@ const Cart: React.FC = () => {
 
           {error && <Typography color="error">{error}</Typography>} {/* نمایش خطا */}
 
-          <Typography variant="h4" className={styles.totalPrice}>
-            {t('total')}: ${totalAmount.toFixed(2)}
-          </Typography> {/* نمایش قیمت کل */}
-
+            <Typography variant="h4" className={styles.totalPrice}>
+                {t('total')}: €{convertToEuro(totalAmount)}
+              </Typography>
           <Box className={styles.checkoutContainer}>
             <Link href="/checkout" passHref>
               <Button variant="contained" color="primary" className={styles.checkoutButton}>

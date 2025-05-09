@@ -19,6 +19,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
 import SignInModal from "@/components/SignInModal";
+import { convertToEuro } from "@/utils/convertCurrency";
 
 const validationSchema = yup.object().shape({
   address: yup.string().required("Address is required"),
@@ -228,7 +229,7 @@ const CheckoutPage: React.FC = () => {
               {cart.items.map((item) => (
                 <ListItem key={item.id}>
                   <ListItemText
-                    primary={`${item.name} - $${item.price} x ${item.quantity}`}
+                    primary={`${item.name} - €${convertToEuro(item.price)} x ${item.quantity}`}
                     secondary={`Size: ${item.size || "N/A"}, Color: ${
                       item.color || "N/A"
                     }`}

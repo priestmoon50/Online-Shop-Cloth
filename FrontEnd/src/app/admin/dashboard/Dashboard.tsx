@@ -4,6 +4,7 @@
 import React from 'react';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import styles from './Dashboard.module.css'; // اضافه کردن CSS Module
+import { convertToEuro } from "@/utils/convertCurrency";
 
 interface DashboardProps {
   totalOrders: number;
@@ -34,7 +35,8 @@ const Dashboard: React.FC<DashboardProps> = ({
         <Grid item xs={12} md={4}>
           <Paper className={styles.paper}>
             <Typography variant="h6">Total Sales</Typography>
-            <Typography variant="h4">${totalSales.toFixed(2)}</Typography>
+            <Typography variant="h4">€{convertToEuro(totalSales)}</Typography>
+
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>

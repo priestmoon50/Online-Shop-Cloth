@@ -161,7 +161,7 @@ export default function RegisterForm() {
 
         <Box mb={2}>
           <PhoneInput
-            country={"us"}
+            country={"de"}
             value={phone}
             onChange={(value) => setPhone("+" + value)}
             inputProps={{ name: "phone", required: true }}
