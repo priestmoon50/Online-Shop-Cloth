@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, List, ListItem, ListItemText, Skeleton } from "@mui/material";
+import { Box, Typography, Button, List, ListItem, ListItemText, Skeleton, Modal } from "@mui/material";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext"; // اضافه‌شده
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import styles from "./Cart.module.css";
@@ -9,23 +10,25 @@ import { convertToEuro } from "@/utils/convertCurrency";
 
 const Cart: React.FC = () => {
   const { cart, removeItem, updateItem } = useCart();
+  const { user } = useAuth(); // بررسی وضعیت لاگین
   const { t } = useTranslation();
-  const [error, setError] = useState<string | null>(null); // مدیریت خطا
-  const [loading, setLoading] = useState(false); // مدیریت لودینگ
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const handleUpdateItem = async (id: string, newQuantity: number) => {
     if (newQuantity < 1) {
       setError(t('error.quantityTooLow'));
       return;
     }
-    setLoading(true);  // شروع لودینگ
+    setLoading(true);
     try {
       await updateItem(id, newQuantity);
-      setLoading(false);  // پایان لودینگ
-      setError(null);  // پاک کردن خطا
+      setLoading(false);
+      setError(null);
     } catch {
       setError(t('error.updateFailed'));
-      setLoading(false); // لودینگ به پایان
+      setLoading(false);
     }
   };
 
@@ -40,11 +43,18 @@ const Cart: React.FC = () => {
     }
   };
 
+  const handleProceedToCheckout = () => {
+    if (!user) {
+      setOpenModal(true);
+    } else {
+      window.location.href = "/checkout";
+    }
+  };
+
   const totalAmount = cart.items.reduce(
     (total, item) => total + Number(item.price) * item.quantity,
     0
   );
-  
 
   return (
     <Box className={styles.cartContainer}>
@@ -63,16 +73,13 @@ const Cart: React.FC = () => {
           <List className={styles.cartList}>
             {cart.items.map((item: CartItem) => (
               <ListItem key={item.id} className={styles.cartListItem}>
-                {/* نمایش تصویر محصول */}
                 <Box>
                   <img 
                     src={item.image || "/placeholder.jpg"} 
                     alt={item.name} 
-                    style={{ width: "250px", height: "250px", objectFit: "cover", }} 
+                    style={{ width: "250px", height: "250px", objectFit: "cover" }} 
                   />
                 </Box>
-
-                {/* نمایش نام و جزئیات محصول */}
                 <ListItemText
                   primary={
                     <Typography variant="h6" className={styles.itemName}>
@@ -129,23 +136,42 @@ const Cart: React.FC = () => {
             ))}
           </List>
 
-          {error && <Typography color="error">{error}</Typography>} {/* نمایش خطا */}
+          {error && <Typography color="error">{error}</Typography>}
 
-            <Typography variant="h4" className={styles.totalPrice}>
-                {t('total')}: €{convertToEuro(totalAmount)}
-              </Typography>
+          <Typography variant="h4" className={styles.totalPrice}>
+            {t('total')}: €{convertToEuro(totalAmount)}
+          </Typography>
+
           <Box className={styles.checkoutContainer}>
-            <Link href="/checkout" passHref>
-              <Button variant="contained" color="primary" className={styles.checkoutButton}>
-                {t('proceedToCheckout')}
-              </Button>
-            </Link>
+            <Button
+              variant="contained"
+              color="primary"
+              className={styles.checkoutButton}
+              onClick={handleProceedToCheckout}
+            >
+              {t('proceedToCheckout')}
+            </Button>
+
             <Link href="/products" passHref>
               <Button variant="outlined" color="primary" className={styles.backToProductsButton}>
                 {t('backToProducts')}
               </Button>
             </Link>
           </Box>
+
+          {/* Modal برای ورود */}
+          <Modal open={openModal} onClose={() => setOpenModal(false)}>
+            <Box className={styles.modalBox}>
+              <Typography variant="h6" mb={2}>
+                {t('Please Login To Continue') || "لطفاً برای ادامه وارد حساب کاربری خود شوید"}
+              </Typography>
+              <Link href="/auth/login" passHref>
+                <Button variant="contained" color="primary">
+                  {t('go To Login') || "ورود"}
+                </Button>
+              </Link>
+            </Box>
+          </Modal>
         </>
       )}
     </Box>
