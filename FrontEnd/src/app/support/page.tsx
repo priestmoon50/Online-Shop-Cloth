@@ -24,7 +24,7 @@ export default function SupportPage() {
         className={`${styles.navbar} ${isMobile && active ? styles.active : ""}`}
         onClick={handleClick}
       >
-        Social
+        Click
         <ul className={styles.menu}>
           <li><a href="#"><Facebook style={{ color: "#1877F2" }} fontSize="large" /></a></li>
           <li><a href="https://www.instagram.com/mopastyle_/" target="_blank" rel="noopener noreferrer">
