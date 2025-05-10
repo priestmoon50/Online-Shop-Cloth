@@ -142,6 +142,16 @@ export default function LoginForm() {
         >
           {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
+
+        <Box mt={2} textAlign="center">
+          <Button
+            variant="text"
+            href="/forgot-password"
+            sx={{ color: "#90caf9", fontSize: "0.9rem" }}
+          >
+            Forgot your password?
+          </Button>
+        </Box>
       </Paper>
     </Box>
   );
