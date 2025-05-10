@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     );
 
     await resend.emails.send({
-      from: "login@resend.dev",
+      from: "noreply@mopastyle.de",
       to: email,
       subject: "Your Login Code",
       html: `<p>Your 6-digit login code is: <strong>${code}</strong></p>`,

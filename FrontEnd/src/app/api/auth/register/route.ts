@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     }
 
     await resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: "noreply@mopastyle.de",
       to: normalizedEmail,
       subject: "Verify your email address",
       html: `

@@ -16,7 +16,7 @@ export async function sendVerificationEmail({
 
   try {
     await resend.emails.send({
-      from: 'onboarding@resend.dev', // یا ایمیل تأیید شده دامنه شما
+      from: "noreply@mopastyle.de",
       to,
       subject: 'Verify your email address',
       html: `
