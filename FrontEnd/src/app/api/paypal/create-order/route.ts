@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       purchase_units: [
         {
           amount: {
-            currency_code: "USD",
+            currency_code: "EUR",
             value: parsedPrice.toFixed(2),
           },
         },
