@@ -9,7 +9,6 @@ import {
   ListItem,
   ListItemText,
   TextField,
-  CircularProgress,
 } from "@mui/material";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -65,13 +64,7 @@ const CheckoutPage: React.FC = () => {
       .then((data) => {
         if (data?.user) {
           const { firstName, lastName, email, phone, _id } = data.user;
-          setUserData({
-            firstName,
-            lastName,
-            email,
-            phone,
-            userId: _id,
-          });
+          setUserData({ firstName, lastName, email, phone, userId: _id });
         }
       })
       .catch((err) => console.error("Failed to fetch user data", err));
@@ -117,43 +110,32 @@ const CheckoutPage: React.FC = () => {
         body: JSON.stringify(orderData),
       });
 
-      if (!saveRes.ok) {
-        const err = await saveRes.json();
-        console.error("❌ Error saving order:", err);
+      const saveResult = await saveRes.json();
+
+      if (!saveRes.ok || !saveResult.insertedId) {
+        console.error("❌ Error saving order:", saveResult);
         alert("خطا در ذخیره سفارش. لطفاً دوباره تلاش کنید.");
         return;
       }
 
-      const saveResult = await saveRes.json();
-      const insertedId = saveResult.insertedId;
-
-      if (!insertedId) {
-        alert("خطا در دریافت شناسه سفارش.");
-        return;
-      }
-
-      localStorage.setItem("orderId", insertedId);
+      localStorage.setItem("orderId", saveResult.insertedId);
 
       const paypalRes = await fetch("/api/paypal/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ totalPrice: orderData.totalPrice }),
+        body: JSON.stringify({ totalPrice }),
       });
 
-      if (!paypalRes.ok) {
-        const err = await paypalRes.json();
-        console.error("❌ PayPal error:", err);
+      const paypalResult = await paypalRes.json();
+
+      if (!paypalRes.ok || !paypalResult.approvalUrl || !paypalResult.paypalOrderId) {
+        console.error("❌ PayPal error:", paypalResult);
         alert("خطا در ارتباط با درگاه پرداخت.");
         return;
       }
 
-      const { approvalUrl } = await paypalRes.json();
-      if (!approvalUrl) {
-        alert("درگاه پرداخت یافت نشد.");
-        return;
-      }
-
-      router.push(approvalUrl);
+      localStorage.setItem("paypalOrderId", paypalResult.paypalOrderId);
+      router.push(paypalResult.approvalUrl);
     } catch (error) {
       console.error("🔥 Unexpected checkout error:", error);
       alert("مشکلی در ثبت سفارش یا ارتباط با درگاه رخ داد.");
@@ -230,9 +212,7 @@ const CheckoutPage: React.FC = () => {
                 <ListItem key={item.id}>
                   <ListItemText
                     primary={`${item.name} - €${convertToEuro(item.price)} x ${item.quantity}`}
-                    secondary={`Size: ${item.size || "N/A"}, Color: ${
-                      item.color || "N/A"
-                    }`}
+                    secondary={`Size: ${item.size || "N/A"}, Color: ${item.color || "N/A"}`}
                   />
                 </ListItem>
               ))}

@@ -1,6 +1,8 @@
 // 📁 src/app/api/paypal/complete-payment/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
   try {
     const { orderId } = await req.json();
@@ -20,7 +22,6 @@ export async function POST(req: NextRequest) {
 
     const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString("base64");
 
-    // 1. گرفتن access token
     const tokenRes = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
       method: "POST",
       headers: {
@@ -38,23 +39,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Access token fetch failed" }, { status: 500 });
     }
 
-    // 2. Capture تراکنش (دقت: بدون Content-Type چون body ندارد)
-// ✅ Step 2: Capture payment
-const captureRes = await fetch(
-  `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderId}/capture`,
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json", // این خط باید اضافه شود
-      
-    },
-  }
-);
-console.log("🔴 PayPal capture response status:", captureRes.status);
-console.log("🔴 PayPal capture response headers:", JSON.stringify(captureRes.headers));
+    const captureRes = await fetch(
+      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderId}/capture`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-
+    console.log("🔴 PayPal capture response status:", captureRes.status);
+    console.log("🔴 PayPal capture response headers:", JSON.stringify(captureRes.headers));
 
     const captureText = await captureRes.text();
     console.log("📦 PayPal Capture Response Raw:", captureText);

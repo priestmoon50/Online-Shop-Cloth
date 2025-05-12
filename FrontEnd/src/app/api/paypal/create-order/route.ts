@@ -1,19 +1,27 @@
 // 📁 src/app/api/paypal/create-order/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/utils/mongo";
+
+export const runtime = "nodejs"; // جلوگیری از خطای Buffer در Edge Runtime
+
+const BASE_URL = process.env.BASE_URL;
 
 export async function POST(req: NextRequest) {
+  if (!BASE_URL) {
+    return NextResponse.json({ error: "Missing BASE_URL environment variable" }, { status: 500 });
+  }
+
   try {
     const body = await req.json();
-    console.log("📅 Received order data:", body);
-
     const { totalPrice } = body;
+
+    console.log("📦 totalPrice received:", totalPrice, "type:", typeof totalPrice);
 
     if (!totalPrice) {
       return NextResponse.json({ error: "Missing total price" }, { status: 400 });
     }
 
-    const parsedPrice = parseFloat(totalPrice);
+    const parsedPrice = typeof totalPrice === "string" ? parseFloat(totalPrice) : totalPrice;
+
     if (isNaN(parsedPrice) || parsedPrice <= 0) {
       return NextResponse.json({ error: "Invalid total price" }, { status: 400 });
     }
@@ -37,11 +45,13 @@ export async function POST(req: NextRequest) {
     });
 
     const tokenData = await tokenRes.json();
-    const accessToken = tokenData.access_token;
 
-    if (!accessToken) {
-      return NextResponse.json({ error: "PayPal access token failed" }, { status: 500 });
+    if (!tokenRes.ok || !tokenData.access_token) {
+      console.error("❌ PayPal token error:", tokenData);
+      return NextResponse.json({ error: "Failed to fetch PayPal token", details: tokenData }, { status: 500 });
     }
+
+    const accessToken = tokenData.access_token;
 
     const paypalOrder = {
       intent: "CAPTURE",
@@ -54,8 +64,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       application_context: {
-        return_url: "http://localhost:3000/confirmation",
-        cancel_url: "http://localhost:3000/cancel",
+        return_url: `${BASE_URL}/confirmation`,
+        cancel_url: `${BASE_URL}/cancel`,
       },
     };
 
@@ -68,6 +78,12 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(paypalOrder),
     });
 
+    if (!paypalRes.ok) {
+      const raw = await paypalRes.text();
+      console.error("❌ PayPal order creation failed:", raw);
+      return NextResponse.json({ error: "PayPal order creation failed", raw }, { status: 500 });
+    }
+
     const paypalData = await paypalRes.json();
     const approvalUrl = paypalData.links?.find((l: any) => l.rel === "approve")?.href;
 
@@ -77,9 +93,9 @@ export async function POST(req: NextRequest) {
 
     console.log("✅ PayPal approval URL:", approvalUrl);
 
-    return NextResponse.json({ approvalUrl });
+    return NextResponse.json({ approvalUrl, paypalOrderId: paypalData.id });
   } catch (err: any) {
-    console.error("🔥 Unexpected error in create-order:", err.message || err);
+    console.error("🔥 Unexpected error in create-order:", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

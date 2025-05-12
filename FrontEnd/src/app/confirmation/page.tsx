@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 
 export default function ConfirmationPage() {
@@ -10,14 +10,13 @@ export default function ConfirmationPage() {
   const [status, setStatus] = useState<"success" | "error" | "">("");
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { clearCart } = useCart();
 
   useEffect(() => {
-    const paypalToken = searchParams?.get("token");
+    const paypalOrderId = localStorage.getItem("paypalOrderId");
     const localOrderId = localStorage.getItem("orderId");
 
-    if (!paypalToken || !localOrderId) {
+    if (!paypalOrderId || !localOrderId) {
       setStatus("error");
       setErrorMessage("شناسه پرداخت یا سفارش پیدا نشد.");
       setLoading(false);
@@ -30,7 +29,7 @@ export default function ConfirmationPage() {
         const res = await fetch("/api/paypal/complete-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: paypalToken }),
+          body: JSON.stringify({ orderId: paypalOrderId }),
         });
 
         const resData = await res.json();
@@ -61,9 +60,9 @@ export default function ConfirmationPage() {
           throw new Error("به‌روزرسانی سفارش با مشکل مواجه شد.");
         }
 
-        // ▶ پاک‌سازی localStorage
         clearCart();
         localStorage.removeItem("orderId");
+        localStorage.removeItem("paypalOrderId");
 
         setStatus("success");
       } catch (err: any) {
@@ -90,9 +89,7 @@ export default function ConfirmationPage() {
           <Typography variant="h6" color="green" gutterBottom>
             سفارش شما با موفقیت ثبت و پرداخت شد ✅
           </Typography>
-          <Typography variant="body1">
-            سفارش شما در حال پردازش است.
-          </Typography>
+          <Typography variant="body1">سفارش شما در حال پردازش است.</Typography>
           <Button
             variant="contained"
             color="primary"
