@@ -23,55 +23,61 @@ export default function ConfirmationPage() {
       return;
     }
 
-    const confirmPayment = async () => {
-      try {
-        // ▶ مرحله ۱: تایید پرداخت در PayPal
-        const res = await fetch("/api/paypal/complete-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: paypalOrderId }),
-        });
+   const confirmPayment = async () => {
+  try {
+    const paypalOrderId = localStorage.getItem("paypalOrderId");
+    const localOrderId = localStorage.getItem("orderId");
+    const savedOrder = localStorage.getItem("savedOrderData");
 
-        const resData = await res.json();
+    if (!paypalOrderId || !localOrderId || !savedOrder) {
+      throw new Error("اطلاعات سفارش ناقص است.");
+    }
 
-        if (!res.ok || resData?.data?.status !== "COMPLETED") {
-          console.error("❌ PayPal capture failed:", resData);
-          throw new Error("تایید پرداخت با شکست مواجه شد.");
-        }
+    const orderData = JSON.parse(savedOrder);
 
-        const paypalCaptureId = resData.data.purchase_units?.[0]?.payments?.captures?.[0]?.id;
-        if (!paypalCaptureId) {
-          throw new Error("شناسه پرداخت PayPal موجود نیست.");
-        }
+    // مرحله ۱: تایید پرداخت
+    const res = await fetch("/api/paypal/complete-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: paypalOrderId }),
+    });
 
-        // ▶ مرحله ۲: به‌روزرسانی وضعیت سفارش
-        const updateRes = await fetch("/api/orders/update-payment", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId: localOrderId,
-            paypalCaptureId,
-          }),
-        });
+    const resData = await res.json();
+    if (!res.ok || resData?.data?.status !== "COMPLETED") {
+      throw new Error("تایید پرداخت با شکست مواجه شد.");
+    }
 
-        if (!updateRes.ok) {
-          const updateError = await updateRes.json();
-          console.error("❌ Order update failed:", updateError);
-          throw new Error("به‌روزرسانی سفارش با مشکل مواجه شد.");
-        }
+    const paypalCaptureId = resData.data.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+    if (!paypalCaptureId) {
+      throw new Error("شناسه پرداخت موجود نیست.");
+    }
 
-        clearCart();
-        localStorage.removeItem("orderId");
-        localStorage.removeItem("paypalOrderId");
+    // مرحله ۲: آپدیت سفارش
+    const updateRes = await fetch("/api/orders/update-payment", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: localOrderId, paypalCaptureId }),
+    });
 
-        setStatus("success");
-      } catch (err: any) {
-        setStatus("error");
-        setErrorMessage(err.message || "خطای ناشناخته‌ای رخ داده است.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!updateRes.ok) {
+      throw new Error("به‌روزرسانی سفارش با خطا مواجه شد.");
+    }
+
+
+
+    clearCart();
+    localStorage.removeItem("orderId");
+    localStorage.removeItem("paypalOrderId");
+    localStorage.removeItem("savedOrderData");
+
+    setStatus("success");
+  } catch (err: any) {
+    setStatus("error");
+    setErrorMessage(err.message || "خطای ناشناخته‌ای رخ داده است.");
+  } finally {
+    setLoading(false);
+  }
+};
 
     confirmPayment();
   }, []);
