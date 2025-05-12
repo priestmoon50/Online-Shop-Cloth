@@ -1,13 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Snackbar, Alert } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Snackbar,
+  Alert,
+  Button,
+  Box,
+} from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import OrdersList, { OrdersListProps } from './OrdersList';
 import withAdminAccess from '@/hoc/withAdminAccess';
 import Link from 'next/link';
-import { Button, Box } from '@mui/material';
-
 
 interface OrderItem {
   id: string;
@@ -29,6 +34,8 @@ interface Order {
   status: 'Pending' | 'Processing' | 'Completed';
   createdAt: string;
   totalPrice: number;
+  paid?: boolean;
+  paypalCaptureId?: string;
 }
 
 const fetchOrders = async (): Promise<Order[]> => {
@@ -83,19 +90,17 @@ const OrdersPage: React.FC = () => {
 
   return (
     <Container sx={{ mt: 6 }}>
-    {/* دکمه بازگشت به داشبورد */}
-    <Box sx={{ mb: 3 }}>
-      <Link href="/admin" passHref>
-        <Button variant="outlined" color="primary">
-          ← Back to Admin Dashboard
-        </Button>
-      </Link>
-    </Box>
-  
-    <Typography variant="h4" gutterBottom color="white">
-      مدیریت سفارش‌ها
-    </Typography>
-  
+      <Box sx={{ mb: 3 }}>
+        <Link href="/admin" passHref>
+          <Button variant="outlined" color="primary">
+            ← Back to Admin Dashboard
+          </Button>
+        </Link>
+      </Box>
+
+      <Typography variant="h4" gutterBottom color="white">
+        مدیریت سفارش‌ها
+      </Typography>
 
       <OrdersList
         orders={orderList}

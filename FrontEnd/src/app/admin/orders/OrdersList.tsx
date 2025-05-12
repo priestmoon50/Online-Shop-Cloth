@@ -13,6 +13,7 @@ import {
   Divider,
   Paper,
   Grid,
+  Chip,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { convertToEuro } from "@/utils/convertCurrency";
@@ -37,6 +38,8 @@ interface Order {
   status: "Pending" | "Processing" | "Completed";
   createdAt: string;
   totalPrice?: number;
+  paid?: boolean;
+  paypalCaptureId?: string;
 }
 
 interface OrdersListProps {
@@ -64,7 +67,6 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                 <Typography className={styles.orderId}>
                   سفارش #{order._id}
                 </Typography>
-
                 <Typography variant="caption" className={styles.orderDate}>
                   تاریخ: {dayjs(order.createdAt).format("YYYY/MM/DD - HH:mm")}
                 </Typography>
@@ -75,6 +77,20 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                 <Typography>ایمیل: {order.email}</Typography>
                 <Typography>تلفن: {order.phone}</Typography>
                 <Typography>آدرس: {order.address}</Typography>
+                <Typography>
+                  پرداخت:
+                  <Chip
+                    label={order.paid ? "پرداخت‌شده" : "پرداخت‌نشده"}
+                    color={order.paid ? "success" : "warning"}
+                    size="small"
+                    sx={{ ml: 1 }}
+                  />
+                </Typography>
+                {order.paypalCaptureId && (
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    PayPal ID: {order.paypalCaptureId}
+                  </Typography>
+                )}
               </Grid>
 
               <Grid item xs={12} sm={6} className={styles.itemsSection}>
@@ -91,6 +107,10 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                     </ListItem>
                   ))}
                 </List>
+                <Divider sx={{ my: 1 }} />
+                <Typography>
+                  مجموع قیمت: €{convertToEuro(order.totalPrice || 0)}
+                </Typography>
               </Grid>
 
               <Grid item xs={12} className={styles.statusSection}>
