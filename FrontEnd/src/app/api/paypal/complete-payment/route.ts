@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
 
     const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString("base64");
 
-    const tokenRes = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
+    const tokenRes = await fetch("https://api-m.paypal.com/v1/oauth2/token", {
+
       method: "POST",
       headers: {
         Authorization: `Basic ${auth}`,
@@ -39,8 +40,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Access token fetch failed" }, { status: 500 });
     }
 
-    const captureRes = await fetch(
-      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderId}/capture`,
+  const captureRes = await fetch(
+  `https://api-m.paypal.com/v2/checkout/orders/${orderId}/capture`,
+
       {
         method: "POST",
         headers: {
