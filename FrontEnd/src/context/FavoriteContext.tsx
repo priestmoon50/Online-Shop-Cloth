@@ -25,6 +25,7 @@ interface FavoriteContextProps {
   favorites: FavoriteState;
   addFavorite: (item: FavoriteItem) => void;
   removeFavorite: (id: string | number) => void;
+  isMounted: boolean; 
 }
 
 // Initial State
@@ -86,9 +87,13 @@ export const FavoriteProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [favorites.items, isMounted]);
 
-  const addFavorite = (item: FavoriteItem) => {
+const addFavorite = (item: FavoriteItem) => {
+  const exists = favorites.items.some((fav) => String(fav.id) === String(item.id));
+  if (!exists) {
     dispatch({ type: 'ADD_FAVORITE', payload: item });
-  };
+  }
+};
+
 
   const removeFavorite = (id: string | number) => {
     dispatch({ type: 'REMOVE_FAVORITE', payload: id });
@@ -97,7 +102,8 @@ export const FavoriteProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   if (!isMounted) return null;
 
   return (
-    <FavoriteContext.Provider value={{ favorites, addFavorite, removeFavorite }}>
+    <FavoriteContext.Provider value={{ favorites, addFavorite, removeFavorite, isMounted }}>
+
       {children}
     </FavoriteContext.Provider>
   );

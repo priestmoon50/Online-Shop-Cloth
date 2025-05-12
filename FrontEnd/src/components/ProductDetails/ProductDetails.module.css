@@ -83,3 +83,14 @@
   }
   
   
+  .mobileDivider {
+  display: none;
+  margin: 20px 0;
+  border-top: 1px solid #ccc;
+}
+
+@media (max-width: 768px) {
+  .mobileDivider {
+    display: block;
+  }
+}
