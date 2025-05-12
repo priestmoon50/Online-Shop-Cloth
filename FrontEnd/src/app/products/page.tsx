@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Box, Typography, TextField } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
 import ProductCategories from "@/components/ProductCategories";
 import ProductFilters from "@/components/ProductFilters";
@@ -18,8 +18,8 @@ const fetchProducts = async (): Promise<Product[]> => {
     return data.map((product: any) => {
       return {
         ...product,
-        id: product.id || product._id?.toString(), // 👈 همیشه یک id داشته باشه
-        price: Number(product.price), // احتیاطی برای اینکه فیلتر درست کار کنه
+        id: product.id || product._id?.toString(),
+        price: Number(product.price),
       };
     });
   }
@@ -27,11 +27,10 @@ const fetchProducts = async (): Promise<Product[]> => {
   return [];
 };
 
-
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<number[]>([1, 1000]);
-
+  const [searchTerm, setSearchTerm] = useState("");
 
   const {
     data: allProducts = [],
@@ -64,18 +63,30 @@ export default function Home() {
         product.category !== "men" &&
         product.category !== "women");
 
+    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase());
+
     return (
       isInSelectedCategory &&
       product.price >= priceRange[0] &&
-      product.price <= priceRange[1]
+      product.price <= priceRange[1] &&
+      matchesSearch
     );
   });
 
   return (
     <Box sx={{ mt: "100px", px: 2 }}>
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="جستجو بر اساس نام محصول..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </Box>
+
       <ProductCategories setSelectedCategory={setSelectedCategory} />
       <ProductFilters priceRange={priceRange} setPriceRange={setPriceRange} />
-
 
       {filteredProducts.length === 0 && (
         <Typography variant="h6" align="center">

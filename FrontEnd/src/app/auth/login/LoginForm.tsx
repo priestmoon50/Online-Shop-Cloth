@@ -151,6 +151,19 @@ export default function LoginForm() {
           >
             Forgot your password?
           </Button>
+          <Box mt={1} textAlign="center">
+<Typography variant="body2" sx={{ color: "#f3f3f3" }}>
+  Don't have an account?
+</Typography>
+  <Button
+    variant="text"
+    href="/auth/register"
+    sx={{ color: "#90caf9", fontSize: "1rem" }}
+  >
+    Sign Up
+  </Button>
+</Box>
+
         </Box>
       </Paper>
     </Box>
