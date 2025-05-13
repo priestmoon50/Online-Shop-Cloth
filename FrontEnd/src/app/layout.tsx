@@ -22,6 +22,9 @@ const Layout: React.FC<{ children: React.ReactNode; dehydratedState?: unknown }>
       <Head>
         <title>My Clothing Shop | High-Class Women&apos;s Fashion | ModaPersia</title>
         <meta name="description" content="Shop the latest high-class women&apos;s fashion at My Clothing Shop. Explore our exclusive collections now!" />
+        
+        <meta name="keywords" content="women's fashion,  mopa ,  MOPA ,  AHADI ,  Mopastyle , clothing, high-class fashion, online shopping, t-shirts, dresses, ModaPersia" />
+
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <body>
