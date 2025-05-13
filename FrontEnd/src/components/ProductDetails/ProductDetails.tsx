@@ -96,33 +96,50 @@ const toggleLike = () => {
   const handleCloseModal = () => setOpenModal(false);
 
   return (
-    <Container maxWidth="lg" className={styles.container}>
-      <Box display="flex" justifyContent="center" alignItems="center" margin="10px">
-        <Link href="/products" passHref>
-          <Button variant="outlined" className={styles.backButton} style={{ margin: "10px" }}>
-            Back to Products
-          </Button>
-        </Link>
-      </Box>
+<Container
+  maxWidth="lg"
+  disableGutters
+  sx={{
+    px: { xs: '2vw', sm: '3vw', md: 0 },
+    pt: { xs: '16px', md: '40px' }, // کنترل padding بالا
+    pb: { xs: '24px', md: '40px' }, // کنترل padding پایین
+  }}
+  className={styles.container}
+>
+
+
+
+
+<Box display="flex" justifyContent="center" alignItems="center" margin="10px">
+  <Link href="/products" passHref>
+    <Button variant="outlined" className={styles.backButton} style={{ margin: "10px" }}>
+      Back to Products
+    </Button>
+  </Link>
+</Box>
+
 
       <Grid container spacing={4}>
-  <Grid item xs={12} md={6}>
-  <Box
-    sx={{
-      transform: {
-        xs: "scale(1.5)",
-        md: "none",
-      },
-      transformOrigin: "top center",
-      mb: { xs: 16, md: 0 }, // ✅ اضافه شده: فاصله پایین فقط در موبایل
-    }}
-  >
-    <ProductImages images={imagesArray} />
-  </Box>
+<Grid
+  item
+  xs={12}
+  md={6}
+  sx={{ px: { xs: 0, md: 3 } }} // همینجا هم پدینگ رو صفر کن
+>
+
+  <ProductImages images={imagesArray} />
 </Grid>
 
 
-        <Grid item xs={12} md={6} className={styles.productInfo}>
+
+        <Grid
+  item
+  xs={12}
+  md={6}
+  className={styles.productInfo}
+  sx={{ px: { xs: 0, md: 3 } }} // حذف padding افقی در موبایل
+>
+
           <Typography variant="h4" component="h1" className={styles.productTitle}>
             {product.name}
           </Typography>
