@@ -28,7 +28,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
       <Box
         sx={{
           width: { xs: '95vw', sm: '90vw', md: '500px' },
-          maxWidth: '100%',
+          maxWidth: '135%',
         }}
       >
         <Slider {...settings}>
