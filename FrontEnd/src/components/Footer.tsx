@@ -35,7 +35,8 @@ const Footer: React.FC = () => {
       const res = await fetch('/api/contact/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, message }),
+        body: JSON.stringify({ email, message, fromSupport: true }),
+
       });
 
       const data = await res.json();
