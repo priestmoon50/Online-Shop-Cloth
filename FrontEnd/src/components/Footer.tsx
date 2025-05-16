@@ -1,12 +1,27 @@
 'use client';
 
-import React from 'react';
-import { Box, Container, Grid, Typography, Link, TextField, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Container, Grid, Typography, Link, TextField, Button, Alert } from '@mui/material';
 import { FaPaypal, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim() !== '') {
+      setSubmitted(true);
+      // اگر قرار است ایمیل را به سرور بفرستی، اینجا انجام بده
+      // reset after delay
+      setTimeout(() => {
+        setSubmitted(false);
+        setEmail('');
+      }, 4000);
+    }
+  };
 
   return (
     <Box component="footer" sx={{ bgcolor: '#333', color: '#fff', py: 4 }}>
@@ -18,8 +33,6 @@ const Footer: React.FC = () => {
               {t('aboutUsDescription')}
             </Typography>
           </Grid>
-
-        
 
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" gutterBottom>{t('stayConnected')}</Typography>
@@ -33,18 +46,25 @@ const Footer: React.FC = () => {
             <Typography variant="body2" gutterBottom>
               {t('subscribeMessage')}
             </Typography>
-            <Box component="form">
+            <Box component="form" onSubmit={handleSubscribe}>
               <TextField
-                label={t('enterEmail')} 
+                label={t('enterEmail')}
                 variant="outlined"
                 size="small"
                 fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 sx={{ bgcolor: '#fff', borderRadius: '4px', mb: 1 }}
               />
-              <Button variant="contained" color="primary" fullWidth>
+              <Button type="submit" variant="contained" color="primary" fullWidth>
                 {t('subscribe')}
               </Button>
             </Box>
+            {submitted && (
+              <Alert severity="success" sx={{ mt: 2 }}>
+               We will contact you via email.
+              </Alert>
+            )}
           </Grid>
         </Grid>
 

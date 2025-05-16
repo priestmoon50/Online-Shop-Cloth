@@ -79,7 +79,7 @@ export default function Home() {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="جستجو بر اساس نام محصول..."
+          placeholder="Search by product name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
