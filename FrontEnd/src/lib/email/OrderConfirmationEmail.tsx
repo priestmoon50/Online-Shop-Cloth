@@ -42,6 +42,17 @@ const OrderConfirmationEmail = ({
           </Text>
           <Text>We'll notify you once your items are on the way.</Text>
         </Section>
+
+        {/* ✅ LEGAL NOTE FOR GERMAN INVOICE */}
+        <Section style={{ marginTop: '30px', borderTop: '1px solid #ccc', paddingTop: '20px' }}>
+          <Text style={{ fontSize: '12px', color: '#666' }}>
+            <strong>Note:</strong> As a small business according to § 19 Abs. 1 UStG, we do not charge VAT.
+          </Text>
+          <Text style={{ fontSize: '12px', color: '#666' }}>
+            This invoice does not include VAT in accordance with German tax regulations for Kleinunternehmer.
+            Please transfer the invoice amount within 14 days to the provided IBAN.
+          </Text>
+        </Section>
       </Container>
     </Body>
   </Html>
