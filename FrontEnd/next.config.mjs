@@ -15,6 +15,22 @@ const nextConfig = {
   images: {
     domains: ['res.cloudinary.com'],
   },
+
+  async redirects() {
+    return [
+      {
+        source: '/(.*)', // هر مسیر دلخواه
+        has: [
+          {
+            type: 'host',
+            value: 'mopastyle.de',
+          },
+        ],
+        permanent: true,
+        destination: 'https://mopastyle.de/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
