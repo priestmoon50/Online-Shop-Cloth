@@ -14,6 +14,8 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: false,
+    swipe: true,      
+    touchMove: true, 
   };
 
   return (
