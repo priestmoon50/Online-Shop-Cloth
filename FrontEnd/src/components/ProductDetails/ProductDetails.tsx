@@ -110,13 +110,51 @@ const toggleLike = () => {
 
 
 
-<Box display="flex" justifyContent="center" alignItems="center" margin="10px">
+<Box
+  sx={{
+    position: {
+      xs: "absolute",
+      sm: "static",
+    },
+    top: { xs: 16 },
+    left: { xs: 16 },
+    zIndex: { xs: 10 },
+    display: "flex",
+    justifyContent: {
+      xs: "flex-start",
+      sm: "center",
+    },
+    alignItems: "center",
+    mt: {
+      xs: 0,
+      sm: -3,
+      md: -5,
+    },
+    mb: {
+      xs: 4,
+      sm: 6, // در دسکتاپ فاصله بیشتر پایین
+    },
+  }}
+>
   <Link href="/products" passHref>
-    <Button variant="outlined" className={styles.backButton} style={{ margin: "10px" }}>
-      Back to Products
+    <Button
+      variant="contained"
+      className={styles.backButton}
+      sx={{
+        backgroundColor: "#FFD700",
+        color: "#000",
+        '&:hover': {
+          backgroundColor: "#FFC107",
+        },
+      }}
+    >
+      Back 
     </Button>
   </Link>
 </Box>
+
+
+
 
 
       <Grid container spacing={4}>
