@@ -108,6 +108,12 @@
 }
 
 
+.searchInput {
+  min-width: 240px;
+  background-color: #fff;
+}
+
+
 .sectionLabel {
   position: relative;
   font-weight: 600;

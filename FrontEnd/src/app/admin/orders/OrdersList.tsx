@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import styles from './OrdersList.module.css';
 import {
   Box,
@@ -15,6 +15,7 @@ import {
   Grid,
   Chip,
   Stack,
+  TextField,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { convertToEuro } from '@/utils/convertCurrency';
@@ -54,19 +55,47 @@ interface OrdersListProps {
 
 const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
   const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredOrders = useMemo(() => {
+    if (!searchTerm) return orders;
+    const term = searchTerm.toLowerCase();
+    return orders.filter(
+      (order) =>
+        order.name.toLowerCase().includes(term) ||
+        order.email.toLowerCase().includes(term) ||
+        order.phone.toLowerCase().includes(term)
+    );
+  }, [orders, searchTerm]);
 
   return (
     <Box className={styles.tableContainer}>
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
-        {t('ordersListTitle')}
-      </Typography>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        spacing={2}
+        mb={3}
+      >
+        <Typography variant="h5" fontWeight="bold">
+          {t('ordersListTitle')}
+        </Typography>
 
-      {orders.length === 0 ? (
+        <TextField
+          size="small"
+          placeholder={t('search') || 'Search by name, email, phone'}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.searchInput}
+        />
+      </Stack>
+
+      {filteredOrders.length === 0 ? (
         <Typography variant="body1" mt={2}>
           {t('noOrders')}
         </Typography>
       ) : (
-        orders.map((order) => (
+        filteredOrders.map((order) => (
           <Paper key={order._id} className={styles.orderCard} elevation={3}>
             <Grid container spacing={3}>
               {/* Header */}
@@ -135,27 +164,26 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                     <List dense disablePadding>
                       {order.items.map((item) => (
                         <ListItem key={item.id} className={styles.itemRow}>
-              <ListItemText
-  primary={
-    <Typography className={styles.itemTitle}>
-      {item.name} × {item.quantity}
-    </Typography>
-  }
-  secondary={
-    <Box className={styles.itemDetails}>
-      <Typography variant="body2" className={styles.itemField}>
-        <strong>{t('color')}:</strong> {item.color || t('unknown')}
-      </Typography>
-      <Typography variant="body2" className={styles.itemField}>
-        <strong>{t('size')}:</strong> {item.size || t('unknown')}
-      </Typography>
-      <Typography variant="body2" className={styles.itemField}>
-        <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
-      </Typography>
-    </Box>
-  }
-/>
-
+                          <ListItemText
+                            primary={
+                              <Typography className={styles.itemTitle}>
+                                {item.name} × {item.quantity}
+                              </Typography>
+                            }
+                            secondary={
+                              <Box className={styles.itemDetails}>
+                                <Typography variant="body2" className={styles.itemField}>
+                                  <strong>{t('color')}:</strong> {item.color || t('unknown')}
+                                </Typography>
+                                <Typography variant="body2" className={styles.itemField}>
+                                  <strong>{t('size')}:</strong> {item.size || t('unknown')}
+                                </Typography>
+                                <Typography variant="body2" className={styles.itemField}>
+                                  <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
+                                </Typography>
+                              </Box>
+                            }
+                          />
                         </ListItem>
                       ))}
                     </List>
@@ -173,24 +201,21 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                   <Typography variant="body2" gutterBottom>
                     {t('orderStatus')}:
                   </Typography>
-                <Select
-  value={order.status}
-  onChange={(e) =>
-    onUpdateStatus(order._id, e.target.value as Order['status'])
-  }
-  size="small"
-  className={styles.statusSelect}
-  MenuProps={{
-    PaperProps: {
-      elevation: 4,
-      style: {
-        maxHeight: 200,
-      },
-    },
-    disableScrollLock: true, // 🔑 مهم‌ترین نکته برای جلوگیری از تکان
-  }}
->
-
+                  <Select
+                    value={order.status}
+                    onChange={(e) =>
+                      onUpdateStatus(order._id, e.target.value as Order['status'])
+                    }
+                    size="small"
+                    className={styles.statusSelect}
+                    MenuProps={{
+                      PaperProps: {
+                        elevation: 4,
+                        style: { maxHeight: 200 },
+                      },
+                      disableScrollLock: true,
+                    }}
+                  >
                     <MenuItem value="Pending">{t('pending')}</MenuItem>
                     <MenuItem value="Processing">{t('processing')}</MenuItem>
                     <MenuItem value="Completed">{t('completed')}</MenuItem>
