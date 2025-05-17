@@ -87,6 +87,27 @@
   margin-bottom: 24px;
 }
 
+
+.itemTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.itemDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.itemField {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+}
+
+
 .sectionLabel {
   position: relative;
   font-weight: 600;

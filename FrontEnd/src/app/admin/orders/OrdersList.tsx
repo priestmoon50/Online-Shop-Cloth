@@ -135,10 +135,27 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                     <List dense disablePadding>
                       {order.items.map((item) => (
                         <ListItem key={item.id} className={styles.itemRow}>
-                          <ListItemText
-                            primary={`${item.name} × ${item.quantity}`}
-                            secondary={`${t('color')}: ${item.color || t('unknown')} | ${t('size')}: ${item.size || t('unknown')} | ${t('price')}: €${convertToEuro(item.price)}`}
-                          />
+              <ListItemText
+  primary={
+    <Typography className={styles.itemTitle}>
+      {item.name} × {item.quantity}
+    </Typography>
+  }
+  secondary={
+    <Box className={styles.itemDetails}>
+      <Typography variant="body2" className={styles.itemField}>
+        <strong>{t('color')}:</strong> {item.color || t('unknown')}
+      </Typography>
+      <Typography variant="body2" className={styles.itemField}>
+        <strong>{t('size')}:</strong> {item.size || t('unknown')}
+      </Typography>
+      <Typography variant="body2" className={styles.itemField}>
+        <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
+      </Typography>
+    </Box>
+  }
+/>
+
                         </ListItem>
                       ))}
                     </List>
