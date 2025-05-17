@@ -83,7 +83,7 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
 
         <TextField
           size="small"
-          placeholder={t('search') || 'Search by name, email, phone'}
+          placeholder={t('Search by name, phone, email ') || 'Search by name, email, phone'}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className={styles.searchInput}
@@ -95,7 +95,8 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
           {t('noOrders')}
         </Typography>
       ) : (
-        filteredOrders.map((order) => (
+        filteredOrders.slice(0, 3).map((order) => (
+
           <Paper key={order._id} className={styles.orderCard} elevation={3}>
             <Grid container spacing={3}>
               {/* Header */}
