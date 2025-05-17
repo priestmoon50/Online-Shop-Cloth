@@ -48,7 +48,6 @@ const NavBar: React.FC = () => {
         sx={{
           backgroundColor: "#fff",
           px: 2,
-          fontFamily: "Roboto, sans-serif",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}

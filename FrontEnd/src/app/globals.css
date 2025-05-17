@@ -1,21 +1,20 @@
+/* --- Slick Carousel styles --- */
 @import '~slick-carousel/slick/slick.css';
 @import '~slick-carousel/slick/slick-theme.css';
 
+/* --- IRANSansX (فونت فارسی) --- */
 
-@font-face {
-  font-family: 'IranianSans';
-  src: url('/fonts/IranianSans.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  
+
+/* --- فونت بر اساس زبان بدون تغییر جهت --- */
+html[lang="fa"] body {
+  font-family: 'IRANSansX', sans-serif !important;
 }
 
-html[lang="fa"] body  * {
-  font-family: 'IranianSans', Arial, sans-serif!important;
+html:not([lang="fa"]) body {
+  font-family: 'Inter', sans-serif !important;
 }
 
-
-
+/* --- رنگ‌های پایه --- */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -28,7 +27,7 @@ html[lang="fa"] body  * {
   }
 }
 
-/* تنظیمات کلی برای حداکثر عرض صفحه */
+/* --- ساختار کلی صفحه --- */
 html,
 body {
   max-width: 100vw;
@@ -36,17 +35,14 @@ body {
   min-height: 100%;
 }
 
-/* استایل‌های عمومی برای متن و رنگ پس‌زمینه */
 body {
   margin-top: 50px;
   position: relative;
   color: var(--foreground);
   background: var(--background);
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  min-height: 100vh; 
+  min-height: 100vh;
 }
 
 body::before {
@@ -60,29 +56,51 @@ body::before {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  filter: blur(3px); /* اعمال تار کردن */
-  z-index: -1; /* این خط باعث می‌شود که تصویر محو‌شده در پس‌زمینه باقی بماند */
+  filter: blur(3px);
+  z-index: -1;
 }
 
-
-
-/* تنظیمات کلی برای padding و margin */
+/* --- تنظیمات کلی --- */
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-/* استایل لینک‌ها */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* حالت دارک‌مود برای تنظیمات کلی */
+/* --- dark mode color-scheme --- */
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
 }
 
+/* --- جلوگیری از بازنویسی فونت توسط MUI (اختیاری ولی مفید) --- */
+.MuiTypography-root {
+  font-family: inherit !important;
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/fonts/IRANSansX/IRANSansXFaNum-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/fonts/IRANSansX/IRANSansXFaNum-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/fonts/IRANSansX/IRANSansXFaNum-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}

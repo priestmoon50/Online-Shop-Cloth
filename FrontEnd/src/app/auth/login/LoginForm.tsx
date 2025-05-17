@@ -83,9 +83,14 @@ export default function LoginForm() {
           boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
         }}
       >
-        <Typography variant="h5" mb={2} sx={{ color: "#fff" }}>
-          {t("login")}
-        </Typography>
+ <Typography
+  variant="h5"
+  mb={2}
+  sx={{ color: "#fff", textAlign: "center" }}  // ← این خط اضافه شده
+>
+  {t("login")}
+</Typography>
+
 
         <TextField
           fullWidth
