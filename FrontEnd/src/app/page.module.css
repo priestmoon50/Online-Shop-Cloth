@@ -1,10 +1,16 @@
-/* کانتینر اسلایدر */
 .sliderContainer {
   position: relative;
-  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.85);
-  border: 1px solid #070f18;
-  transition: all 0.5s ease;
+  display: block;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #000000, #0a0a0a); 
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+
+
 
 /* فلش‌های عمومی */
 .customArrow {
