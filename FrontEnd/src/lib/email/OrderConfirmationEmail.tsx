@@ -1,4 +1,14 @@
-import { Html, Head, Preview, Body, Container, Section, Text } from '@react-email/components';
+import {
+  Html,
+  Head,
+  Preview,
+  Body,
+  Container,
+  Section,
+  Text,
+  Img,
+  Hr,
+} from '@react-email/components';
 import * as React from 'react';
 
 interface OrderItem {
@@ -24,27 +34,53 @@ const OrderConfirmationEmail = ({
     <Head />
     <Preview>Order Confirmation - #{orderId}</Preview>
     <Body style={{ backgroundColor: '#f6f9fc', padding: '20px' }}>
-      <Container>
-        <Section>
-          <Text style={{ fontSize: '20px', fontWeight: 'bold' }}>
-            Thank you for your order, {name}!
-          </Text>
-          <Text>Your order <strong>#{orderId}</strong> has been received.</Text>
-          <ul>
-            {items.map((item, i) => (
-              <li key={i}>
-                {item.name} × {item.quantity} – €{item.price}
-              </li>
-            ))}
-          </ul>
-          <Text>
-            <strong>Total: €{totalPrice.toFixed(2)}</strong>
-          </Text>
-          <Text>We'll notify you once your items are on the way.</Text>
+      <Container style={{ backgroundColor: '#ffffff', borderRadius: '8px', padding: '30px', fontFamily: 'Arial, sans-serif' }}>
+        {/* LOGO */}
+        <Section style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <Img src="https://yourdomain.com/logo.png" alt="MopaStyle" height="40" />
         </Section>
 
-        {/* ✅ LEGAL NOTE FOR GERMAN INVOICE */}
-        <Section style={{ marginTop: '30px', borderTop: '1px solid #ccc', paddingTop: '20px' }}>
+        {/* MAIN CONTENT */}
+        <Section>
+          <Text style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '10px' }}>
+            Thank you for your order, {name}!
+          </Text>
+          <Text style={{ marginBottom: '20px' }}>
+            Your order <strong>#{orderId}</strong> has been received.
+          </Text>
+
+          {/* ORDER ITEMS TABLE */}
+          <table width="100%" style={{ borderCollapse: 'collapse', marginBottom: '20px' }}>
+            <thead>
+              <tr>
+                <th align="left" style={{ borderBottom: '1px solid #ccc', paddingBottom: '8px' }}>Item</th>
+                <th align="center" style={{ borderBottom: '1px solid #ccc', paddingBottom: '8px' }}>Qty</th>
+                <th align="right" style={{ borderBottom: '1px solid #ccc', paddingBottom: '8px' }}>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, i) => (
+                <tr key={i}>
+                  <td style={{ padding: '8px 0' }}>{item.name}</td>
+                  <td align="center">{item.quantity}</td>
+                  <td align="right">€{item.price.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <Text style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '20px' }}>
+            Total: €{totalPrice.toFixed(2)}
+          </Text>
+
+          <Text style={{ color: '#555' }}>
+            We'll notify you once your items are on the way.
+          </Text>
+        </Section>
+
+        {/* LEGAL FOOTER */}
+        <Hr style={{ margin: '30px 0' }} />
+        <Section>
           <Text style={{ fontSize: '12px', color: '#666' }}>
             <strong>Note:</strong> As a small business according to § 19 Abs. 1 UStG, we do not charge VAT.
           </Text>
@@ -53,6 +89,11 @@ const OrderConfirmationEmail = ({
             Please transfer the invoice amount within 14 days to the provided IBAN.
           </Text>
         </Section>
+
+        {/* FOOTER */}
+        <Text style={{ fontSize: '12px', color: '#aaa', textAlign: 'center', marginTop: '30px' }}>
+          © {new Date().getFullYear()} MopaStyle. All rights reserved.
+        </Text>
       </Container>
     </Body>
   </Html>
