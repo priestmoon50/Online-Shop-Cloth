@@ -17,7 +17,7 @@ import { Product } from "@/data/types";
 import styles from "./ProductGrid.module.css";
 import { convertToEuro } from "@/utils/convertCurrency";
 
-// ✅ گرفتن محصولات از API
+
 const fetchProducts = async (): Promise<Product[]> => {
   const baseUrl =
     typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL;
@@ -73,14 +73,21 @@ export default function ProductGrid() {
     );
   }
 
-  const sliderSettings = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: isMobile ? 1.5 : isTablet ? 3 : 5,
-    slidesToScroll: 1,
-    arrows: true,
-  };
+const sliderSettings = {
+  dots: false,
+  infinite: true,
+  speed: 10000,
+  slidesToShow: isMobile ? 1.5 : isTablet ? 3 : 5,
+  slidesToScroll: 1,
+  arrows: false,
+  autoplay: true,
+  autoplaySpeed: 0,
+  cssEase: "linear",
+  rtl: true, // ← اضافه کن برای حرکت از راست به چپ
+};
+
+
+
 
   const handleProductClick = (id: string | number) => {
     if (!id) {
@@ -91,7 +98,9 @@ export default function ProductGrid() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, sm: 6, md: 1 }, py: 4 }}
+>
+
       <Slider {...sliderSettings}>
         {products.map((product) => (
           <Box
