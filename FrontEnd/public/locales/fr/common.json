@@ -18,8 +18,10 @@
   "contact": "Contact",
   "privacyPolicy": "Politique de confidentialité",
   "stayConnected": "Restez connecté",
-  "newsletter": "Newsletter",
-  "subscribeMessage": "Abonnez-vous pour recevoir les dernières tendances de la mode dans votre boîte de réception.",
+
+  "newsletter": "Contactez-nous",
+"subscribeMessage": "Si vous avez des questions ou des suggestions, envoyez-les-nous — nous sommes là pour vous répondre."
+,
   "enterEmail": "Entrez votre email",
   "subscribe": "S'abonner",
   "paymentMethods": "Méthodes de paiement",

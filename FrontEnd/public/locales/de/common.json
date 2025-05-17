@@ -18,8 +18,10 @@
   "contact": "Kontakt",
   "privacyPolicy": "Datenschutzrichtlinie",
   "stayConnected": "Verbunden bleiben",
-  "newsletter": "Newsletter",
-  "subscribeMessage": "Abonnieren Sie, um die neuesten Modetrends in Ihren Posteingang zu erhalten.",
+
+  "newsletter": "Kontakt",
+  "subscribeMessage": "Wenn Sie Fragen oder Anregungen haben, schreiben Sie uns – wir sind für Sie da.",
+
   "enterEmail": "Geben Sie Ihre E-Mail ein",
   "subscribe": "Abonnieren",
   "paymentMethods": "Zahlungsmethoden",
