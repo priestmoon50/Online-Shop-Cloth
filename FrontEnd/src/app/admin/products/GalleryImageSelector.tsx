@@ -6,8 +6,9 @@ import Image from "next/image";
 import axios from "axios";
 
 interface GalleryImageSelectorProps {
-  onAddImage: (imageUrl: string) => void;
+  onAddImage: (image: { url: string; public_id: string }) => void;
 }
+
 
 interface GalleryImage {
   url: string;
@@ -45,11 +46,12 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
     setSelectedImage(image);
   };
 
-  const handleAddImage = () => {
-    if (selectedImage) {
-      onAddImage(selectedImage.url);
-    }
-  };
+const handleAddImage = () => {
+  if (selectedImage) {
+    onAddImage(selectedImage); // ✅ حالا کل شیء را پاس می‌دیم
+  }
+};
+
 
   const handleDeleteImage = async (image: GalleryImage) => {
     try {

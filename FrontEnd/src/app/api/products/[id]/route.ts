@@ -29,20 +29,24 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   const updatedData: Product = await request.json();
 
+  // ✅ حذف فیلد _id از دادهٔ ورودی
+  const { _id, ...productWithoutId } = updatedData;
+
   const { db } = await connectToDatabase();
   const collection = db.collection<Product>('products');
 
   const result = await collection.updateOne(
     { id: numericId },
-    { $set: updatedData }
+    { $set: productWithoutId }
   );
 
   if (result.matchedCount === 0) {
     return NextResponse.json({ message: 'Product not found' }, { status: 404 });
   }
 
-  return NextResponse.json({ success: true, updated: updatedData }, { status: 200 });
+  return NextResponse.json({ success: true, updated: productWithoutId }, { status: 200 });
 }
+
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const numericId = Number(params.id);

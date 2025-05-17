@@ -22,6 +22,11 @@ interface AddProductFormProps {
   initialProduct?: Product;
 }
 
+type GalleryImage = {
+  url: string;
+  public_id: string;
+};
+
 const CATEGORY_OPTIONS = ["all", "pants", "shoes", "dress", "accessory"];
 
 const AddProductForm: React.FC<AddProductFormProps> = ({
@@ -40,7 +45,9 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
     },
   });
 
-  const [addedImages, setAddedImages] = useState<string[]>([]);
+  const [addedImages, setAddedImages] = useState<GalleryImage[]>([]);
+const [deletedImagePublicIds, setDeletedImagePublicIds] = useState<string[]>([]);
+
   const [customColor, setCustomColor] = useState<string>("");
   const [customSize, setCustomSize] = useState<string>("");
   const [availableColors, setAvailableColors] = useState<string[]>([
@@ -60,29 +67,44 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
   useEffect(() => {
     if (initialProduct) {
       reset(initialProduct);
-      setAddedImages(initialProduct.images || []);
+      setAddedImages((initialProduct.images || []).map((url) => ({ url, public_id: "" })));
     }
   }, [initialProduct, reset]);
 
-  const handleAddImage = (imageUrl: string) => {
-    setAddedImages([...addedImages, imageUrl]);
-  };
+const handleAddImage = (image: { url: string; public_id: string }) => {
+  setAddedImages([...addedImages, image]);
+};
 
-  const onSubmit = async (data: Product) => {
-    try {
-      const productData = { ...data, images: addedImages };
-      const response = initialProduct
-        ? await axios.put(`/api/products/${initialProduct.id}`, productData)
-        : await axios.post("/api/products", productData);
 
-      console.log("Product added successfully:", response.data);
-      onAddProduct(response.data);
-      reset();
-      setAddedImages([]);
-    } catch (error) {
-      console.error("Error adding product:", error);
-    }
-  };
+const onSubmit = async (data: Product) => {
+  try {
+    // حذف تصاویر حذف‌شده از Cloudinary
+    await Promise.all(
+      deletedImagePublicIds.map((public_id) =>
+        axios.delete("/api/gallery", { params: { public_id } })
+      )
+    );
+
+    // فقط URL تصاویر را ذخیره کن (اگر بک‌اند public_id نمی‌خواهد)
+    const productData = {
+      ...data,
+      images: addedImages.map((img) => img.url),
+    };
+
+    const response = initialProduct
+      ? await axios.put(`/api/products/${initialProduct.id}`, productData)
+      : await axios.post("/api/products", productData);
+
+    console.log("Product updated successfully:", response.data);
+    onAddProduct(response.data);
+    reset();
+    setAddedImages([]);
+    setDeletedImagePublicIds([]);
+  } catch (error) {
+    console.error("Error updating product:", error);
+  }
+};
+
 
   return (
     <Box
@@ -302,19 +324,24 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
           overflow: "hidden",
         }}
       >
-        <Image
-          src={image}
-          alt={`Selected Image ${index}`}
+          <Image
+        src={image.url}
+        alt={`Selected Image ${index}`}
           width={100}
           height={100}
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
         />
 
-        <Button
-          onClick={() => {
-            const updatedImages = addedImages.filter((_, i) => i !== index);
-            setAddedImages(updatedImages);
-          }}
+    <Button
+  onClick={() => {
+    const removedImage = addedImages[index];
+    if (removedImage.public_id) {
+      setDeletedImagePublicIds([...deletedImagePublicIds, removedImage.public_id]);
+    }
+    const updatedImages = addedImages.filter((_, i) => i !== index);
+    setAddedImages(updatedImages);
+  }}
+
           size="small"
           color="error"
           variant="contained"
