@@ -74,12 +74,14 @@ export default function Home() {
                 position: "relative",
               }}
             >
-              <Image
-                src={src}
-                alt={`Slide ${index + 1}`}
-                fill
-                style={{ objectFit: "cover" }}
-              />
+       <Image
+        src={src}
+        alt={`Slide ${index + 1}`}
+        fill
+        sizes="100vw"  // ← این خط مهمه!
+        style={{ objectFit: "cover" }}
+      />
+
             </Box>
           ))}
         </Slider>
