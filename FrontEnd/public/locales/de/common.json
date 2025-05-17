@@ -58,11 +58,22 @@
   "yourMessage": "Ihre Nachricht",
   "send": "Senden",
   "sending": "Wird gesendet...",
- 
+   "total": "Gesamtsumme",
+  "backToProducts": "Zurück zu den Produkten",
+  "loginToContinue": "Bitte melden Sie sich an, um fortzufahren.",
+  "goToLogin": "Zur Anmeldung",
+  "error": {
+    "quantityTooLow": "Die Menge muss mindestens 1 betragen.",
+    "updateFailed": "Artikel konnte nicht aktualisiert werden.",
+    "failedToRemoveItem": "Artikel konnte nicht entfernt werden."
+  },
   "messageRequired": "Bitte schreiben Sie eine Nachricht.",
   "sendFailed": "Senden fehlgeschlagen.",
   "messageSuccess": "Ihre Nachricht wurde erfolgreich gesendet.",
- 
+   "searchPlaceholder": "Nach Produktname suchen...",
+  "noProductsForFilters": "Keine Produkte für die gewählten Filter verfügbar.",
+  "loading": "Lädt...",
+  "errorFetchingProducts": "Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.",
   "phone": "Telefonnummer",
 
   "confirmPassword": "Passwort bestätigen",

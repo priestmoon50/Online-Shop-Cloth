@@ -19,6 +19,10 @@
   "privacyPolicy": "Privacy Policy",
   "stayConnected": "Stay Connected",
   "newsletter": "Newsletter",
+   "searchPlaceholder": "Search by product name...",
+  "noProductsForFilters": "No products available for the selected filters.",
+  "loading": "Loading...",
+  "errorFetchingProducts": "Error fetching products. Please try again later.",
   "subscribeMessage": "Subscribe to get the latest fashion trends delivered to your inbox.",
   "enterEmail": "Enter your email",
   "subscribe": "Subscribe",
@@ -48,6 +52,25 @@
   "remove": "Remove",
   "proceedToCheckout": "Proceed to Checkout",
 
+
+
+
+
+
+
+  "total": "Total",
+  "backToProducts": "Back to products",
+  "loginToContinue": "Please log in to continue.",
+  "goToLogin": "Go to Login",
+  "error": {
+    "quantityTooLow": "Quantity must be at least 1.",
+    "updateFailed": "Failed to update item.",
+    "failedToRemoveItem": "Failed to remove item."
+  },
+
+
+
+  
     "register": "Register",
   "firstName": "First Name",
   "lastName": "Last Name",

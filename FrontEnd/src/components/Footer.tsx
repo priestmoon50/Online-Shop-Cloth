@@ -187,7 +187,7 @@ const Footer: React.FC = () => {
 
         <Box mt={4} textAlign="center">
           <Typography variant="body2">
-            © 2024 My Clothing Shop | {t('allRightsReserved')}
+            © 2024 Mopastyle.de | {t('allRightsReserved')}
           </Typography>
         </Box>
       </Container>

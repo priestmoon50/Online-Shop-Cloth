@@ -163,11 +163,11 @@ const Cart: React.FC = () => {
           <Modal open={openModal} onClose={() => setOpenModal(false)}>
             <Box className={styles.modalBox}>
               <Typography variant="h6" mb={2}>
-                {t('Please Login To Continue') || "لطفاً برای ادامه وارد حساب کاربری خود شوید"}
+                {t('Please Login To Continue')}
               </Typography>
               <Link href="/auth/login" passHref>
                 <Button variant="contained" color="primary">
-                  {t('go To Login') || "ورود"}
+                  {t('goToLogin')}
                 </Button>
               </Link>
             </Box>

@@ -61,9 +61,20 @@
   "messageRequired": "Veuillez écrire un message.",
   "sendFailed": "Échec de l'envoi.",
   "messageSuccess": "Votre message a été envoyé avec succès.",
- 
+   "searchPlaceholder": "Rechercher par nom de produit...",
+  "noProductsForFilters": "Aucun produit disponible pour les filtres sélectionnés.",
+  "loading": "Chargement...",
+  "errorFetchingProducts": "Erreur lors du chargement des produits. Veuillez réessayer plus tard.",
   "phone": "Numéro de téléphone",
-
+  "total": "Total",
+  "backToProducts": "Retour aux produits",
+  "loginToContinue": "Veuillez vous connecter pour continuer.",
+  "goToLogin": "Aller à la connexion",
+  "error": {
+    "quantityTooLow": "La quantité doit être d'au moins 1.",
+    "updateFailed": "Échec de la mise à jour de l'article.",
+    "failedToRemoveItem": "Échec de la suppression de l'article."
+  },
   "confirmPassword": "Confirmer le mot de passe",
   "nameRequired": "Le prénom et le nom sont requis.",
 

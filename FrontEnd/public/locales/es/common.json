@@ -52,7 +52,15 @@
   "loginFailed": "Error al iniciar sesión.",
   "loginSuccess": "Inicio de sesión exitoso. Redirigiendo...",
   "serverError": "Error del servidor. Por favor, inténtalo de nuevo.",
-
+  "total": "Total",
+  "backToProducts": "Volver a los productos",
+  "loginToContinue": "Por favor, inicia sesión para continuar.",
+  "goToLogin": "Ir a Iniciar sesión",
+  "error": {
+    "quantityTooLow": "La cantidad debe ser al menos 1.",
+    "updateFailed": "No se pudo actualizar el artículo.",
+    "failedToRemoveItem": "No se pudo eliminar el artículo."
+  },
   "register": "Registrarse",
   "firstName": "Nombre",
   "lastName": "Apellido",
@@ -60,7 +68,10 @@
   "yourMessage": "Tu mensaje",
   "send": "Enviar",
   "sending": "Enviando...",
-
+  "searchPlaceholder": "Buscar por nombre de producto...",
+  "noProductsForFilters": "No hay productos disponibles para los filtros seleccionados.",
+  "loading": "Cargando...",
+  "errorFetchingProducts": "Error al obtener los productos. Por favor, inténtalo más tarde.",
   "messageRequired": "Por favor, escribe un mensaje.",
   "sendFailed": "No se pudo enviar.",
   "messageSuccess": "Tu mensaje se ha enviado correctamente.",
