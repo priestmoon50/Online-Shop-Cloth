@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   Box,
+  CircularProgress,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import OrdersList, { OrdersListProps } from './OrdersList';
@@ -53,6 +54,7 @@ const OrdersPage: React.FC = () => {
   });
 
   const [orderList, setOrderList] = useState<Order[]>([]);
+  const [visibleCount, setVisibleCount] = useState(5);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
@@ -87,8 +89,26 @@ const OrdersPage: React.FC = () => {
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  if (isLoading) return <div>{t('loadingOrders')}</div>;
-  if (error) return <div>{t('errorLoadingOrders')}</div>;
+  const handleLoadMore = () => setVisibleCount((prev) => prev + 5);
+
+  if (isLoading) {
+    return (
+      <Box mt={4} textAlign="center">
+        <CircularProgress />
+        <Typography mt={2}>{t('loadingOrders')}</Typography>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box mt={4} textAlign="center">
+        <Typography color="error">{t('errorLoadingOrders')}</Typography>
+      </Box>
+    );
+  }
+
+  const visibleOrders = orderList.slice(0, visibleCount);
 
   return (
     <Container sx={{ mt: 6 }}>
@@ -114,9 +134,17 @@ const OrdersPage: React.FC = () => {
       </Typography>
 
       <OrdersList
-        orders={orderList}
+        orders={visibleOrders}
         onUpdateStatus={handleUpdateStatus as OrdersListProps['onUpdateStatus']}
       />
+
+      {visibleCount < orderList.length && (
+        <Box textAlign="center" mt={3}>
+          <Button variant="contained" onClick={handleLoadMore}>
+            {t('loadMore')}
+          </Button>
+        </Box>
+      )}
 
       <Snackbar open={snackbarOpen} autoHideDuration={5000} onClose={handleSnackbarClose}>
         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
