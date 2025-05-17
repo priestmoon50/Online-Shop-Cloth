@@ -78,6 +78,24 @@
   color: #6b7280;
 }
 
+
+/* ------------------------------
+   Section Wrapper & Label
+--------------------------------*/
+.sectionWrapper {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.sectionLabel {
+  position: relative;
+  font-weight: 600;
+  color: #fc6a15; /* آبی حرفه‌ای */
+  margin-bottom: 6px;
+  padding-right: 4px;
+  text-align: center;
+}
+
 /* ------------------------------
    Status Select
 --------------------------------*/
