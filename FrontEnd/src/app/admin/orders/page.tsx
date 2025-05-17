@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import OrdersList, { OrdersListProps } from './OrdersList';
 import withAdminAccess from '@/hoc/withAdminAccess';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 interface OrderItem {
   id: string;
@@ -45,6 +46,7 @@ const fetchOrders = async (): Promise<Order[]> => {
 };
 
 const OrdersPage: React.FC = () => {
+  const { t } = useTranslation();
   const { data: orders, isLoading, error } = useQuery({
     queryKey: ['orders'],
     queryFn: fetchOrders,
@@ -73,10 +75,10 @@ const OrdersPage: React.FC = () => {
       });
 
       if (!res.ok) throw new Error();
-      setSnackbarMessage('وضعیت سفارش با موفقیت تغییر یافت');
+      setSnackbarMessage(t('orderStatusSuccess'));
       setSnackbarSeverity('success');
     } catch {
-      setSnackbarMessage('خطا در تغییر وضعیت سفارش');
+      setSnackbarMessage(t('orderStatusError'));
       setSnackbarSeverity('error');
     }
 
@@ -85,21 +87,30 @@ const OrdersPage: React.FC = () => {
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  if (isLoading) return <div>در حال بارگذاری...</div>;
-  if (error) return <div>خطا در بارگذاری سفارش‌ها</div>;
+  if (isLoading) return <div>{t('loadingOrders')}</div>;
+  if (error) return <div>{t('errorLoadingOrders')}</div>;
 
   return (
     <Container sx={{ mt: 6 }}>
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 1 }}>
         <Link href="/admin" passHref>
-          <Button variant="outlined" color="primary">
-            ← Back to Admin Dashboard
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#FFD700",
+              color: "#000",
+              '&:hover': {
+                backgroundColor: "#FFC107",
+              },
+            }}
+          >
+            ← {t('back')}
           </Button>
         </Link>
       </Box>
 
       <Typography variant="h4" gutterBottom color="white">
-        مدیریت سفارش‌ها
+        {t('adminOrders')}
       </Typography>
 
       <OrdersList

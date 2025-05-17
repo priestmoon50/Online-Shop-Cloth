@@ -18,7 +18,25 @@
   "contact": "Kontakt",
   "privacyPolicy": "Datenschutzrichtlinie",
   "stayConnected": "Verbunden bleiben",
+"ordersListTitle": "Bestellliste",
+  "noOrders": "Es liegen keine Bestellungen vor.",
+  "orderId": "Bestellung",
+  "date": "Datum",
+  "name": "Name",
 
+
+  "address": "Adresse",
+  "payment": "Zahlung",
+  "paid": "Bezahlt",
+  "notPaid": "Nicht bezahlt",
+  "items": "Artikel",
+
+  "unknown": "Unbekannt",
+  "totalPrice": "Gesamtpreis",
+  "orderStatus": "Bestellstatus",
+  "pending": "Ausstehend",
+  "processing": "In Bearbeitung",
+  "completed": "Abgeschlossen",
   "newsletter": "Kontakt",
   "subscribeMessage": "Wenn Sie Fragen oder Anregungen haben, schreiben Sie uns – wir sind für Sie da.",
 

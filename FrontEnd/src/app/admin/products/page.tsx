@@ -64,11 +64,23 @@ const ProductsPage: React.FC = () => {
       {/* دکمه بازگشت به /admin */}
       <Box sx={{ mb: 1 }}>
         <Link href="/admin" passHref>
-          <Button variant="outlined" color="primary">
-            ← Back to Admin Dashboard
+          <Button
+            variant="contained"
+            
+            sx={{
+              backgroundColor: "#FFD700",
+              color: "#000",
+              '&:hover': {
+                backgroundColor: "#FFC107",
+              },
+            }}
+          >
+            ← Back 
           </Button>
         </Link>
       </Box>
+
+
 
       <Typography color="white"  gutterBottom>
         Products Management
