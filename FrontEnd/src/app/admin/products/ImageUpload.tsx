@@ -1,9 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Button, Input, Snackbar, Alert } from "@mui/material";
+import {
+  Box,
+  Button,
+  Input,
+  Snackbar,
+  Alert,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import Image from "next/image";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 
 interface UploadResult {
   url: string;
@@ -11,6 +21,8 @@ interface UploadResult {
 }
 
 const ImageUpload: React.FC = () => {
+  const { t } = useTranslation();
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploaded, setUploaded] = useState<UploadResult | null>(null);
@@ -34,20 +46,16 @@ const ImageUpload: React.FC = () => {
 
     try {
       const response = await axios.post("/api/gallery", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       const { url, public_id } = response.data;
       setUploaded({ url, public_id });
-      setSnackbarMessage("Image uploaded successfully!");
+      setSnackbarMessage(t("upload_success"));
       setOpenSnackbar(true);
       window.dispatchEvent(new Event("gallery-updated"));
-
-      console.log("✅ Image uploaded:", { url, public_id });
     } catch (error) {
-      setSnackbarMessage("Error uploading image.");
+      setSnackbarMessage(t("upload_error"));
       setOpenSnackbar(true);
       console.error("❌ Upload error:", error);
     }
@@ -58,56 +66,144 @@ const ImageUpload: React.FC = () => {
   return (
     <Box
       sx={{
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        backgroundColor: "#f9f9f9",
+        maxWidth: "900px",
+        mx: "auto",
+        width: "100%",
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        gap: 4,
+        mt: 5,
+        px: 2,
       }}
     >
-      <Input type="file" onChange={handleFileChange} />
-
-      {previewUrl && (
-        <Box sx={{ marginTop: "20px" }}>
-          <Image
-            src={previewUrl}
-            alt="Preview"
-            width={300}
-            height={300}
-            style={{ objectFit: "cover" }}
-          />
-        </Box>
-      )}
-
-      <Button
-        onClick={handleUpload}
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: "10px" }}
-        disabled={!selectedFile}
+      {/* Left Side: Form */}
+      <Box
+        sx={{
+          flex: 1,
+          backgroundColor: "#f9f9f9",
+          border: "1px solid #ddd",
+          borderRadius: "12px",
+          padding: 3,
+        }}
       >
-        Upload Image
-      </Button>
+        <Typography variant="h6" mb={2}>
+          {t("upload_new_image")}
+        </Typography>
 
-      {uploaded && (
-        <Box sx={{ marginTop: "20px" }}>
-          <strong>Final Image URL:</strong>
-          <div>{uploaded.url}</div>
-          <strong>Public ID:</strong>
-          <div>{uploaded.public_id}</div>
-          <Image
-            src={uploaded.url}
-            alt="Uploaded"
-            width={300}
-            height={300}
-            style={{ objectFit: "cover" }}
-          />
-        </Box>
-      )}
+        <Input
+          type="file"
+          onChange={handleFileChange}
+          fullWidth
+          disableUnderline
+          sx={{
+            backgroundColor: "#fff",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            padding: "8px",
+            fontSize: "0.95rem",
+            mb: 2,
+          }}
+        />
 
-      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        {previewUrl && (
+          <Box
+            sx={{
+              mt: 2,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Image
+              src={previewUrl}
+              alt="Preview"
+              width={250}
+              height={250}
+              style={{ objectFit: "cover", borderRadius: "8px" }}
+            />
+          </Box>
+        )}
+
+        <Button
+          onClick={handleUpload}
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={!selectedFile}
+          sx={{ mt: 3, py: 1.2, fontWeight: "bold" }}
+        >
+          {t("upload_button")}
+        </Button>
+
+        {uploaded && (
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              {t("final_url")}
+            </Typography>
+            <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
+              {uploaded.url}
+            </Typography>
+
+            <Typography variant="subtitle2" mt={2}>
+              {t("public_id")}
+            </Typography>
+            <Typography variant="body2">{uploaded.public_id}</Typography>
+
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+              <Image
+                src={uploaded.url}
+                alt="Uploaded"
+                width={250}
+                height={250}
+                style={{ objectFit: "cover", borderRadius: "8px" }}
+              />
+            </Box>
+          </Box>
+        )}
+      </Box>
+
+      {/* Right Side: Instructions */}
+      <Box
+        sx={{
+          flex: 1,
+          display: { xs: "none", md: "block" },
+          paddingTop: 1,
+        }}
+      >
+        <Typography variant="h6" mb={2}>
+          {t("instructions_title")}
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#555", lineHeight: 1.8 }}>
+          {t("instructions_text")}
+        </Typography>
+
+        <ul
+          style={{
+            paddingLeft: "18px",
+            marginTop: "8px",
+            color: "#555",
+            lineHeight: "1.8",
+          }}
+        >
+          <li>{t("instruction_1")}</li>
+ <li>
+   <strong>{t("upload_button")}</strong>
+</li>
+
+          <li>{t("instruction_3")}</li>
+        </ul>
+      </Box>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
         <Alert
           onClose={handleCloseSnackbar}
-          severity={snackbarMessage.includes("successfully") ? "success" : "error"}
+          severity={snackbarMessage.includes(t("upload_success")) ? "success" : "error"}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

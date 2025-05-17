@@ -20,10 +20,37 @@ export async function POST(req: NextRequest) {
     const { name, email, phone, address, items, totalPrice } = body;
 
     if (!name || !email || !phone || !address || !items?.length || !totalPrice) {
-      console.error("❌ Missing order data");
       return NextResponse.json({ error: "Invalid order data" }, { status: 400 });
     }
 
+    // بررسی موجودی برای هر آیتم
+    for (const item of items) {
+      const product = await db.collection("products").findOne({ id: item.id });
+
+      if (!product) {
+        return NextResponse.json(
+          { error: `محصول با ID ${item.id} پیدا نشد` },
+          { status: 404 }
+        );
+      }
+
+      if ((product.stock ?? 0) < item.quantity) {
+        return NextResponse.json(
+          { error: `موجودی محصول ${product.name} کافی نیست` },
+          { status: 400 }
+        );
+      }
+    }
+
+    // کاهش موجودی محصولات پس از تأیید
+    for (const item of items) {
+      await db.collection("products").updateOne(
+        { id: item.id },
+        { $inc: { stock: -item.quantity } }
+      );
+    }
+
+    // ثبت سفارش
     const order = {
       name,
       email,

@@ -1,98 +1,99 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Typography, Button } from "@mui/material";
+import Link from "next/link";
+import axios from "axios";
+
 import ProductsList from "./ProductsList";
 import AddProductForm from "./AddProductForm";
-import { Product } from "@/data/types";
 import ImageUpload from "./ImageUpload";
 import withAdminAccess from "@/hoc/withAdminAccess";
-import axios from "axios";
-import Link from "next/link";
-import { Button } from "@mui/material";
+import { Product } from "@/data/types";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // وقتی صفحه لود می‌شه → لیست محصولات رو از API بخون
+  // دریافت لیست محصولات از API
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get<Product[]>("/api/products");
-        setProducts(res.data || []);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      }
-    };
+const fetchProducts = async () => {
+  try {
+    const res = await axios.get<Product[]>("/api/products");
+
+    // تضمین اینکه colors و sizes همیشه آرایه باشند
+    const safeProducts = (res.data || []).map((p) => ({
+      ...p,
+      colors: Array.isArray(p.colors) ? p.colors : [],
+      sizes: Array.isArray(p.sizes) ? p.sizes : [],
+    }));
+
+    setProducts(safeProducts);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+  }
+};
+
 
     fetchProducts();
   }, []);
 
-  const handleAddProduct = (product: Product) => {
-    if (editingProduct) {
-      // حالت ویرایش: جایگزین کردن محصول در لیست
+  // افزودن یا ویرایش محصول
+  const handleAddOrUpdateProduct = (product: Product, mode: "add" | "edit") => {
+    if (mode === "edit") {
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? product : p))
+        prev.map((p) =>
+          String(p.id) === String(product.id) ? product : p
+        )
       );
       setEditingProduct(null);
     } else {
-      // حالت افزودن جدید
       setProducts((prev) => [...prev, product]);
     }
   };
 
-  const handleDeleteProduct = (id: number) => {
-    setProducts((prev) => prev.filter((product) => product.id !== id));
+  // حذف محصول
+  const handleDeleteProduct = (id: string | number) => {
+    setProducts((prev) =>
+      prev.filter((product) => String(product.id) !== String(id))
+    );
   };
 
+  // ویرایش محصول
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
   };
 
-  const handleUpdateProduct = (updatedProduct: Product) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === updatedProduct.id ? updatedProduct : product
-      )
-    );
-    setEditingProduct(null);
-  };
-
   return (
-    <Container sx={{ marginTop: "50px" }}>
-      {/* دکمه بازگشت به /admin */}
-      <Box sx={{ mb: 1 }}>
-        <Link href="/admin" passHref>
-          <Button
-            variant="contained"
-            
-            sx={{
-              backgroundColor: "#FFD700",
-              color: "#000",
-              '&:hover': {
-                backgroundColor: "#FFC107",
-              },
-            }}
-          >
-            ← Back 
-          </Button>
-        </Link>
-      </Box>
- 
+    <Container maxWidth="lg" sx={{ marginTop: "50px" }}>
+      {/* دکمه بازگشت به پنل ادمین */}
+<Box sx={{ mb: 2, display: "flex", justifyContent: "center" }}>
+  <Link href="/admin" passHref>
+    <Button
+      variant="contained"
+      sx={{
+        backgroundColor: "#FFD700",
+        color: "#000",
+        fontWeight: 600,
+        px: 3,
+        borderRadius: "8px",
+        boxShadow: "none",
+        '&:hover': {
+          backgroundColor: "#FFC107",
+        },
+      }}
+    >
+      ← Back
+    </Button>
+  </Link>
+</Box>
 
-
-   
 
       {/* فرم افزودن یا ویرایش محصول */}
-      {editingProduct ? (
-        <AddProductForm
-          onAddProduct={handleUpdateProduct}
-          initialProduct={editingProduct}
-        />
-      ) : (
-        <AddProductForm onAddProduct={handleAddProduct} />
-      )}
+      <AddProductForm
+        onAddProduct={handleAddOrUpdateProduct}
+        initialProduct={editingProduct || undefined}
+      />
 
       {/* لیست محصولات */}
       <ProductsList

@@ -25,7 +25,20 @@
   "orderId": "Pedido",
   "date": "Fecha",
   "name": "Nombre",
-
+  "inStock": "En stock: {{count}} unidades",
+  "outOfStock": "Agotado",
+"upload_new_image": "Subir nueva imagen",
+  "upload_button": "Subir imagen",
+  
+  "upload_success": "¡Imagen subida con éxito!",
+  "upload_error": "Error al subir la imagen.",
+  "final_url": "URL final de la imagen:",
+  "public_id": "ID público:",
+  "instructions_title": "Instrucciones",
+  "instructions_text": "Para agregar una nueva imagen a la base de datos:",
+  "instruction_1": "Selecciona un archivo desde tu dispositivo.",
+  "instruction_2": "Haz clic en el botón Subir imagen.",
+  "instruction_3": "La imagen se almacenará y se mostrará abajo.",
   "address": "Dirección",
   "payment": "Pago",
   "paid": "Pagado",
@@ -104,6 +117,47 @@
   "passwordsMismatch": "Las contraseñas no coinciden.",
   "accountExists": "¡Ya existe una cuenta con este correo o número de teléfono! Por favor inicia sesión.",
   "emailNotVerified": "Ya estás registrado, pero no has verificado tu correo. Revisa tu bandeja de entrada.",
-  "registerFailed": "Ocurrió un error. Por favor, inténtalo de nuevo."
+  "registerFailed": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+
+
+  
+  "confirm": "Confirmar",
+  "submit": "Enviar",
+  "yes": "Sí",
+  "no": "No",
+  "product_name": "Nombre del producto",
+
+  "description": "Descripción",
+  
+  "select_colors": "Seleccionar colores",
+  "select_sizes": "Seleccionar tallas",
+  "select_category": "Seleccionar categoría",
+  "add_custom_color": "Agregar color personalizado",
+  "add_custom_size": "Agregar talla personalizada",
+  "selected_images_title": "Imágenes seleccionadas para este producto:",
+  "add_product": "Agregar producto",
+  "update_product": "Actualizar producto",
+  "category_all": "Todos",
+  "category_pants": "Pantalones",
+  "category_shoes": "Zapatos",
+  "category_dress": "Vestido",
+  "category_accessory": "Accesorios",
+    "product_id": "ID del producto",
+ 
+ "select_image_gallery": "Seleccionar una imagen de la galería",
+
+  "selected_image": "Imagen seleccionada:",
+  "add": "Añadir",
+  "stock": "Stock",
+
+  "actions": "Acciones",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "confirm_delete": "Confirmar eliminación",
+  "delete_confirm_text": "¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.",
+  "cancel": "Cancelar",
+  "yes_delete": "Sí, eliminar",
+  "delete_success": "Producto eliminado correctamente.",
+  "delete_failed": "No se pudo eliminar el producto."
 
 }

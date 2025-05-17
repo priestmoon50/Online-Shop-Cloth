@@ -23,16 +23,21 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoriteContext";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from 'react-i18next';
+
 
 const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
+const { t } = useTranslation();
 
   const { favorites, addFavorite, removeFavorite, isMounted } = useFavorites();
 const productId = String(product.id || product._id);
 const isLiked = favorites.items.some((item) => String(item.id) === productId);
+const availableStock = product.stock ?? 0;
+
 
 
   const { addItem } = useCart();
@@ -189,10 +194,20 @@ const toggleLike = () => {
             {product.description}
           </Typography>
 <div className={styles.mobileDivider}></div>
+
           <Typography variant="body2">
             <br />
             Category: {product.category || "N/A"}
           </Typography>
+<Typography variant="body2" color={availableStock === 0 ? "error" : "textSecondary"}>
+  {availableStock > 0
+    ? t('inStock', { count: availableStock })
+    : t('outOfStock')}
+</Typography>
+
+
+
+          
 <div className={styles.mobileDivider}></div>
           <Box sx={{ mt: 2, display: "flex", alignItems: "center" }}>
 
@@ -268,16 +283,30 @@ const toggleLike = () => {
               >
                 <RemoveIcon fontSize="small" />
               </IconButton>
-              <TextField
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                inputProps={{ min: 1, className: styles.inputNoArrows }}
+<TextField
+  type="number"
+  value={quantity}
+  onChange={(e) => {
+    const value = Number(e.target.value);
+    if (value > availableStock) {
+      setQuantity(availableStock);
+    } else if (value >= 1) {
+      setQuantity(value);
+    }
+  }}
+  inputProps={{ min: 1, max: availableStock, className: styles.inputNoArrows }}
+
+
+             
                 size="small"
                 style={{ width: "50px", textAlign: "center", margin: "0 8px" }}
               />
-              <IconButton
-                onClick={() => setQuantity((prev) => prev + 1)}
+<IconButton
+  onClick={() => setQuantity((prev) => Math.min(prev + 1, availableStock))}
+  disabled={quantity >= availableStock}
+
+
+
                 size="small"
                 style={{ border: "1px solid #ccc", borderRadius: "50%", backgroundColor: "#f9f9f9", padding: "4px", margin: "0 4px" }}
               >
@@ -287,9 +316,18 @@ const toggleLike = () => {
           </Box>
 
           <Box sx={{ mt: 2 }}>
-            <Button variant="contained" className={styles.backButton} color="primary" onClick={handleAddToCart}>
-              Add to Cart
-            </Button>
+<Button
+  variant="contained"
+  className={styles.backButton}
+  color="primary"
+  onClick={handleAddToCart}
+  disabled={availableStock === 0}
+>
+  {availableStock === 0 ? t('outOfStock') : t('addToCart')}
+</Button>
+
+
+
           </Box>
         </Grid>
       </Grid>

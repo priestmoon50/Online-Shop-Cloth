@@ -112,22 +112,26 @@ const OrdersPage: React.FC = () => {
 
   return (
     <Container sx={{ mt: 6 }}>
-      <Box sx={{ mb: 1 }}>
-        <Link href="/admin" passHref>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#FFD700",
-              color: "#000",
-              '&:hover': {
-                backgroundColor: "#FFC107",
-              },
-            }}
-          >
-            ← {t('back')}
-          </Button>
-        </Link>
-      </Box>
+      <Box sx={{ mb: 2, display: "flex", justifyContent: "center" }}>
+  <Link href="/admin" passHref>
+    <Button
+      variant="contained"
+      sx={{
+        backgroundColor: "#FFD700",
+        color: "#000",
+        fontWeight: 600,
+        px: 3,
+        borderRadius: "8px",
+        boxShadow: "none",
+        '&:hover': {
+          backgroundColor: "#FFC107",
+        },
+      }}
+    >
+      ← Back
+    </Button>
+  </Link>
+</Box>
 
       <Typography variant="h4" gutterBottom color="white">
         {t('adminOrders')}

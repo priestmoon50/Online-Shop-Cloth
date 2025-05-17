@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 import Image from "next/image";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
+
 
 interface GalleryImageSelectorProps {
   onAddImage: (image: { url: string; public_id: string }) => void;
@@ -20,7 +22,7 @@ const GalleryImageSelector: React.FC<GalleryImageSelectorProps> = ({
 }) => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-
+const { t } = useTranslation();
   const fetchImages = async () => {
     try {
       const response = await axios.get("/api/gallery");
@@ -72,9 +74,10 @@ const handleAddImage = () => {
         borderRadius: "8px",
       }}
     >
-      <Typography variant="h6" gutterBottom>
-        Select an Image from Gallery
-      </Typography>
+  <Typography variant="h6" gutterBottom>
+  {t("select_image_gallery")}
+</Typography>
+
 
       <Grid container spacing={1}>
         {images.map((image, index) => (
@@ -106,40 +109,42 @@ const handleAddImage = () => {
                 }}
                 onClick={() => handleImageSelect(image)}
               />
-              <Button
-                variant="contained"
-                color="error"
-                size="small"
-                sx={{ fontSize: "10px", padding: "2px 4px" }}
-                onClick={() => handleDeleteImage(image)}
-              >
-                Delete
-              </Button>
+    <Button
+  variant="contained"
+  color="error"
+  size="small"
+  sx={{ fontSize: "10px", padding: "2px 4px" }}
+  onClick={() => handleDeleteImage(image)}
+>
+  {t("delete")}
+</Button>
+
             </Box>
           </Grid>
         ))}
       </Grid>
 
-      {selectedImage && (
-        <Box mt={2}>
-          <Typography variant="h6">Selected Image:</Typography>
-          <Image
-            src={selectedImage.url}
-            alt="Selected"
-            width={300}
-            height={300}
-            style={{ borderRadius: "8px" }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddImage}
-            sx={{ marginLeft: "20px", marginTop: "10px" }}
-          >
-            Add
-          </Button>
-        </Box>
-      )}
+{selectedImage && (
+  <Box mt={2}>
+    <Typography variant="h6">{t("selected_image")}</Typography>
+    <Image
+      src={selectedImage.url}
+      alt="Selected"
+      width={300}
+      height={300}
+      style={{ borderRadius: "8px" }}
+    />
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={handleAddImage}
+      sx={{ marginLeft: "20px", marginTop: "10px" }}
+    >
+      {t("add")}
+    </Button>
+  </Box>
+)}
+
     </Box>
   );
 };

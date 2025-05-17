@@ -31,11 +31,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, onClose }) 
     i18n.changeLanguage(locale);
     localStorage.setItem('selectedLanguage', locale);
     setOpen(false);
-    if (onClose) onClose(); // اگر onClose تعریف شده باشد، آن را فراخوانی کن
+    if (onClose) onClose(); 
+    // اگر onClose تعریف شده باشد، آن را فراخوانی کن
   };
 
   return (
-    <Modal open={open} onClose={() => { setOpen(false); if (onClose) onClose(); }}>
+    <Modal open={open} onClose={() => { setOpen(false); if (onClose) onClose(); }}   disableScrollLock>
       <Box
         sx={{
           position: 'absolute',
@@ -131,6 +132,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, onClose }) 
       </Box>
     </Modal>
   );
-};
+}; 
  
 export default LanguageSelector;

@@ -1,20 +1,50 @@
+/* نمایش حرفه‌ای‌تر در دسکتاپ */
 .tableContainer {
-  height: 400px;
   width: 100%;
-  margin-top: 50px; /* فاصله 50 پیکسل از بالا */
-  background-color: rgba(255, 255, 255, 0.9); /* پس‌زمینه‌ی سفید با شفافیت */
-  border-radius: 8px; /* گرد کردن گوشه‌ها */
-  padding: 16px; /* اضافه کردن فضای داخلی */
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* اضافه کردن سایه */
+  max-width: 900px; /* محدود کردن عرض جدول در دسکتاپ */
+  margin: 32px auto;  /* وسط‌چین کردن */
+  padding: 24px 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+
+/* ستون Actions با دکمه‌های زیباتر */
+.actionsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 .actionsButton {
-  margin-right: 8px;
+  font-size: 0.85rem;
+  min-width: 80px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-transform: none;
 }
 
-@media (max-width: 600px) {
+/* برای جدول در موبایل */
+@media (max-width: 768px) {
   .tableContainer {
-    width: 100%;
-    padding: 16px;
+    padding: 12px;
+    margin-top: 24px;
+    border-radius: 10px;
+  }
+
+  .actionsButton {
+    font-size: 0.75rem;
+    min-width: 60px;
+    padding: 4px 8px;
+  }
+
+  .actionsContainer {
+    flex-direction: column;
+    gap: 4px;
   }
 }
