@@ -41,5 +41,38 @@
   "size": "Taille",
   "color": "Couleur",
   "remove": "Retirer",
-  "proceedToCheckout": "Passer à la caisse"
+  "proceedToCheckout": "Passer à la caisse",
+    "email": "Adresse e-mail",
+  "password": "Mot de passe",
+  "forgotPassword": "Mot de passe oublié ?",
+  "noAccount": "Vous n'avez pas de compte ?",
+  "invalidEmail": "Veuillez entrer une adresse e-mail valide.",
+  "enterPassword": "Veuillez entrer votre mot de passe.",
+  "loginFailed": "Échec de la connexion.",
+  "loginSuccess": "Connexion réussie. Redirection en cours...",
+  "register": "S'inscrire",
+  "firstName": "Prénom",
+  "lastName": "Nom de famille",
+"yourEmail": "Votre e-mail",
+  "yourMessage": "Votre message",
+  "send": "Envoyer",
+  "sending": "Envoi...",
+
+  "messageRequired": "Veuillez écrire un message.",
+  "sendFailed": "Échec de l'envoi.",
+  "messageSuccess": "Votre message a été envoyé avec succès.",
+ 
+  "phone": "Numéro de téléphone",
+
+  "confirmPassword": "Confirmer le mot de passe",
+  "nameRequired": "Le prénom et le nom sont requis.",
+
+  "invalidPhone": "Veuillez entrer un numéro de téléphone valide avec l'indicatif pays.",
+  "shortPassword": "Le mot de passe doit contenir au moins 6 caractères.",
+  "passwordsMismatch": "Les mots de passe ne correspondent pas.",
+  "accountExists": "Un compte avec cet e-mail ou numéro existe déjà ! Veuillez vous connecter.",
+  "emailNotVerified": "Vous êtes déjà inscrit mais n'avez pas vérifié votre e-mail. Vérifiez votre boîte de réception.",
+  "registerFailed": "Une erreur s'est produite. Veuillez réessayer.",
+  "serverError": "Erreur du serveur. Veuillez réessayer plus tard."
+
 }

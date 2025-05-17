@@ -26,6 +26,11 @@
   "allRightsReserved": "All Rights Reserved",
   "newArrivals": "New Arrivals",
   "sale": "Sale",
+    "email": "Email",
+  "password": "Password",
+  "forgotPassword": "Forgot your password?",
+  "noAccount": "Don't have an account?",
+
   "shop": "Shop",
   "collections": "Collections",
   "viewCart": "View Cart",
@@ -41,6 +46,32 @@
   "size": "Size",
   "color": "Color",
   "remove": "Remove",
-  "proceedToCheckout": "Proceed to Checkout"
+  "proceedToCheckout": "Proceed to Checkout",
+
+    "register": "Register",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+
+  "phone": "Phone Number",
+ 
+  "yourEmail": "Your email",
+  "yourMessage": "Your message",
+  "send": "Send",
+  "sending": "Sending...",
+  "invalidEmail": "Please enter a valid email address.",
+  "messageRequired": "Please write a message.",
+  "sendFailed": "Failed to send.",
+  "messageSuccess": "Your message has been sent successfully.",
+
+  "confirmPassword": "Confirm Password",
+  "nameRequired": "First name and last name are required.",
+
+  "invalidPhone": "Please enter a valid phone number including country code.",
+  "shortPassword": "Password must be at least 6 characters.",
+  "passwordsMismatch": "Passwords do not match.",
+  "accountExists": "An account with this phone or email already exists! Please login.",
+  "emailNotVerified": "You already registered but haven't verified your email. Check your inbox.",
+  "registerFailed": "Something went wrong. Please try again.",
+  "serverError": "Server error. Please try again later."
 
 }

@@ -41,5 +41,40 @@
   "size": "Talla",
   "color": "Color",
   "remove": "Eliminar",
-  "proceedToCheckout": "Proceder al pago"
+  "proceedToCheckout": "Proceder al pago",
+    "email": "Correo electrónico",
+  "password": "Contraseña",
+  "forgotPassword": "¿Olvidaste tu contraseña?",
+  "noAccount": "¿No tienes una cuenta?",
+
+  "invalidEmail": "Por favor, introduce una dirección de correo válida.",
+  "enterPassword": "Por favor, introduce tu contraseña.",
+  "loginFailed": "Error al iniciar sesión.",
+  "loginSuccess": "Inicio de sesión exitoso. Redirigiendo...",
+  "serverError": "Error del servidor. Por favor, inténtalo de nuevo.",
+
+  "register": "Registrarse",
+  "firstName": "Nombre",
+  "lastName": "Apellido",
+ "yourEmail": "Tu correo electrónico",
+  "yourMessage": "Tu mensaje",
+  "send": "Enviar",
+  "sending": "Enviando...",
+
+  "messageRequired": "Por favor, escribe un mensaje.",
+  "sendFailed": "No se pudo enviar.",
+  "messageSuccess": "Tu mensaje se ha enviado correctamente.",
+
+  "phone": "Número de teléfono",
+
+  "confirmPassword": "Confirmar contraseña",
+  "nameRequired": "Nombre y apellido son obligatorios.",
+
+  "invalidPhone": "Por favor, introduce un número de teléfono válido con código de país.",
+  "shortPassword": "La contraseña debe tener al menos 6 caracteres.",
+  "passwordsMismatch": "Las contraseñas no coinciden.",
+  "accountExists": "¡Ya existe una cuenta con este correo o número de teléfono! Por favor inicia sesión.",
+  "emailNotVerified": "Ya estás registrado, pero no has verificado tu correo. Revisa tu bandeja de entrada.",
+  "registerFailed": "Ocurrió un error. Por favor, inténtalo de nuevo."
+
 }

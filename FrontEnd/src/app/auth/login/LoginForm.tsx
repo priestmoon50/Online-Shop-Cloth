@@ -11,8 +11,10 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 export default function LoginForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,13 +28,13 @@ export default function LoginForm() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setError("Please enter a valid email address.");
+      setError(t("invalidEmail"));
       setLoading(false);
       return;
     }
 
     if (!password) {
-      setError("Please enter your password.");
+      setError(t("enterPassword"));
       setLoading(false);
       return;
     }
@@ -50,17 +52,17 @@ export default function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Login failed.");
+        setError(data.error || t("loginFailed"));
         return;
       }
 
       localStorage.setItem("token", data.token);
-      setSuccess("Login successful. Redirecting...");
+      setSuccess(t("loginSuccess"));
       setTimeout(() => {
         window.location.href = "/";
       }, 1000);
     } catch {
-      setError("Server error. Please try again.");
+      setError(t("serverError"));
     } finally {
       setLoading(false);
     }
@@ -82,12 +84,12 @@ export default function LoginForm() {
         }}
       >
         <Typography variant="h5" mb={2} sx={{ color: "#fff" }}>
-          Login
+          {t("login")}
         </Typography>
 
         <TextField
           fullWidth
-          label="Email"
+          label={t("email")}
           variant="outlined"
           type="email"
           value={email}
@@ -106,7 +108,7 @@ export default function LoginForm() {
 
         <TextField
           fullWidth
-          label="Password"
+          label={t("password")}
           variant="outlined"
           type="password"
           value={password}
@@ -140,7 +142,7 @@ export default function LoginForm() {
           onClick={handleLogin}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : "Login"}
+          {loading ? <CircularProgress size={24} /> : t("login")}
         </Button>
 
         <Box mt={2} textAlign="center">
@@ -149,21 +151,21 @@ export default function LoginForm() {
             href="/forgot-password"
             sx={{ color: "#90caf9", fontSize: "0.9rem" }}
           >
-            Forgot your password?
+            {t("forgotPassword")}
           </Button>
-          <Box mt={1} textAlign="center">
-<Typography variant="body2" sx={{ color: "#f3f3f3" }}>
-  Don't have an account?
-</Typography>
-  <Button
-    variant="text"
-    href="/auth/register"
-    sx={{ color: "#90caf9", fontSize: "1rem" }}
-  >
-    Sign Up
-  </Button>
-</Box>
 
+          <Box mt={1}>
+            <Typography variant="body2" sx={{ color: "#f3f3f3" }}>
+              {t("noAccount")}
+            </Typography>
+            <Button
+              variant="text"
+              href="/auth/register"
+              sx={{ color: "#90caf9", fontSize: "1rem" }}
+            >
+              {t("signUp")}
+            </Button>
+          </Box>
         </Box>
       </Paper>
     </Box>

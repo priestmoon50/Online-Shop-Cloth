@@ -132,5 +132,5 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, onClose }) 
     </Modal>
   );
 };
-
+ 
 export default LanguageSelector;

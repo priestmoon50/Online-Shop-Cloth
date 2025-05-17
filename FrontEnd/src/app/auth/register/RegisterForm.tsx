@@ -15,8 +15,10 @@ import {
   Alert,
 } from "@mui/material";
 import styles from "./RegisterForm.module.css";
+import { useTranslation } from "react-i18next";
 
 export default function RegisterForm() {
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -34,27 +36,27 @@ export default function RegisterForm() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!firstName.trim() || !lastName.trim()) {
-      setError("First name and last name are required.");
+      setError(t("nameRequired"));
       return;
     }
 
     if (!emailRegex.test(email.trim())) {
-      setError("Please enter a valid email address.");
+      setError(t("invalidEmail"));
       return;
     }
 
     if (!phone.startsWith("+") || phone.length < 7) {
-      setError("Please enter a valid phone number including country code.");
+      setError(t("invalidPhone"));
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError(t("shortPassword"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("passwordsMismatch"));
       return;
     }
 
@@ -77,23 +79,21 @@ export default function RegisterForm() {
 
       if (!response.ok) {
         if (result.status === "pending-verification") {
-          setError(
-            "You already registered but haven't verified your email. Check your inbox."
-          );
+          setError(t("emailNotVerified"));
           return;
         }
 
         if (response.status === 409) {
-          setError("An account with this phone or email already exists! Please login.");
+          setError(t("accountExists"));
         } else {
-          setError(result.error || "Something went wrong. Please try again.");
+          setError(result.error || t("registerFailed"));
         }
         return;
       }
 
       window.location.href = `/verify-message?email=${encodeURIComponent(email.trim().toLowerCase())}`;
     } catch (err) {
-      setError("Server error. Please try again later.");
+      setError(t("serverError"));
     } finally {
       setLoading(false);
     }
@@ -128,12 +128,12 @@ export default function RegisterForm() {
         }}
       >
         <Typography variant="h5" className={styles.header} mb={3} sx={{ color: "#fff" }}>
-          Register
+          {t("register")}
         </Typography>
 
         <TextField
           fullWidth
-          label="First Name"
+          label={t("firstName")}
           variant="outlined"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
@@ -142,7 +142,7 @@ export default function RegisterForm() {
 
         <TextField
           fullWidth
-          label="Last Name"
+          label={t("lastName")}
           variant="outlined"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
@@ -151,7 +151,7 @@ export default function RegisterForm() {
 
         <TextField
           fullWidth
-          label="Email"
+          label={t("email")}
           type="email"
           variant="outlined"
           value={email}
@@ -187,7 +187,7 @@ export default function RegisterForm() {
 
         <TextField
           fullWidth
-          label="Password"
+          label={t("password")}
           type="password"
           variant="outlined"
           value={password}
@@ -197,7 +197,7 @@ export default function RegisterForm() {
 
         <TextField
           fullWidth
-          label="Confirm Password"
+          label={t("confirmPassword")}
           type="password"
           variant="outlined"
           value={confirmPassword}
@@ -223,7 +223,7 @@ export default function RegisterForm() {
           onClick={handleRegister}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : "Register"}
+          {loading ? <CircularProgress size={24} color="inherit" /> : t("register")}
         </Button>
       </Paper>
     </Box>

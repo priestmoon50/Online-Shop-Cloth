@@ -41,5 +41,38 @@
   "size": "Größe",
   "color": "Farbe",
   "remove": "Entfernen",
-  "proceedToCheckout": "Zur Kasse gehen"
+  "proceedToCheckout": "Zur Kasse gehen",
+    "email": "E-Mail",
+  "password": "Passwort",
+  "forgotPassword": "Passwort vergessen?",
+  "noAccount": "Noch kein Konto?",
+  "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+  "enterPassword": "Bitte geben Sie Ihr Passwort ein.",
+  "loginFailed": "Anmeldung fehlgeschlagen.",
+  "loginSuccess": "Anmeldung erfolgreich. Weiterleitung...",
+  "serverError": "Serverfehler. Bitte versuchen Sie es erneut.",
+    "register": "Registrieren",
+  "firstName": "Vorname",
+  "lastName": "Nachname",
+"yourEmail": "Ihre E-Mail",
+  "yourMessage": "Ihre Nachricht",
+  "send": "Senden",
+  "sending": "Wird gesendet...",
+ 
+  "messageRequired": "Bitte schreiben Sie eine Nachricht.",
+  "sendFailed": "Senden fehlgeschlagen.",
+  "messageSuccess": "Ihre Nachricht wurde erfolgreich gesendet.",
+ 
+  "phone": "Telefonnummer",
+
+  "confirmPassword": "Passwort bestätigen",
+  "nameRequired": "Vorname und Nachname sind erforderlich.",
+
+  "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer mit Ländervorwahl ein.",
+  "shortPassword": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+  "passwordsMismatch": "Die Passwörter stimmen nicht überein.",
+  "accountExists": "Ein Konto mit dieser E-Mail oder Telefonnummer existiert bereits! Bitte anmelden.",
+  "emailNotVerified": "Sie haben sich bereits registriert, aber Ihre E-Mail nicht bestätigt. Bitte überprüfen Sie Ihren Posteingang.",
+  "registerFailed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+
 }

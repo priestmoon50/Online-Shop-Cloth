@@ -21,12 +21,12 @@ const Footer: React.FC = () => {
     setError('');
 
     if (!email || !email.includes('@')) {
-      setError('Please enter a valid email address.');
+      setError(t('invalidEmail'));
       return;
     }
 
     if (!message || message.trim().length < 3) {
-      setError('Please write a message.');
+      setError(t('messageRequired'));
       return;
     }
 
@@ -36,7 +36,6 @@ const Footer: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, message, fromSupport: true }),
-
       });
 
       const data = await res.json();
@@ -46,10 +45,10 @@ const Footer: React.FC = () => {
         setMessage('');
         setTimeout(() => setSubmitted(false), 4000);
       } else {
-        setError(data.error || 'Failed to send.');
+        setError(data.error || t('sendFailed'));
       }
     } catch (err) {
-      setError('Something went wrong. Please try again later.');
+      setError(t('serverError'));
     } finally {
       setLoading(false);
     }
@@ -76,18 +75,47 @@ const Footer: React.FC = () => {
             <Typography variant="body2" gutterBottom>
               {t('subscribeMessage')}
             </Typography>
-            <Box component="form" onSubmit={handleSubscribe}>
+           <Box component="form" onSubmit={handleSubscribe}>
               <TextField
-                label="Your email"
+                label={t('yourEmail')}
                 variant="outlined"
                 size="small"
                 fullWidth
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                sx={{ bgcolor: '#fff', borderRadius: '4px', mb: 1 }}
+                sx={{
+                  mb: 2,
+                  borderRadius: 1,
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  '& .MuiInputBase-input': {
+                    color: '#fff',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#ccc',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#fff',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#666',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#fff',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#fff',
+                    },
+                  },
+                  '& input::placeholder': {
+                    color: '#aaa',
+                    opacity: 1,
+                  },
+                }}
               />
+
               <TextField
-                label="Your message"
+                label={t('yourMessage')}
                 variant="outlined"
                 size="small"
                 fullWidth
@@ -95,12 +123,45 @@ const Footer: React.FC = () => {
                 rows={3}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                sx={{ bgcolor: '#fff', borderRadius: '4px', mb: 1 }}
+                sx={{
+                  mb: 2,
+                  borderRadius: 1,
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  '& .MuiInputBase-input': {
+                    color: '#fff',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#ccc',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#fff',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#666',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#fff',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#fff',
+                    },
+                  },
+                }}
               />
-              <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
-                {loading ? 'Sending...' : 'Send'}
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={loading}
+                sx={{ mt: 1 }}
+              >
+                {loading ? t('sending') : t('send')}
               </Button>
             </Box>
+
 
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>
@@ -109,7 +170,7 @@ const Footer: React.FC = () => {
             )}
             {submitted && (
               <Alert severity="success" sx={{ mt: 2 }}>
-                Your message has been sent successfully.
+                {t('messageSuccess')}
               </Alert>
             )}
           </Grid>
