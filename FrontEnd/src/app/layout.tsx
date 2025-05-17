@@ -24,7 +24,8 @@ const Layout: React.FC<{ children: React.ReactNode; dehydratedState?: unknown }>
   const bodyClass = i18n.language === 'fa' ? 'font-fa' : 'font-latin';
 
   return (
-    <html lang={i18n.language === 'fa' ? 'fa' : 'en'}>
+   <html lang={i18n.language === 'fa' ? 'fa' : 'en'} dir="ltr">
+
       <Head>
         <title>MopaStyle | High-Class Women's Fashion</title>
         <meta
