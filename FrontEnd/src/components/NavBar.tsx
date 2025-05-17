@@ -53,93 +53,107 @@ const NavBar: React.FC = () => {
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
-        <Toolbar
-          sx={{
-            minHeight: NAVBAR_HEIGHT,
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          {isMobile && (
-            <IconButton
-              edge="start"
-              onClick={() => setDrawerOpen(!drawerOpen)}
-              sx={{ ml: isMobile ? "-26px" : 0 }}
-            >
-              <MenuIcon sx={{ color: "#000" }} />
-            </IconButton>
-          )}
-
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              justifyContent: isMobile ? "center" : "flex-start",
-              alignItems: "center",
-            }}
-          >
-            <Link href="/" passHref>
-            <Box sx={{ cursor: "pointer", ml: isMobile ? "-28px" : 0 }}>
-
-                <Image
-                  src="/images/Logo.png"
-                  alt="Logo"
-                  width={120}
-                  height={40}
-                  priority
-                />
-              </Box>
-            </Link>
-          </Box>
-
-          {!isMobile && (
-            <Box sx={{ display: "flex", gap: 2 }}>
-              {["newArrivals", "sale", "shop"].map((key) => (
-                <Link key={key} href="/products" passHref>
-                  <Button
-                    sx={{
-                      color: "#000",
-                      "&:hover": {
-                        borderBottom: "2px solid #3f51b5",
-                        transition: "border-bottom 0.3s ease",
-                      },
-                    }}
-                  >
-                    {t(key)}
-                  </Button>
-                </Link>
-              ))}
-            </Box>
-          )}
-
-<Box
+     <Toolbar
   sx={{
-    flexShrink: 0,
+    minHeight: NAVBAR_HEIGHT,
     display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    ml: isMobile ? 1 : 0,     // فاصله کمی از وسط در موبایل
-    mr: isMobile ? "-16px" : 0 // نزدیک‌تر شدن به راست در موبایل
+    justifyContent: "space-between",
   }}
 >
+  {/* لوگو / منو (سمت چپ) */}
+  <Box
+    sx={{
+      flex: 1,
+      display: "flex",
+      alignItems: "center",
+    }}
+  >
+    {isMobile && (
+      <IconButton
+        edge="start"
+        onClick={() => setDrawerOpen(!drawerOpen)}
+        sx={{ ml: "-26px" }}
+      >
+        <MenuIcon sx={{ color: "#000" }} />
+      </IconButton>
+    )}
 
-            <Link href="/cart" passHref>
-              <IconButton sx={{ ml: 0 }}>
-                <Badge
-                  badgeContent={cart.items.length}
-                  color="error"
-                  overlap="circular"
-                >
-                  <ShoppingCartIcon sx={{ fontSize: 24, color: "#000" }} />
-                </Badge>
-              </IconButton>
-            </Link>
-            <IconButton onClick={toggleLanguageModal} sx={{ ml: 0 }}>
-              <LanguageIcon sx={{ fontSize: 24, color: "#000" }} />
-            </IconButton>
-            <AccountMenu />
-          </Box>
-        </Toolbar>
+<Link href="/" passHref>
+  <Box sx={{ cursor: "pointer", ml: isMobile ? 2 : 0 }}>
+    <Image
+      src="/images/Logo.png"
+      alt="Logo"
+      width={120}
+      height={40}
+      priority
+    />
+  </Box>
+</Link>
+
+  </Box>
+
+  {/* لینک‌های وسط (فقط دسکتاپ) */}
+  {!isMobile && (
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        justifyContent: "center",
+        gap: 4,
+      }}
+    >
+      {[
+        { key: "shop", href: "/products" },
+        { key: "newArrivals", href: "/products" },
+        { key: "sale", href: "/products" },
+      ].map(({ key, href }) => (
+        <Link key={key} href={href} passHref>
+          <Button
+            sx={{
+              color: "#000",
+              textTransform: "capitalize", // ✅ حروف اول بزرگ
+              fontWeight: 500,
+              fontSize: "1rem",
+              "&:hover": {
+                borderBottom: "2px solid #3f51b5",
+                transition: "border-bottom 0.3s ease",
+              },
+            }}
+          >
+            {t(key)}
+          </Button>
+        </Link>
+      ))}
+    </Box>
+  )}
+
+  {/* آیکون‌ها سمت راست */}
+  <Box
+    sx={{
+      flex: 1,
+      display: "flex",
+      justifyContent: "flex-end",
+      alignItems: "center",
+    }}
+  >
+    <Link href="/cart" passHref>
+      <IconButton>
+        <Badge
+          badgeContent={cart.items.length}
+          color="error"
+          overlap="circular"
+        >
+          <ShoppingCartIcon sx={{ fontSize: 24, color: "#000" }} />
+        </Badge>
+      </IconButton>
+    </Link>
+    <IconButton onClick={toggleLanguageModal}>
+      <LanguageIcon sx={{ fontSize: 24, color: "#000" }} />
+    </IconButton>
+    <AccountMenu />
+  </Box>
+</Toolbar>
+
       </AppBar>
 
       {isMobile && (
@@ -157,7 +171,7 @@ const NavBar: React.FC = () => {
             },
           }}
         >
-          <List>
+         <List sx={{ mt: 2 }}>
             {[
               { label: t("newArrivals"), href: "/products" },
               { label: t("collections"), href: "/products" },
