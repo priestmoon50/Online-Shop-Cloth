@@ -156,38 +156,48 @@ const NavBar: React.FC = () => {
       </AppBar>
 
       {isMobile && (
-        <Drawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={toggleDrawer(false)}
-          PaperProps={{
-            sx: {
-              backgroundColor: "#fff",
-              width: "70%",
-              boxShadow: 3,
-              height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
-              mt: `${NAVBAR_HEIGHT}px`,
-            },
-          }}
-        >
-         <List sx={{ mt: 2 }}>
-            {[
-              { label: t("newArrivals"), href: "/products" },
-              { label: t("collections"), href: "/products" },
-              { label: t("shop"), href: "/products" },
-              { label: t("viewCart"), href: "/cart" },
-            ].map(({ label, href }, index, array) => (
-              <React.Fragment key={href}>
-                <Link href={href} passHref legacyBehavior>
-                  <ListItemButton component="a" sx={{ px: 3 }}>
-                    <ListItemText primary={label} />
-                  </ListItemButton>
-                </Link>
-                {index < array.length - 1 && <Divider />}
-              </React.Fragment>
-            ))}
-          </List>
-        </Drawer>
+   <Drawer
+  anchor="left"
+  open={drawerOpen}
+  onClose={toggleDrawer(false)}
+  PaperProps={{
+    sx: {
+      backgroundColor: "#fff",
+      width: "70%",
+      boxShadow: 3,
+      height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
+      mt: `${NAVBAR_HEIGHT}px`,
+    },
+  }}
+>
+  <List sx={{ mt: 2 }}>
+    {[
+      { key: "newArrivals", label: t("newArrivals"), href: "/products" },
+      { key: "collections", label: t("collections"), href: "/products" },
+      { key: "shop", label: t("shop"), href: "/products" },
+      { key: "viewCart", label: t("viewCart"), href: "/cart" },
+    ].map(({ key, label, href }, index, array) => (
+      <React.Fragment key={key}>
+        <Link href={href} passHref legacyBehavior>
+          <ListItemButton component="a" sx={{ px: 3 }}>
+            <ListItemText
+              primary={label}
+              primaryTypographyProps={{
+                sx: {
+                  fontFamily: "inherit",
+                  fontSize: "1rem",
+                  fontWeight: 500,
+                },
+              }}
+            />
+          </ListItemButton>
+        </Link>
+        {index < array.length - 1 && <Divider />}
+      </React.Fragment>
+    ))}
+  </List>
+</Drawer>
+
       )}
 
       <LanguageSelector

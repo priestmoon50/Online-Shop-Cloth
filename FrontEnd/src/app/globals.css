@@ -2,16 +2,45 @@
 @import '~slick-carousel/slick/slick.css';
 @import '~slick-carousel/slick/slick-theme.css';
 
-/* --- IRANSansX (فونت فارسی) --- */
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap');
 
 
-/* --- فونت بر اساس زبان بدون تغییر جهت --- */
-html[lang="fa"] body {
-  font-family: 'IRANSansX', sans-serif !important;
+
+/* --- IRANSansX (فونت فارسی - Local) --- */
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/fonts/IRANSansX/IRANSansXFaNum-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/fonts/IRANSansX/IRANSansXFaNum-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/fonts/IRANSansX/IRANSansXFaNum-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
 }
 
-html:not([lang="fa"]) body {
-  font-family: 'Inter', sans-serif !important;
+/* --- اعمال فونت بر اساس زبان بدون تغییر جهت (بدون direction) --- */
+html[lang='fa'] body {
+  font-family: 'IRANSansX', sans-serif !important;
+}
+html[lang='de'],
+html[lang='es'],
+html[lang='fr'],
+html[lang='en'] {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+/* --- جلوگیری از بازنویسی توسط MUI یا سایر کتابخانه‌ها --- */
+.MuiTypography-root {
+  font-family: inherit !important;
 }
 
 /* --- رنگ‌های پایه --- */
@@ -19,7 +48,6 @@ html:not([lang="fa"]) body {
   --background: #ffffff;
   --foreground: #171717;
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -34,7 +62,6 @@ body {
   overflow-x: hidden;
   min-height: 100%;
 }
-
 body {
   margin-top: 50px;
   position: relative;
@@ -44,9 +71,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
-
 body::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -66,41 +92,12 @@ body::before {
   padding: 0;
   margin: 0;
 }
-
 a {
   color: inherit;
   text-decoration: none;
 }
-
-/* --- dark mode color-scheme --- */
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
-}
-
-/* --- جلوگیری از بازنویسی فونت توسط MUI (اختیاری ولی مفید) --- */
-.MuiTypography-root {
-  font-family: inherit !important;
-}
-
-@font-face {
-  font-family: 'IRANSansX';
-  src: url('/fonts/IRANSansX/IRANSansXFaNum-Light.woff2') format('woff2');
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IRANSansX';
-  src: url('/fonts/IRANSansX/IRANSansXFaNum-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IRANSansX';
-  src: url('/fonts/IRANSansX/IRANSansXFaNum-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-display: swap;
 }

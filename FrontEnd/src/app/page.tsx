@@ -16,11 +16,11 @@ interface ArrowProps {
 }
 
 // Custom Left Arrow
+// Custom Left Arrow
 const PreviousArrow: React.FC<ArrowProps> = ({ onClick }) => (
   <div
-    className={styles.customArrow}
+    className={`${styles.customArrow} ${styles.leftArrow}`}
     onClick={onClick}
-    style={{ left: "-60px" }}
   >
     <ArrowBackIosIcon className={styles.arrowIcon} />
   </div>
@@ -29,9 +29,8 @@ const PreviousArrow: React.FC<ArrowProps> = ({ onClick }) => (
 // Custom Right Arrow
 const NextArrow: React.FC<ArrowProps> = ({ onClick }) => (
   <div
-    className={styles.customArrow}
+    className={`${styles.customArrow} ${styles.rightArrow}`}
     onClick={onClick}
-    style={{ right: "-60px" }}
   >
     <ArrowForwardIosIcon className={styles.arrowIcon} />
   </div>
