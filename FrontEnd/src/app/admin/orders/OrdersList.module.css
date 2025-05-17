@@ -1,60 +1,121 @@
 /* ------------------------------
-   Container Styles
---------------------------------*/
-.tableContainer {
-  width: 100%;
-  margin-top: 40px;
-  padding: 16px;
-}
-
-/* ------------------------------
-   Order Card Styles
+   Card Container
 --------------------------------*/
 .orderCard {
-  background-color: var(--theme-bg, #ffffff);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-  padding: 24px;
-  margin-bottom: 24px;
-  transition: box-shadow 0.2s ease;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  padding: 28px;
+  margin-bottom: 32px;
+  transition: box-shadow 0.3s ease;
+  border: 1px solid #e5e7eb;
 }
 
 .orderCard:hover {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
 }
 
 /* ------------------------------
-   Order Details
+   Header
 --------------------------------*/
 .orderId {
-  font-weight: bold;
-  color: var(--theme-primary, #333333);
-  margin-bottom: 4px;
-  display: block;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
 }
 
-.orderInfo {
-  font-size: 14px;
-  color: var(--theme-text, #444444);
+.orderDate {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
 }
 
 /* ------------------------------
-   Status Selector
+   InfoBox Panels
+--------------------------------*/
+.infoBox {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  height: 100%;
+}
+
+/* ------------------------------
+   Field Typography
+--------------------------------*/
+.field {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.field strong {
+  color: #111827;
+}
+
+/* ------------------------------
+   Item Row
+--------------------------------*/
+.itemRow {
+  padding: 6px 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemRow .MuiListItemText-primary {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.itemRow .MuiListItemText-secondary {
+  font-size: 13.5px;
+  color: #6b7280;
+}
+
+/* ------------------------------
+   Status Select
 --------------------------------*/
 .statusSelect {
-  margin-top: 12px;
-  min-width: 160px;
+  min-width: 200px;
+  margin-top: 10px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 2px 6px;
 }
 
 /* ------------------------------
-   Responsive Styles
+   Responsive Design
 --------------------------------*/
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .orderCard {
+    padding: 20px;
+  }
+
+  .infoBox {
     padding: 16px;
+  }
+
+  .field {
+    font-size: 14px;
+  }
+
+  .orderId {
+    font-size: 1rem;
+  }
+
+  .orderDate {
+    font-size: 0.9rem;
   }
 
   .statusSelect {
     width: 100%;
+    min-width: unset;
   }
 }
