@@ -1,0 +1,54 @@
+.customArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  background-color: #051b33;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.customArrow:hover {
+  background-color: #ee05c7;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.arrowIcon {
+  font-size: 16px;
+}
+
+.leftArrow {
+  left: 10px;
+}
+
+.rightArrow {
+  right: 10px;
+}
+
+
+@media (max-width: 600px) {
+  .customArrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .arrowIcon {
+    font-size: 14px;
+  }
+
+  .leftArrow {
+    left: 6px;
+  }
+
+  .rightArrow {
+    right: 6px;
+  }
+}
