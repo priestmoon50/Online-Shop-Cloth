@@ -34,7 +34,7 @@ const AdminDashboard: React.FC = () => {
             </Suspense>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6}> 
           <Paper elevation={3} style={{ padding: "16px" }}>
             <Typography variant="h6">Products Management</Typography>
             <Link href="/admin/products" passHref>

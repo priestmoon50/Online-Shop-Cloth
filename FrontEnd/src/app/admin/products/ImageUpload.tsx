@@ -43,6 +43,8 @@ const ImageUpload: React.FC = () => {
       setUploaded({ url, public_id });
       setSnackbarMessage("Image uploaded successfully!");
       setOpenSnackbar(true);
+      window.dispatchEvent(new Event("gallery-updated"));
+
       console.log("✅ Image uploaded:", { url, public_id });
     } catch (error) {
       setSnackbarMessage("Error uploading image.");

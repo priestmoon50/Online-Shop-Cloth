@@ -79,12 +79,10 @@ const ProductsPage: React.FC = () => {
           </Button>
         </Link>
       </Box>
+ 
 
 
-
-      <Typography color="white"  gutterBottom>
-        Products Management
-      </Typography>
+   
 
       {/* فرم افزودن یا ویرایش محصول */}
       {editingProduct ? (
