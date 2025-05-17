@@ -91,24 +91,40 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       className={styles.formContainer}
     >
       {/* Product Name */}
-      <Controller
-        name="name"
-        control={control}
-        rules={{ required: "Product name is required" }}
-        render={({ field }) => (
-          <TextField {...field} label="Product Name" required fullWidth />
-        )}
-      />
+<Grid container spacing={2}>
+  <Grid item xs={12} md={6}>
+    <Controller
+      name="name"
+      control={control}
+      rules={{ required: "Product name is required" }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="Product Name"
+          required
+          fullWidth
+        />
+      )}
+    />
+  </Grid>
 
-      {/* Price */}
-      <Controller
-        name="price"
-        control={control}
-        rules={{ required: "Price is required", min: 0 }}
-        render={({ field }) => (
-          <TextField {...field} label="Price" type="number" required fullWidth />
-        )}
-      />
+  <Grid item xs={12} md={6}>
+    <Controller
+      name="price"
+      control={control}
+      rules={{ required: "Price is required", min: 0 }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="Price"
+          type="number"
+          required
+          fullWidth
+        />
+      )}
+    />
+  </Grid>
+</Grid>
 
       {/* Description */}
       <Controller
@@ -275,19 +291,50 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       {/* Selected Images */}
       <Box sx={{ marginTop: "20px" }}>
         <Typography variant="h6">Selected Images for this Product:</Typography>
-        <Grid container spacing={2}>
-          {addedImages.map((image, index) => (
-            <Grid item xs={2} key={index}>
-              <Image
-                src={image}
-                alt={`Selected Image ${index}`}
-                width={100}
-                height={100}
-                style={{ objectFit: "cover" }}
-              />
-            </Grid>
-          ))}
-        </Grid>
+<Grid container spacing={2}>
+  {addedImages.map((image, index) => (
+    <Grid item xs={6} sm={4} md={2} key={index}>
+      <Box
+        sx={{
+          position: "relative",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          overflow: "hidden",
+        }}
+      >
+        <Image
+          src={image}
+          alt={`Selected Image ${index}`}
+          width={100}
+          height={100}
+          style={{ objectFit: "cover", width: "100%", height: "100%" }}
+        />
+
+        <Button
+          onClick={() => {
+            const updatedImages = addedImages.filter((_, i) => i !== index);
+            setAddedImages(updatedImages);
+          }}
+          size="small"
+          color="error"
+          variant="contained"
+          sx={{
+            position: "absolute",
+            top: 4,
+            right: 4,
+            minWidth: "auto",
+            padding: "2px 6px",
+            fontSize: "0.7rem",
+            lineHeight: 1,
+          }}
+        >
+          ✕
+        </Button>
+      </Box>
+    </Grid>
+  ))}
+</Grid>
+
       </Box>
 
       {/* Submit Button */}
