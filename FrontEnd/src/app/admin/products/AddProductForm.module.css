@@ -1,22 +1,33 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 50px; /* فاصله 50 پیکسل از بالا */
-  background-color: rgba(255, 255, 255, 0.9); /* پس‌زمینه‌ی سفید با شفافیت */
-  border-radius: 8px; /* گرد کردن گوشه‌های فرم */
-  padding: 16px; /* فضای داخلی */
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* اضافه کردن سایه */
+  gap: 24px;
+  margin-top: 50px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+/* دکمه اصلی افزودن محصول */
 .buttonClass {
   width: 100%;
-  max-width: 200px;
+  max-width: 220px;
   align-self: center;
+  margin-top: 24px;
 }
 
+/* بهبود ظاهر فرم در موبایل */
 @media (max-width: 600px) {
   .formContainer {
     padding: 16px;
+    gap: 16px;
+  }
+
+  .buttonClass {
+    max-width: 100%;
   }
 }

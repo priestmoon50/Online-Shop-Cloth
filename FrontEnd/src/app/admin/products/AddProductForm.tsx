@@ -21,6 +21,7 @@ interface AddProductFormProps {
   onAddProduct: (product: Product) => void;
   initialProduct?: Product;
 }
+
 const CATEGORY_OPTIONS = ["all", "pants", "shoes", "dress", "accessory"];
 
 const AddProductForm: React.FC<AddProductFormProps> = ({
@@ -31,7 +32,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
     defaultValues: {
       name: "",
       price: undefined,
-
       description: "",
       colors: [],
       sizes: [],
@@ -70,18 +70,13 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
 
   const onSubmit = async (data: Product) => {
     try {
-      const productData = {
-        ...data,
-        images: addedImages,
-   
-      };
-
+      const productData = { ...data, images: addedImages };
       const response = initialProduct
         ? await axios.put(`/api/products/${initialProduct.id}`, productData)
         : await axios.post("/api/products", productData);
 
       console.log("Product added successfully:", response.data);
-      onAddProduct(response.data); // ارسال به لیست اصلی محصولات
+      onAddProduct(response.data);
       reset();
       setAddedImages([]);
     } catch (error) {
@@ -95,127 +90,161 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       onSubmit={handleSubmit(onSubmit)}
       className={styles.formContainer}
     >
+      {/* Product Name */}
       <Controller
         name="name"
         control={control}
         rules={{ required: "Product name is required" }}
         render={({ field }) => (
-          <TextField {...field} label="Product Name" required />
+          <TextField {...field} label="Product Name" required fullWidth />
         )}
       />
 
+      {/* Price */}
       <Controller
         name="price"
         control={control}
         rules={{ required: "Price is required", min: 0 }}
         render={({ field }) => (
-          <TextField {...field} label="Price" type="number" required />
+          <TextField {...field} label="Price" type="number" required fullWidth />
         )}
       />
 
+      {/* Description */}
       <Controller
         name="description"
         control={control}
         render={({ field }) => (
-          <TextField {...field} label="Description" multiline rows={4} />
+          <TextField {...field} label="Description" multiline rows={4} fullWidth />
         )}
       />
 
-      {/* انتخاب رنگ‌ها */}
-      <Controller
-        name="colors"
-        control={control}
-        render={({ field }) => (
-          <Select
-            {...field}
-            multiple
-            value={field.value || []}
-            onChange={(event) => field.onChange(event.target.value as string[])}
-            renderValue={(selected) => (selected as string[]).join(", ")}
+      {/* Colors + Custom Color */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+   <Controller
+  name="colors"
+  control={control}
+  render={({ field }) => (
+    <Select
+      {...field}
+      fullWidth
+      multiple
+      displayEmpty
+      value={field.value || []}
+      onChange={(event) => field.onChange(event.target.value as string[])}
+      renderValue={(selected) =>
+        selected.length === 0 ? "Select colors" : (selected as string[]).join(", ")
+      }
+      MenuProps={{ disableScrollLock: true }}
+    >
+      {availableColors.map((color) => (
+        <MenuItem key={color} value={color}>
+          <Box
+            sx={{
+              display: "inline-block",
+              width: "20px",
+              height: "20px",
+              backgroundColor: color.toLowerCase(),
+              marginRight: "8px",
+              borderRadius: "50%",
+              border: "1px solid #ddd",
+            }}
+          />
+          {color}
+        </MenuItem>
+      ))}
+    </Select>
+  )}
+/>
+
+        </Grid>
+
+        <Grid item xs={6} md={4}>
+          <TextField
+            label="Add Custom Color"
+            value={customColor}
+            onChange={(e) => setCustomColor(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+
+        <Grid item xs={6} md={2}>
+          <Button
+            onClick={() => {
+              if (customColor && !availableColors.includes(customColor)) {
+                setAvailableColors([...availableColors, customColor]);
+                setCustomColor("");
+              }
+            }}
+            variant="contained"
+            color="secondary"
+            fullWidth
+            sx={{ height: "100%" }}
           >
-            {availableColors.map((color) => (
-              <MenuItem key={color} value={color}>
-                <Box
-                  sx={{
-                    display: "inline-block",
-                    width: "20px",
-                    height: "20px",
-                    backgroundColor: color.toLowerCase(),
-                    marginRight: "8px",
-                    borderRadius: "50%",
-                    border: "1px solid #ddd",
-                  }}
-                />
-                {color}
-              </MenuItem>
-            ))}
-          </Select>
-        )}
-      />
+            Add
+          </Button>
+        </Grid>
+      </Grid>
 
-      <TextField
-        label="Add Custom Color"
-        value={customColor}
-        onChange={(e) => setCustomColor(e.target.value)}
-        sx={{ marginTop: "20px" }}
-      />
-      <Button
-        onClick={() => {
-          if (customColor && !availableColors.includes(customColor)) {
-            setAvailableColors([...availableColors, customColor]);
-            setCustomColor("");
-          }
-        }}
-        variant="contained"
-        color="secondary"
-        sx={{ marginTop: "10px", marginBottom: "20px" }}
-      >
-        Add Color
-      </Button>
+      {/* Sizes + Custom Size */}
+      <Grid container spacing={2} sx={{ marginTop: "20px" }}>
+        <Grid item xs={12} md={6}>
+         <Controller
+  name="sizes"
+  control={control}
+  render={({ field }) => (
+    <Select
+      {...field}
+      fullWidth
+      multiple
+      displayEmpty
+      value={field.value || []}
+      onChange={(event) => field.onChange(event.target.value as string[])}
+      renderValue={(selected) =>
+        selected.length === 0 ? "Select sizes" : (selected as string[]).join(", ")
+      }
+      MenuProps={{ disableScrollLock: true }}
+    >
+      {availableSizes.map((size) => (
+        <MenuItem key={size} value={size}>
+          {size}
+        </MenuItem>
+      ))}
+    </Select>
+  )}
+/>
 
-      {/* انتخاب سایزها */}
-      <Controller
-        name="sizes"
-        control={control}
-        render={({ field }) => (
-          <Select
-            {...field}
-            multiple
-            value={field.value || []}
-            onChange={(event) => field.onChange(event.target.value as string[])}
-            renderValue={(selected) => (selected as string[]).join(", ")}
+        </Grid>
+
+        <Grid item xs={6} md={4}>
+          <TextField
+            label="Add Custom Size"
+            value={customSize}
+            onChange={(e) => setCustomSize(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+
+        <Grid item xs={6} md={2}>
+          <Button
+            onClick={() => {
+              if (customSize && !availableSizes.includes(customSize)) {
+                setAvailableSizes([...availableSizes, customSize]);
+                setCustomSize("");
+              }
+            }}
+            variant="contained"
+            color="secondary"
+            fullWidth
+            sx={{ height: "100%" }}
           >
-            {availableSizes.map((size) => (
-              <MenuItem key={size} value={size}>
-                {size}
-              </MenuItem>
-            ))}
-          </Select>
-        )}
-      />
+            Add
+          </Button>
+        </Grid>
+      </Grid>
 
-      <TextField
-        label="Add Custom Size"
-        value={customSize}
-        onChange={(e) => setCustomSize(e.target.value)}
-        sx={{ marginTop: "20px" }}
-      />
-      <Button
-        onClick={() => {
-          if (customSize && !availableSizes.includes(customSize)) {
-            setAvailableSizes([...availableSizes, customSize]);
-            setCustomSize("");
-          }
-        }}
-        variant="contained"
-        color="secondary"
-        sx={{ marginTop: "10px", marginBottom: "20px" }}
-      >
-        Add Size
-      </Button>
-
-
-
+      {/* Category */}
       <Controller
         name="category"
         control={control}
@@ -226,6 +255,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
             displayEmpty
             value={field.value || ""}
             onChange={(e) => field.onChange(e.target.value)}
+            MenuProps={{ disableScrollLock: true }}
           >
             <MenuItem value="" disabled>
               Select Category
@@ -239,8 +269,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         )}
       />
 
+      {/* Gallery Selector */}
       <GalleryImageSelector onAddImage={handleAddImage} />
 
+      {/* Selected Images */}
       <Box sx={{ marginTop: "20px" }}>
         <Typography variant="h6">Selected Images for this Product:</Typography>
         <Grid container spacing={2}>
@@ -258,6 +290,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         </Grid>
       </Box>
 
+      {/* Submit Button */}
       <Button
         className={styles.buttonClass}
         type="submit"
