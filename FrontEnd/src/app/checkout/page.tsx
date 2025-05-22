@@ -17,14 +17,21 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
-import SignInModal from "@/components/SignInModal";
 import { convertToEuro } from "@/utils/convertCurrency";
 
 const validationSchema = yup.object().shape({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+  email: yup.string().email().required("Email is required"),
+  phone: yup.string().required("Phone is required"),
   address: yup.string().required("Address is required"),
 });
 
 interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   address: string;
 }
 
@@ -33,19 +40,18 @@ const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const { token, isAuthenticated, ready } = useAuth();
 
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<FormData>({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-    userId: "",
+    address: "",
   });
-
-  const [openModal, setOpenModal] = useState(false);
 
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
@@ -63,27 +69,20 @@ const CheckoutPage: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data?.user) {
-          const { firstName, lastName, email, phone, _id } = data.user;
-          setUserData({ firstName, lastName, email, phone, userId: _id });
+          const { firstName, lastName, email, phone } = data.user;
+          setUserData({ firstName, lastName, email, phone, address: "" });
+          setValue("firstName", firstName);
+          setValue("lastName", lastName);
+          setValue("email", email);
+          setValue("phone", phone);
         }
       })
       .catch((err) => console.error("Failed to fetch user data", err));
-  }, [ready, isAuthenticated, token]);
+  }, [ready, isAuthenticated, token, setValue]);
 
   const handlePlaceOrder = async (data: FormData) => {
-    if (!isAuthenticated) {
-      setOpenModal(true);
-      return;
-    }
-
     if (cart.items.length === 0) {
       alert("Your cart is empty!");
-      return;
-    }
-
-    const { firstName, lastName, email, phone } = userData;
-    if (!firstName || !lastName || !email || !phone) {
-      alert("Incomplete user profile. Please complete your account info.");
       return;
     }
 
@@ -93,9 +92,9 @@ const CheckoutPage: React.FC = () => {
     );
 
     const orderData = {
-      name: `${firstName} ${lastName}`,
-      email,
-      phone,
+      name: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      phone: data.phone,
       address: data.address,
       totalPrice,
       items: cart.items,
@@ -150,38 +149,44 @@ const CheckoutPage: React.FC = () => {
         Checkout
       </Typography>
 
-      <SignInModal open={openModal} onClose={() => setOpenModal(false)} />
+      <Typography variant="body1" sx={{ mb: 2 }}>
+        {isAuthenticated
+          ? "اطلاعات شما از حساب کاربری بارگذاری شده است."
+          : "برای تکمیل خرید، اطلاعات خود را وارد کنید یا وارد حساب کاربری شوید."}
+      </Typography>
 
       <form onSubmit={handleSubmit(handlePlaceOrder)}>
         <Box sx={{ marginBottom: "20px" }}>
-          <TextField
-            fullWidth
-            label="First Name"
-            value={userData.firstName}
-            InputProps={{ readOnly: true }}
-            sx={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="Last Name"
-            value={userData.lastName}
-            InputProps={{ readOnly: true }}
-            sx={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            value={userData.email}
-            InputProps={{ readOnly: true }}
-            sx={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="Phone"
-            value={userData.phone}
-            InputProps={{ readOnly: true }}
-            sx={{ marginBottom: "10px" }}
-          />
+          {["firstName", "lastName", "email", "phone"].map((field) => (
+            <Controller
+              key={field}
+              name={field as keyof FormData}
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label={field.name === "firstName"
+                    ? "First Name"
+                    : field.name === "lastName"
+                    ? "Last Name"
+                    : field.name === "email"
+                    ? "Email"
+                    : "Phone"}
+                  error={!!errors[field.name as keyof FormData]}
+                  helperText={
+                    errors[field.name as keyof FormData]?.message || ""
+                  }
+                  sx={{ marginBottom: "10px" }}
+                  InputProps={
+                    isAuthenticated ? { readOnly: true } : undefined
+                  }
+                />
+              )}
+            />
+          ))}
+
           <Controller
             name="address"
             control={control}
@@ -223,7 +228,11 @@ const CheckoutPage: React.FC = () => {
                 Pay with PayPal
               </Button>
               <Link href="/cart" passHref>
-                <Button variant="outlined" color="secondary" sx={{ marginLeft: "10px" }}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{ marginLeft: "10px" }}
+                >
                   Back to Cart
                 </Button>
               </Link>

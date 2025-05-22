@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
       paid: false, // هنوز پرداخت نشده
       paypalOrderId: order.paypalOrderId || null,
+      isGuest: !order.userId,
     };
 
     const { db } = await connectToDatabase();

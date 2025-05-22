@@ -43,13 +43,10 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleProceedToCheckout = () => {
-    if (!user) {
-      setOpenModal(true);
-    } else {
-      window.location.href = "/checkout";
-    }
-  };
+const handleProceedToCheckout = () => {
+  window.location.href = "/checkout";
+};
+
 
   const totalAmount = cart.items.reduce(
     (total, item) => total + Number(item.price) * item.quantity,

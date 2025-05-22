@@ -179,7 +179,14 @@ const NavBar: React.FC = () => {
     ].map(({ key, label, href }, index, array) => (
       <React.Fragment key={key}>
         <Link href={href} passHref legacyBehavior>
-          <ListItemButton component="a" sx={{ px: 3 }}>
+          <ListItemButton
+  component="a"
+  sx={{ px: 3 }}
+  onClick={() => {
+    if (isMobile) setDrawerOpen(false);
+  }}
+>
+
             <ListItemText
               primary={label}
               primaryTypographyProps={{
