@@ -30,6 +30,8 @@ const validationSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   phone: yup.string().required("Phone is required"),
   address: yup.string().required("Address is required"),
+  postalCode: yup.string().required("Postal code is required").matches(/^[0-9]{4,10}$/, "Invalid postal code"),
+  street: yup.string().required("Street is required"),
 });
 
 interface FormData {
@@ -37,7 +39,9 @@ interface FormData {
   lastName: string;
   email: string;
   phone: string;
+  street: string;
   address: string;
+  postalCode: string;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -90,7 +94,9 @@ const CheckoutPage: React.FC = () => {
       name: `${data.firstName} ${data.lastName}`,
       email: data.email,
       phone: data.phone,
+      street: data.street,
       address: data.address,
+      postalCode: data.postalCode,
       totalPrice,
       items: cart.items,
       createdAt: new Date().toISOString(),
@@ -154,39 +160,135 @@ const CheckoutPage: React.FC = () => {
 
           <form onSubmit={handleSubmit(handlePlaceOrder)}>
             <Grid container spacing={2}>
-              {["firstName", "lastName", "email", "phone", "address"].map((fieldName) => (
-                <Grid item xs={12} sm={fieldName === "address" ? 12 : 6} key={fieldName}>
-                  <Controller
-                    name={fieldName as keyof FormData}
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label={
-                          fieldName === "firstName"
-                            ? t("firstName", "First Name")
-                            : fieldName === "lastName"
-                            ? t("lastName", "Last Name")
-                            : fieldName === "email"
-                            ? t("email", "Email")
-                            : fieldName === "phone"
-                            ? t("phone", "Phone")
-                            : t("address", "Address")
-                        }
-                        error={!!errors[fieldName as keyof FormData]}
-                        helperText={errors[fieldName as keyof FormData]?.message || ""}
-                        InputProps={
-                          isAuthenticated && fieldName !== "address"
-                            ? { readOnly: true }
-                            : undefined
-                        }
-                      />
-                    )}
-                  />
-                </Grid>
-              ))}
+              {/* First Name */}
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="firstName"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("firstName", "First Name")}
+                      error={!!errors.firstName}
+                      helperText={errors.firstName?.message}
+                      InputProps={isAuthenticated ? { readOnly: true } : undefined}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Last Name */}
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="lastName"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("lastName", "Last Name")}
+                      error={!!errors.lastName}
+                      helperText={errors.lastName?.message}
+                      InputProps={isAuthenticated ? { readOnly: true } : undefined}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Email */}
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="email"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("email", "Email")}
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      InputProps={isAuthenticated ? { readOnly: true } : undefined}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Phone */}
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="phone"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("phone", "Phone")}
+                      error={!!errors.phone}
+                      helperText={errors.phone?.message}
+                      InputProps={isAuthenticated ? { readOnly: true } : undefined}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Address */}
+              <Grid item xs={12}>
+                <Controller
+                  name="address"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("address", "Address")}
+                      error={!!errors.address}
+                      helperText={errors.address?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Street */}
+              <Grid item xs={12}>
+                <Controller
+                  name="street"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("street", "Street")}
+                      error={!!errors.street}
+                      helperText={errors.street?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Postal Code */}
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="postalCode"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("postalCode", "Postal Code")}
+                      error={!!errors.postalCode}
+                      helperText={errors.postalCode?.message}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
 
             <Button
