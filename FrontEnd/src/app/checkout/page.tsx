@@ -9,6 +9,9 @@ import {
   ListItem,
   ListItemText,
   TextField,
+  Grid,
+  Avatar,
+  Divider,
 } from "@mui/material";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -18,11 +21,12 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
 import { convertToEuro } from "@/utils/convertCurrency";
+import toast, { Toaster } from "react-hot-toast";
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
-  email: yup.string().email().required("Email is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
   phone: yup.string().required("Phone is required"),
   address: yup.string().required("Address is required"),
 });
@@ -40,14 +44,6 @@ const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const { token, isAuthenticated, ready } = useAuth();
 
-  const [userData, setUserData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
-
   const {
     handleSubmit,
     control,
@@ -62,27 +58,24 @@ const CheckoutPage: React.FC = () => {
 
     fetch("/api/user/me", {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
         if (data?.user) {
           const { firstName, lastName, email, phone } = data.user;
-          setUserData({ firstName, lastName, email, phone, address: "" });
           setValue("firstName", firstName);
           setValue("lastName", lastName);
           setValue("email", email);
           setValue("phone", phone);
         }
       })
-      .catch((err) => console.error("Failed to fetch user data", err));
+      .catch(() => toast.error("Failed to load user info."));
   }, [ready, isAuthenticated, token, setValue]);
 
   const handlePlaceOrder = async (data: FormData) => {
     if (cart.items.length === 0) {
-      alert("Your cart is empty!");
+      toast.error("Your cart is empty!");
       return;
     }
 
@@ -112,8 +105,7 @@ const CheckoutPage: React.FC = () => {
       const saveResult = await saveRes.json();
 
       if (!saveRes.ok || !saveResult.insertedId) {
-        console.error("❌ Error saving order:", saveResult);
-        alert("خطا در ذخیره سفارش. لطفاً دوباره تلاش کنید.");
+        toast.error("خطا در ذخیره سفارش");
         return;
       }
 
@@ -127,119 +119,124 @@ const CheckoutPage: React.FC = () => {
 
       const paypalResult = await paypalRes.json();
 
-      if (!paypalRes.ok || !paypalResult.approvalUrl || !paypalResult.paypalOrderId) {
-        console.error("❌ PayPal error:", paypalResult);
-        alert("خطا در ارتباط با درگاه پرداخت.");
+      if (!paypalRes.ok || !paypalResult.approvalUrl) {
+        toast.error("خطا در ارتباط با درگاه پرداخت.");
         return;
       }
 
+      toast.success("در حال هدایت به PayPal...");
       localStorage.setItem("paypalOrderId", paypalResult.paypalOrderId);
       router.push(paypalResult.approvalUrl);
     } catch (error) {
-      console.error("🔥 Unexpected checkout error:", error);
-      alert("مشکلی در ثبت سفارش یا ارتباط با درگاه رخ داد.");
+      toast.error("مشکل در ثبت سفارش یا اتصال به درگاه");
     }
   };
 
   if (!ready) return <p>در حال بارگذاری اطلاعات کاربر...</p>;
 
   return (
-    <Box sx={{ padding: "20px" }}>
+    <Box sx={{ px: { xs: 2, sm: 4 }, py: 4 }}>
+      <Toaster position="top-right" />
       <Typography variant="h4" gutterBottom>
         Checkout
       </Typography>
 
-      <Typography variant="body1" sx={{ mb: 2 }}>
-        {isAuthenticated
-          ? "اطلاعات شما از حساب کاربری بارگذاری شده است."
-          : "برای تکمیل خرید، اطلاعات خود را وارد کنید یا وارد حساب کاربری شوید."}
-      </Typography>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={7}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            {isAuthenticated
+              ? "اطلاعات شما از حساب کاربری بارگذاری شده است."
+              : "برای تکمیل خرید، اطلاعات خود را وارد کنید یا وارد حساب کاربری شوید."}
+          </Typography>
 
-      <form onSubmit={handleSubmit(handlePlaceOrder)}>
-        <Box sx={{ marginBottom: "20px" }}>
-          {["firstName", "lastName", "email", "phone"].map((field) => (
-            <Controller
-              key={field}
-              name={field as keyof FormData}
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label={field.name === "firstName"
-                    ? "First Name"
-                    : field.name === "lastName"
-                    ? "Last Name"
-                    : field.name === "email"
-                    ? "Email"
-                    : "Phone"}
-                  error={!!errors[field.name as keyof FormData]}
-                  helperText={
-                    errors[field.name as keyof FormData]?.message || ""
-                  }
-                  sx={{ marginBottom: "10px" }}
-                  InputProps={
-                    isAuthenticated ? { readOnly: true } : undefined
-                  }
-                />
-              )}
-            />
-          ))}
+          <form onSubmit={handleSubmit(handlePlaceOrder)}>
+            <Grid container spacing={2}>
+              {["firstName", "lastName", "email", "phone", "address"].map((fieldName) => (
+                <Grid item xs={12} sm={fieldName === "address" ? 12 : 6} key={fieldName}>
+                  <Controller
+                    name={fieldName as keyof FormData}
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        label={
+                          fieldName === "firstName" ? "First Name" :
+                          fieldName === "lastName" ? "Last Name" :
+                          fieldName === "email" ? "Email" :
+                          fieldName === "phone" ? "Phone" : "Address"
+                        }
+                        error={!!errors[fieldName as keyof FormData]}
+                        helperText={errors[fieldName as keyof FormData]?.message || ""}
+                        InputProps={isAuthenticated && fieldName !== "address" ? { readOnly: true } : undefined}
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+            </Grid>
 
-          <Controller
-            name="address"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Address"
-                error={!!errors.address}
-                helperText={errors.address?.message}
-                sx={{ marginBottom: "20px" }}
-              />
-            )}
-          />
-        </Box>
+            <Button
+              variant="contained"
+              type="submit"
+              fullWidth
+              sx={{
+                mt: 3,
+                backgroundColor: "#ffc439",
+                color: "#003087",
+                fontWeight: "bold",
+                fontSize: "16px",
+                padding: "12px",
+                "&:hover": {
+                  backgroundColor: "#ffb347",
+                },
+              }}
+            >
+              PAY WITH PAYPAL
+            </Button>
+          </form>
+        </Grid>
 
-        <Typography variant="h5" gutterBottom>
-          Order Summary
-        </Typography>
+        {/* جداکننده ظریف */}
+        <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" }, mx: 2 }} />
 
-        {cart.items.length === 0 ? (
-          <Typography variant="h6">Your cart is currently empty.</Typography>
-        ) : (
-          <>
+        <Grid item xs={12} md={4}>
+          <Typography variant="h5" gutterBottom>
+            Order Summary
+          </Typography>
+
+          {cart.items.length === 0 ? (
+            <Typography variant="h6">Your cart is currently empty.</Typography>
+          ) : (
             <List>
               {cart.items.map((item) => (
-                <ListItem key={item.id}>
+                <ListItem key={item.id} alignItems="flex-start">
+                  <Avatar
+                    src={item.image || "/placeholder.jpg"}
+                    variant="rounded"
+                    sx={{ width: 64, height: 64, mr: 2 }}
+                  />
                   <ListItemText
                     primary={`${item.name} - €${convertToEuro(item.price)} x ${item.quantity}`}
-                    secondary={`Size: ${item.size || "N/A"}, Color: ${item.color || "N/A"}`}
+                    secondary={`Size: ${item.size || "N/A"} | Color: ${item.color || "N/A"}`}
                   />
                 </ListItem>
               ))}
             </List>
+          )}
 
-            <Box sx={{ marginTop: "20px", textAlign: "center" }}>
-              <Button variant="contained" color="primary" type="submit">
-                Pay with PayPal
-              </Button>
-              <Link href="/cart" passHref>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ marginLeft: "10px" }}
-                >
-                  Back to Cart
-                </Button>
-              </Link>
-            </Box>
-          </>
-        )}
-      </form>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Total: €{convertToEuro(cart.items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0))}
+          </Typography>
+
+          <Link href="/cart" passHref>
+            <Button variant="outlined" color="secondary" sx={{ mt: 2 }} fullWidth>
+              Back to Cart
+            </Button>
+          </Link>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
