@@ -119,7 +119,18 @@
   "emailNotVerified": "Ya estás registrado, pero no has verificado tu correo. Revisa tu bandeja de entrada.",
   "registerFailed": "Ocurrió un error. Por favor, inténtalo de nuevo.",
 
-
+"checkoutTitle": "Pagar",
+  "userInfoLoaded": "La información de su cuenta ha sido cargada.",
+  "enterInfoOrLogin": "Para completar su compra, introduzca su información o inicie sesión.",
+  "payWithPaypal": "Pagar con PayPal",
+  "orderSummary": "Resumen del pedido",
+  "cartEmpty": "Su carrito está vacío.",
+  "orderSaveError": "Error al guardar el pedido",
+  "paypalError": "Error al conectar con el servicio de pago",
+  "redirectingToPaypal": "Redirigiendo a PayPal...",
+  "checkoutError": "Error al realizar el pago",
+  "loadingUser": "Cargando información del usuario...",
+  "backToCart": "Volver al carrito",
   
   "confirm": "Confirmar",
   "submit": "Enviar",

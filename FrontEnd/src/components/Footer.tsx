@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import {
   Box, Container, Grid, Typography, Link,
-  TextField, Button, Alert
+  TextField, Button, Alert, Divider
 } from '@mui/material';
 import { FaPaypal, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
@@ -55,138 +55,105 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <Box component="footer" sx={{ bgcolor: '#333', color: '#fff', py: 4 }}>
+    <Box component="footer" sx={{ bgcolor: '#1c1c1c', color: '#fff', py: 6 }}>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" gutterBottom>{t('aboutUs')}</Typography>
-            <Typography variant="body2">{t('aboutUsDescription')}</Typography>
+            <Typography variant="body2" color="#ccc">
+              {t('aboutUsDescription')}
+            </Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" gutterBottom>{t('stayConnected')}</Typography>
             <Typography variant="body2">
-              <Link href="/support" color="inherit">{t('support')}</Link>
+              <Link href="/support" color="inherit" underline="hover">
+                {t('support')}
+              </Link>
             </Typography>
+            <Box mt={2}>
+              <Typography variant="h6" gutterBottom>RICHTLINIEN</Typography>
+              {[
+                { label: 'Impressum', path: '/impressum' },
+                { label: 'AGB', path: '/agb' },
+                { label: 'Datenschutz', path: '/datenschutz' },
+                { label: 'Widerrufsbelehrung', path: '/widerrufsbelehrung' },
+                { label: 'Versand', path: '/versand' },
+                { label: 'Zahlung', path: '/zahlung' },
+                { label: 'Rückgabe & Umtausch', path: '/rueckgabe-umtausch' },
+              ].map(({ label, path }) => (
+                <Typography key={label} variant="body2">
+                  <Link href={path} color="inherit" underline="hover">
+                    {label}
+                  </Link>
+                </Typography>
+              ))}
+            </Box>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={12} md={6}>
             <Typography variant="h6" gutterBottom>{t('newsletter')}</Typography>
             <Typography variant="body2" gutterBottom>
               {t('subscribeMessage')}
             </Typography>
-           <Box component="form" onSubmit={handleSubscribe}>
-              <TextField
-                label={t('yourEmail')}
-                variant="outlined"
-                size="small"
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{
-                  mb: 2,
-                  borderRadius: 1,
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  '& .MuiInputBase-input': {
-                    color: '#fff',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: '#ccc',
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                    color: '#fff',
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#666',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#fff',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#fff',
-                    },
-                  },
-                  '& input::placeholder': {
-                    color: '#aaa',
-                    opacity: 1,
-                  },
-                }}
-              />
-
-              <TextField
-                label={t('yourMessage')}
-                variant="outlined"
-                size="small"
-                fullWidth
-                multiline
-                rows={3}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                sx={{
-                  mb: 2,
-                  borderRadius: 1,
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  '& .MuiInputBase-input': {
-                    color: '#fff',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: '#ccc',
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                    color: '#fff',
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#666',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#fff',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#fff',
-                    },
-                  },
-                }}
-              />
-
+            <Box component="form" onSubmit={handleSubscribe}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    label={t('yourEmail')}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    sx={{ backgroundColor: '#2c2c2c', input: { color: '#fff' }, label: { color: '#ccc' } }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label={t('yourMessage')}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    sx={{ backgroundColor: '#2c2c2c', textarea: { color: '#fff' }, label: { color: '#ccc' } }}
+                  />
+                </Grid>
+              </Grid>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
                 disabled={loading}
-                sx={{ mt: 1 }}
+                sx={{ mt: 2, fontWeight: 'bold', fontSize: '15px', py: 1.2 }}
               >
                 {loading ? t('sending') : t('send')}
               </Button>
             </Box>
-
-
             {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
+              <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>
             )}
             {submitted && (
-              <Alert severity="success" sx={{ mt: 2 }}>
-                {t('messageSuccess')}
-              </Alert>
+              <Alert severity="success" sx={{ mt: 2 }}>{t('messageSuccess')}</Alert>
             )}
           </Grid>
         </Grid>
 
-        <Box mt={4} textAlign="center">
-          <Typography variant="body2">{t('paymentMethods')}</Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 1 }}>
+        <Divider sx={{ my: 4, borderColor: '#555' }} />
+
+        <Box textAlign="center">
+          <Typography variant="body2" gutterBottom>{t('paymentMethods')}</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, my: 1 }}>
             <FaPaypal color="#003087" size={32} />
             <FaCcVisa color="#1a1f71" size={32} />
             <FaCcMastercard color="#FF5F00" size={32} />
           </Box>
-        </Box>
-
-        <Box mt={4} textAlign="center">
-          <Typography variant="body2">
+          <Typography variant="body2" color="#999" sx={{ mt: 2 }}>
             © 2024 Mopastyle.de | {t('allRightsReserved')}
           </Typography>
         </Box>

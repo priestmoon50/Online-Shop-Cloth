@@ -32,6 +32,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, onClose }) 
     localStorage.setItem('selectedLanguage', locale);
     setOpen(false);
     if (onClose) onClose(); 
+    window.location.reload();
     // اگر onClose تعریف شده باشد، آن را فراخوانی کن
   };
 

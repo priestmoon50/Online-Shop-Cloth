@@ -93,7 +93,18 @@
 
   "description": "توضیحات",
 
-
+  "checkoutTitle": "تسویه حساب",
+  "userInfoLoaded": "اطلاعات حساب شما بارگذاری شده است.",
+  "enterInfoOrLogin": "برای تکمیل خرید، اطلاعات خود را وارد کنید یا وارد حساب کاربری شوید.",
+  "payWithPaypal": "پرداخت با PayPal",
+  "orderSummary": "خلاصه سفارش",
+  "cartEmpty": "سبد خرید شما در حال حاضر خالی است.",
+  "orderSaveError": "خطا در ذخیره سفارش",
+  "paypalError": "خطا در ارتباط با درگاه پرداخت",
+  "redirectingToPaypal": "در حال هدایت به PayPal...",
+  "checkoutError": "خطا در فرآیند تسویه حساب",
+  "loadingUser": "در حال بارگذاری اطلاعات کاربر...",
+  "backToCart": "بازگشت به سبد خرید",
   "select_colors": "انتخاب رنگ‌ها",
   "select_sizes": "انتخاب سایزها",
   "select_category": "انتخاب دسته‌بندی",

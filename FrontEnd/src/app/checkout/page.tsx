@@ -7,7 +7,6 @@ import {
   Button,
   List,
   ListItem,
-  ListItemText,
   TextField,
   Grid,
   Avatar,
@@ -23,6 +22,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/context/AuthContext";
 import { convertToEuro } from "@/utils/convertCurrency";
 import toast, { Toaster } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -44,6 +44,7 @@ const CheckoutPage: React.FC = () => {
   const { cart } = useCart();
   const router = useRouter();
   const { token, isAuthenticated, ready } = useAuth();
+  const { t } = useTranslation();
 
   const {
     handleSubmit,
@@ -106,7 +107,7 @@ const CheckoutPage: React.FC = () => {
       const saveResult = await saveRes.json();
 
       if (!saveRes.ok || !saveResult.insertedId) {
-        toast.error("خطا در ذخیره سفارش");
+        toast.error(t("orderSaveError", "Failed to save order"));
         return;
       }
 
@@ -121,34 +122,34 @@ const CheckoutPage: React.FC = () => {
       const paypalResult = await paypalRes.json();
 
       if (!paypalRes.ok || !paypalResult.approvalUrl) {
-        toast.error("خطا در ارتباط با درگاه پرداخت.");
+        toast.error(t("paypalError", "Error connecting to payment gateway"));
         return;
       }
 
-      toast.success("در حال هدایت به PayPal...");
+      toast.success(t("redirectingToPaypal", "Redirecting to PayPal..."));
       localStorage.setItem("paypalOrderId", paypalResult.paypalOrderId);
       router.push(paypalResult.approvalUrl);
     } catch (error) {
-      toast.error("مشکل در ثبت سفارش یا اتصال به درگاه");
+      toast.error(t("checkoutError", "Checkout failed"));
     }
   };
 
-  if (!ready) return <p>در حال بارگذاری اطلاعات کاربر...</p>;
+  if (!ready) return <p>{t("loadingUser", "Loading user info...")}</p>;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Toaster position="bottom-center" />
 
       <Typography variant="h4" gutterBottom>
-        Checkout
+        {t("checkoutTitle", "Checkout")}
       </Typography>
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={7}>
           <Typography variant="body1" sx={{ mb: 2 }}>
             {isAuthenticated
-              ? "اطلاعات شما از حساب کاربری بارگذاری شده است."
-              : "برای تکمیل خرید، اطلاعات خود را وارد کنید یا وارد حساب کاربری شوید."}
+              ? t("userInfoLoaded", "Your account information has been loaded.")
+              : t("enterInfoOrLogin", "To complete your purchase, enter your information or log in.")}
           </Typography>
 
           <form onSubmit={handleSubmit(handlePlaceOrder)}>
@@ -165,14 +166,14 @@ const CheckoutPage: React.FC = () => {
                         fullWidth
                         label={
                           fieldName === "firstName"
-                            ? "First Name"
+                            ? t("firstName", "First Name")
                             : fieldName === "lastName"
-                            ? "Last Name"
+                            ? t("lastName", "Last Name")
                             : fieldName === "email"
-                            ? "Email"
+                            ? t("email", "Email")
                             : fieldName === "phone"
-                            ? "Phone"
-                            : "Address"
+                            ? t("phone", "Phone")
+                            : t("address", "Address")
                         }
                         error={!!errors[fieldName as keyof FormData]}
                         helperText={errors[fieldName as keyof FormData]?.message || ""}
@@ -204,7 +205,7 @@ const CheckoutPage: React.FC = () => {
                 },
               }}
             >
-              PAY WITH PAYPAL
+              {t("payWithPaypal", "PAY WITH PAYPAL")}
             </Button>
           </form>
         </Grid>
@@ -213,11 +214,11 @@ const CheckoutPage: React.FC = () => {
 
         <Grid item xs={12} md={4}>
           <Typography variant="h5" gutterBottom>
-            Order Summary
+            {t("orderSummary", "Order Summary")}
           </Typography>
 
           {cart.items.length === 0 ? (
-            <Typography variant="h6">Your cart is currently empty.</Typography>
+            <Typography variant="h6">{t("cartEmpty", "Your cart is currently empty.")}</Typography>
           ) : (
             <List>
               {cart.items.map((item) => (
@@ -229,10 +230,10 @@ const CheckoutPage: React.FC = () => {
                   />
                   <Box>
                     <Typography fontWeight="bold">{item.name}</Typography>
-                    <Typography variant="body2">Price: €{convertToEuro(item.price)}</Typography>
-                    <Typography variant="body2">Quantity: {item.quantity}</Typography>
-                    <Typography variant="body2">Size: {item.size || "N/A"}</Typography>
-                    <Typography variant="body2">Color: {item.color || "N/A"}</Typography>
+                    <Typography variant="body2">{t("price", "Price")}: €{convertToEuro(item.price)}</Typography>
+                    <Typography variant="body2">{t("quantity", "Quantity")}: {item.quantity}</Typography>
+                    <Typography variant="body2">{t("size", "Size")}: {item.size || "N/A"}</Typography>
+                    <Typography variant="body2">{t("color", "Color")}: {item.color || "N/A"}</Typography>
                   </Box>
                 </ListItem>
               ))}
@@ -240,12 +241,12 @@ const CheckoutPage: React.FC = () => {
           )}
 
           <Typography variant="h6" sx={{ mt: 2 }}>
-            Total: €{convertToEuro(cart.items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0))}
+            {t("total", "Total")}: €{convertToEuro(cart.items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0))}
           </Typography>
 
           <Link href="/cart" passHref legacyBehavior>
             <Button variant="outlined" color="secondary" sx={{ mt: 2 }} fullWidth>
-              Back to Cart
+              {t("backToCart", "Back to Cart")}
             </Button>
           </Link>
         </Grid>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
 import { Box, Container } from '@mui/material';
 import './globals.css';
@@ -18,13 +18,19 @@ import { ThemeProvider } from '@mui/material/styles';
 
 const Layout: React.FC<{ children: React.ReactNode; dehydratedState?: unknown }> = ({ children, dehydratedState }) => {
   const [queryClient] = useState(() => new QueryClient());
-  const { i18n } = useTranslation();
+const [language, setLanguage] = useState('en');
 
-  // انتخاب کلاس بدنه بر اساس زبان
-  const bodyClass = i18n.language === 'fa' ? 'font-fa' : 'font-latin';
+useEffect(() => {
+  const storedLang = localStorage.getItem('selectedLanguage') || 'en';
+  setLanguage(storedLang);
+}, []);
+
+const bodyClass = language === 'fa' ? 'font-fa' : 'font-latin';
+
 
   return (
-   <html lang={i18n.language === 'fa' ? 'fa' : 'en'} dir="ltr">
+   <html lang={language} dir="ltr">
+
 
       <Head>
         <title>MopaStyle | High-Class Women's Fashion</title>

@@ -69,7 +69,18 @@
   
 
 
-
+ "checkoutTitle": "Paiement",
+  "userInfoLoaded": "Vos informations de compte ont été chargées.",
+  "enterInfoOrLogin": "Pour finaliser votre achat, saisissez vos informations ou connectez-vous.",
+  "payWithPaypal": "Payer avec PayPal",
+  "orderSummary": "Résumé de la commande",
+  "cartEmpty": "Votre panier est actuellement vide.",
+  "orderSaveError": "Échec de l'enregistrement de la commande",
+  "paypalError": "Erreur de connexion au service de paiement",
+  "redirectingToPaypal": "Redirection vers PayPal...",
+  "checkoutError": "Erreur lors du paiement",
+  "loadingUser": "Chargement des informations utilisateur...",
+  "backToCart": "Retour au panier",
   "confirm": "Confirmer",
   "submit": "Soumettre",
   "yes": "Oui",

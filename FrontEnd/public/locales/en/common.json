@@ -118,7 +118,18 @@
   "color": "Color",
   "remove": "Remove",
   "proceedToCheckout": "Proceed to Checkout",
-
+"checkoutTitle": "Checkout",
+  "userInfoLoaded": "Your account information has been loaded.",
+  "enterInfoOrLogin": "To complete your purchase, enter your information or log in.",
+  "payWithPaypal": "Pay with PayPal",
+  "orderSummary": "Order Summary",
+  "cartEmpty": "Your cart is currently empty.",
+  "orderSaveError": "Failed to save order",
+  "paypalError": "Error connecting to payment gateway",
+  "redirectingToPaypal": "Redirecting to PayPal...",
+  "checkoutError": "Checkout failed",
+  "loadingUser": "Loading user info...",
+  "backToCart": "Back to Cart",
 
 
 
