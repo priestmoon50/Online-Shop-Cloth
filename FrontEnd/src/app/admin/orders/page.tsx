@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Container,
   Typography,
@@ -9,9 +9,13 @@ import {
   Button,
   Box,
   CircularProgress,
+  Stack,
+  TextField,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import OrdersList, { OrdersListProps } from './OrdersList';
+import OrdersList from './OrdersList';
 import withAdminAccess from '@/hoc/withAdminAccess';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -50,27 +54,18 @@ const fetchOrders = async (): Promise<Order[]> => {
 
 const OrdersPage: React.FC = () => {
   const { t } = useTranslation();
-  const { data: orders, isLoading, error } = useQuery({
-    queryKey: ['orders'],
-    queryFn: fetchOrders,
-  });
+  const { data: orders, isLoading, error } = useQuery({ queryKey: ['orders'], queryFn: fetchOrders });
 
-  const [orderList, setOrderList] = useState<Order[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [paymentFilter, setPaymentFilter] = useState<'all' | 'paid' | 'unpaid'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'Pending' | 'Processing' | 'Completed'>('all');
   const [visibleCount, setVisibleCount] = useState(5);
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-  useEffect(() => {
-    if (orders) setOrderList(orders);
-  }, [orders]);
-
   const handleUpdateStatus = async (_id: string, newStatus: Order['status']) => {
-    const updatedOrders = orderList.map((order) =>
-      order._id === _id ? { ...order, status: newStatus } : order
-    );
-    setOrderList(updatedOrders);
-
     try {
       const res = await fetch(`/api/orders/${_id}`, {
         method: 'PUT',
@@ -85,17 +80,40 @@ const OrdersPage: React.FC = () => {
       setSnackbarMessage(t('orderStatusError'));
       setSnackbarSeverity('error');
     }
-
     setSnackbarOpen(true);
   };
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
-
   const handleLoadMore = () => setVisibleCount((prev) => prev + 5);
+
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+
+    const term = searchTerm.toLowerCase();
+
+    return orders.filter((order) => {
+      const matchesSearch =
+        order.name.toLowerCase().includes(term) ||
+        order.email.toLowerCase().includes(term) ||
+        order.phone.toLowerCase().includes(term);
+
+      const matchesPayment =
+        paymentFilter === 'all' ||
+        (paymentFilter === 'paid' && order.paid) ||
+        (paymentFilter === 'unpaid' && !order.paid);
+
+      const matchesStatus =
+        statusFilter === 'all' || order.status === statusFilter;
+
+      return matchesSearch && matchesPayment && matchesStatus;
+    });
+  }, [orders, searchTerm, paymentFilter, statusFilter]);
+
+  const visibleOrders = filteredOrders.slice(0, visibleCount);
 
   if (isLoading) {
     return (
-      <Box mt={4} textAlign="center">
+      <Box mt={4} display="flex" flexDirection="column" alignItems="center">
         <CircularProgress />
         <Typography mt={2}>{t('loadingOrders')}</Typography>
       </Box>
@@ -105,16 +123,14 @@ const OrdersPage: React.FC = () => {
   if (error) {
     return (
       <Box mt={4} textAlign="center">
-        <Typography color="error">{t('errorLoadingOrders')}</Typography>
+        <Typography color="error.main">{t('errorLoadingOrders')}</Typography>
       </Box>
     );
   }
 
-  const visibleOrders = orderList.slice(0, visibleCount);
-
   return (
-    <Container sx={{ mt: 6 }}>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+    <Container maxWidth="lg" sx={{ mt: 6 }}>
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-start' }}>
         <Link href="/admin" passHref>
           <Button
             variant="contained"
@@ -123,14 +139,14 @@ const OrdersPage: React.FC = () => {
               color: '#000',
               fontWeight: 600,
               px: 3,
-              borderRadius: '8px',
+              borderRadius: 2,
               boxShadow: 'none',
               '&:hover': {
                 backgroundColor: '#FFC107',
               },
             }}
           >
-            ← Back
+            ← {t('back')}
           </Button>
         </Link>
       </Box>
@@ -139,14 +155,53 @@ const OrdersPage: React.FC = () => {
         {t('adminOrders')}
       </Typography>
 
-      <OrdersList
-        orders={visibleOrders}
-        onUpdateStatus={handleUpdateStatus as OrdersListProps['onUpdateStatus']}
-      />
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={2}
+        alignItems="stretch"
+        justifyContent="space-between"
+        mb={4}
+        flexWrap="wrap"
+      >
+        <TextField
+          size="small"
+          placeholder={t('Search by name, phone, email') || 'Search'}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ flexGrow: 1, minWidth: 200, maxWidth: 400 }}
+        />
 
-      {visibleCount < orderList.length && (
-        <Box textAlign="center" mt={3}>
-          <Button variant="contained" onClick={handleLoadMore}>
+        <ToggleButtonGroup
+          value={paymentFilter}
+          exclusive
+          onChange={(e, val) => val && setPaymentFilter(val)}
+          size="small"
+          color="primary"
+        >
+          <ToggleButton value="all">{t('all')}</ToggleButton>
+          <ToggleButton value="paid">{t('paid')}</ToggleButton>
+          <ToggleButton value="unpaid">{t('notPaid')}</ToggleButton>
+        </ToggleButtonGroup>
+
+        <ToggleButtonGroup
+          value={statusFilter}
+          exclusive
+          onChange={(e, val) => val && setStatusFilter(val)}
+          size="small"
+          color="secondary"
+        >
+          <ToggleButton value="all">{t('allStatuses')}</ToggleButton>
+          <ToggleButton value="Pending">{t('pending')}</ToggleButton>
+          <ToggleButton value="Processing">{t('processing')}</ToggleButton>
+          <ToggleButton value="Completed">{t('completed')}</ToggleButton>
+        </ToggleButtonGroup>
+      </Stack>
+
+      <OrdersList orders={visibleOrders} onUpdateStatus={handleUpdateStatus} />
+
+      {visibleCount < filteredOrders.length && (
+        <Box textAlign="center" mt={4}>
+          <Button variant="outlined" onClick={handleLoadMore} sx={{ borderRadius: 2 }}>
             {t('loadMore')}
           </Button>
         </Box>

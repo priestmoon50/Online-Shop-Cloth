@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import styles from './OrdersList.module.css';
 import {
   Box,
@@ -14,7 +14,6 @@ import {
   Grid,
   Chip,
   Stack,
-  TextField,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { convertToEuro } from '@/utils/convertCurrency';
@@ -56,171 +55,135 @@ interface OrdersListProps {
 
 const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredOrders = useMemo(() => {
-    if (!searchTerm) return orders;
-    const term = searchTerm.toLowerCase();
-    return orders.filter(
-      (order) =>
-        order.name.toLowerCase().includes(term) ||
-        order.email.toLowerCase().includes(term) ||
-        order.phone.toLowerCase().includes(term)
+  if (!orders.length) {
+    return (
+      <Typography variant="body1" mt={2}>
+        {t('noOrders')}
+      </Typography>
     );
-  }, [orders, searchTerm]);
+  }
 
   return (
     <Box className={styles.tableContainer}>
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'stretch', sm: 'center' }}
-        spacing={2}
-        mb={3}
-      >
-        <Typography variant="h5" fontWeight="bold">
-          {t('ordersListTitle')}
-        </Typography>
-
-        <TextField
-          size="small"
-          placeholder={t('Search by name, phone, email ') || 'Search by name, email, phone'}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={styles.searchInput}
-        />
-      </Stack>
-
-      {filteredOrders.length === 0 ? (
-        <Typography variant="body1" mt={2}>
-          {t('noOrders')}
-        </Typography>
-      ) : (
-        filteredOrders.map((order) => (
-          <Paper key={order._id} className={styles.orderCard} elevation={3}>
-            <Grid container spacing={3}>
-              {/* Header */}
-              <Grid item xs={12}>
-                <Stack
-                  direction={{ xs: 'column', sm: 'row' }}
-                  justifyContent="space-between"
-                  alignItems={{ xs: 'flex-start', sm: 'center' }}
-                  spacing={1}
-                >
-                  <Typography className={styles.orderId}>
-                    {t('orderId')} #{order._id}
-                  </Typography>
-                  <Typography className={styles.orderDate}>
-                    {t('date')}: {dayjs(order.createdAt).format('YYYY/MM/DD - HH:mm')}
-                  </Typography>
-                </Stack>
-              </Grid>
-
-              {/* Customer Info */}
-              <Grid item xs={12} md={6}>
-                <Box className={styles.sectionWrapper}>
-                  <Typography className={styles.sectionLabel} component="div">
-                    {t('customerInfo')}
-                  </Typography>
-                  <Box className={styles.infoBox}>
-                    <Stack spacing={1}>
-                      {[
-                        ['name', order.name],
-                        ['email', order.email],
-                        ['phone', order.phone],
-                        ['address', order.address],
-                        ['street', order.street],
-                        ['postalCode', order.postalCode],
-                      ].map(([label, value]) => (
-                        <Typography key={label} component="div" className={styles.field}>
-                          <strong>{t(label)}:</strong> {value || t('unknown')}
-                        </Typography>
-                      ))}
-
-                      <Box className={styles.field} display="flex" alignItems="center" gap={1}>
-                        <Typography component="span">
-                          <strong>{t('payment')}:</strong>
-                        </Typography>
-                        <Chip
-                          label={order.paid ? t('paid') : t('notPaid')}
-                          color={order.paid ? 'success' : 'warning'}
-                          size="small"
-                        />
-                      </Box>
-
-                      {order.paypalCaptureId && (
-                        <Typography component="div" className={styles.field}>
-                          <strong>PayPal ID:</strong> {order.paypalCaptureId}
-                        </Typography>
-                      )}
-                    </Stack>
-                  </Box>
-                </Box>
-              </Grid>
-
-              {/* Order Items */}
-              <Grid item xs={12} md={6}>
-                <Box className={styles.sectionWrapper}>
-                  <Typography className={styles.sectionLabel} component="div">
-                    {t('items')}
-                  </Typography>
-                  <Box className={styles.infoBox}>
-                    <List dense disablePadding>
-                      {order.items.map((item) => (
-                        <ListItem key={item.id} className={styles.itemRow}>
-                          <Box>
-                            <Typography component="div" className={styles.itemTitle}>
-                              {item.name} × {item.quantity}
-                            </Typography>
-                            <Typography component="div" className={styles.itemField}>
-                              <strong>{t('color')}:</strong> {item.color || t('unknown')}
-                            </Typography>
-                            <Typography component="div" className={styles.itemField}>
-                              <strong>{t('size')}:</strong> {item.size || t('unknown')}
-                            </Typography>
-                            <Typography component="div" className={styles.itemField}>
-                              <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
-                            </Typography>
-                          </Box>
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Divider sx={{ my: 1 }} />
-                    <Typography component="div" className={styles.field}>
-                      <strong>{t('totalPrice')}:</strong> €{convertToEuro(order.totalPrice || 0)}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-
-              {/* Status */}
-              <Grid item xs={12}>
-                <Box mt={2}>
-                  <Typography variant="body2" gutterBottom>
-                    {t('orderStatus')}:
-                  </Typography>
-                  <Select
-                    value={order.status}
-                    onChange={(e) =>
-                      onUpdateStatus(order._id, e.target.value as Order['status'])
-                    }
-                    size="small"
-                    className={styles.statusSelect}
-                    MenuProps={{
-                      PaperProps: { elevation: 4, style: { maxHeight: 200 } },
-                      disableScrollLock: true,
-                    }}
-                  >
-                    <MenuItem value="Pending">{t('pending')}</MenuItem>
-                    <MenuItem value="Processing">{t('processing')}</MenuItem>
-                    <MenuItem value="Completed">{t('completed')}</MenuItem>
-                  </Select>
-                </Box>
-              </Grid>
+      {orders.map((order) => (
+        <Paper key={order._id} className={styles.orderCard} elevation={3} sx={{ mb: 3 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                alignItems="flex-start"
+                spacing={1}
+              >
+                <Typography component="div" className={styles.orderId}>
+                  {t('orderId')} #{order._id}
+                </Typography>
+                <Typography component="div" className={styles.orderDate}>
+                  {t('date')}: {dayjs(order.createdAt).format('YYYY/MM/DD - HH:mm')}
+                </Typography>
+              </Stack>
             </Grid>
-          </Paper>
-        ))
-      )}
+
+            <Grid item xs={12} md={6}>
+              <Box className={styles.sectionWrapper}>
+                <Typography component="div" className={styles.sectionLabel}>
+                  {t('customerInfo')}
+                </Typography>
+                <Box className={styles.infoBox}>
+                  <Stack spacing={1}>
+                    {[
+                      ['name', order.name],
+                      ['email', order.email],
+                      ['phone', order.phone],
+                      ['address', order.address],
+                      ['street', order.street],
+                      ['postalCode', order.postalCode],
+                    ].map(([label, value]) => (
+                      <Typography key={label} component="div" className={styles.field}>
+                        <strong>{t(label)}:</strong> {value || t('unknown')}
+                      </Typography>
+                    ))}
+                    <Box className={styles.field} display="flex" alignItems="center" gap={1}>
+                      <Typography component="span">
+                        <strong>{t('payment')}:</strong>
+                      </Typography>
+                      <Chip
+                        label={order.paid ? t('paid') : t('notPaid')}
+                        color={order.paid ? 'success' : 'warning'}
+                        size="small"
+                      />
+                    </Box>
+                    {order.paypalCaptureId && (
+                      <Typography component="div" className={styles.field}>
+                        <strong>PayPal ID:</strong> {order.paypalCaptureId}
+                      </Typography>
+                    )}
+                  </Stack>
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Box className={styles.sectionWrapper}>
+                <Typography component="div" className={styles.sectionLabel}>
+                  {t('items')}
+                </Typography>
+                <Box className={styles.infoBox}>
+                  <List dense disablePadding>
+                    {order.items.map((item) => (
+                      <ListItem key={item.id} className={styles.itemRow}>
+                        <Box>
+                          <Typography component="div" className={styles.itemTitle}>
+                            {item.name} × {item.quantity}
+                          </Typography>
+                          <Typography component="div" className={styles.itemField}>
+                            <strong>{t('color')}:</strong> {item.color || t('unknown')}
+                          </Typography>
+                          <Typography component="div" className={styles.itemField}>
+                            <strong>{t('size')}:</strong> {item.size || t('unknown')}
+                          </Typography>
+                          <Typography component="div" className={styles.itemField}>
+                            <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
+                          </Typography>
+                        </Box>
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Divider sx={{ my: 1 }} />
+                  <Typography component="div" className={styles.field}>
+                    <strong>{t('totalPrice')}:</strong> €{convertToEuro(order.totalPrice || 0)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Box mt={2}>
+                <Typography variant="body2" gutterBottom>
+                  {t('orderStatus')}:
+                </Typography>
+                <Select
+                  value={order.status}
+                  onChange={(e) =>
+                    onUpdateStatus(order._id, e.target.value as Order['status'])
+                  }
+                  size="small"
+                  className={styles.statusSelect}
+                  MenuProps={{
+                    PaperProps: { elevation: 4, style: { maxHeight: 200 } },
+                    disableScrollLock: true,
+                  }}
+                >
+                  <MenuItem value="Pending">{t('pending')}</MenuItem>
+                  <MenuItem value="Processing">{t('processing')}</MenuItem>
+                  <MenuItem value="Completed">{t('completed')}</MenuItem>
+                </Select>
+              </Box>
+            </Grid>
+          </Grid>
+        </Paper>
+      ))}
     </Box>
   );
 };
