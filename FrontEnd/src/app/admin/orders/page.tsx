@@ -32,6 +32,8 @@ interface Order {
   email: string;
   phone: string;
   address: string;
+  street: string;
+  postalCode: string;
   items: OrderItem[];
   status: 'Pending' | 'Processing' | 'Completed';
   createdAt: string;
@@ -112,26 +114,26 @@ const OrdersPage: React.FC = () => {
 
   return (
     <Container sx={{ mt: 6 }}>
-      <Box sx={{ mb: 2, display: "flex", justifyContent: "center" }}>
-  <Link href="/admin" passHref>
-    <Button
-      variant="contained"
-      sx={{
-        backgroundColor: "#FFD700",
-        color: "#000",
-        fontWeight: 600,
-        px: 3,
-        borderRadius: "8px",
-        boxShadow: "none",
-        '&:hover': {
-          backgroundColor: "#FFC107",
-        },
-      }}
-    >
-      ← Back
-    </Button>
-  </Link>
-</Box>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+        <Link href="/admin" passHref>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#FFD700',
+              color: '#000',
+              fontWeight: 600,
+              px: 3,
+              borderRadius: '8px',
+              boxShadow: 'none',
+              '&:hover': {
+                backgroundColor: '#FFC107',
+              },
+            }}
+          >
+            ← Back
+          </Button>
+        </Link>
+      </Box>
 
       <Typography variant="h4" gutterBottom color="white">
         {t('adminOrders')}

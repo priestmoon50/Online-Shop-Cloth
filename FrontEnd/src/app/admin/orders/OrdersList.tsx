@@ -7,7 +7,6 @@ import {
   Typography,
   List,
   ListItem,
-  ListItemText,
   Select,
   MenuItem,
   Divider,
@@ -37,6 +36,8 @@ interface Order {
   email: string;
   phone: string;
   address: string;
+  street: string;
+  postalCode: string;
   items: OrderItem[];
   status: 'Pending' | 'Processing' | 'Completed';
   createdAt: string;
@@ -95,8 +96,7 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
           {t('noOrders')}
         </Typography>
       ) : (
-        filteredOrders.slice(0, 3).map((order) => (
-
+        filteredOrders.map((order) => (
           <Paper key={order._id} className={styles.orderCard} elevation={3}>
             <Grid container spacing={3}>
               {/* Header */}
@@ -119,34 +119,37 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
               {/* Customer Info */}
               <Grid item xs={12} md={6}>
                 <Box className={styles.sectionWrapper}>
-                  <Typography className={styles.sectionLabel}>
+                  <Typography className={styles.sectionLabel} component="div">
                     {t('customerInfo')}
                   </Typography>
                   <Box className={styles.infoBox}>
                     <Stack spacing={1}>
-                      <Typography className={styles.field}>
-                        <strong>{t('name')}:</strong> {order.name}
-                      </Typography>
-                      <Typography className={styles.field}>
-                        <strong>{t('email')}:</strong> {order.email}
-                      </Typography>
-                      <Typography className={styles.field}>
-                        <strong>{t('phone')}:</strong> {order.phone}
-                      </Typography>
-                      <Typography className={styles.field}>
-                        <strong>{t('address')}:</strong> {order.address}
-                      </Typography>
-                      <Typography className={styles.field}>
-                        <strong>{t('payment')}:</strong>{' '}
+                      {[
+                        ['name', order.name],
+                        ['email', order.email],
+                        ['phone', order.phone],
+                        ['address', order.address],
+                        ['street', order.street],
+                        ['postalCode', order.postalCode],
+                      ].map(([label, value]) => (
+                        <Typography key={label} component="div" className={styles.field}>
+                          <strong>{t(label)}:</strong> {value || t('unknown')}
+                        </Typography>
+                      ))}
+
+                      <Box className={styles.field} display="flex" alignItems="center" gap={1}>
+                        <Typography component="span">
+                          <strong>{t('payment')}:</strong>
+                        </Typography>
                         <Chip
                           label={order.paid ? t('paid') : t('notPaid')}
                           color={order.paid ? 'success' : 'warning'}
                           size="small"
-                          sx={{ ml: 1 }}
                         />
-                      </Typography>
+                      </Box>
+
                       {order.paypalCaptureId && (
-                        <Typography className={styles.field}>
+                        <Typography component="div" className={styles.field}>
                           <strong>PayPal ID:</strong> {order.paypalCaptureId}
                         </Typography>
                       )}
@@ -158,45 +161,39 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
               {/* Order Items */}
               <Grid item xs={12} md={6}>
                 <Box className={styles.sectionWrapper}>
-                  <Typography className={styles.sectionLabel}>
+                  <Typography className={styles.sectionLabel} component="div">
                     {t('items')}
                   </Typography>
                   <Box className={styles.infoBox}>
                     <List dense disablePadding>
                       {order.items.map((item) => (
                         <ListItem key={item.id} className={styles.itemRow}>
-                          <ListItemText
-                            primary={
-                              <Typography className={styles.itemTitle}>
-                                {item.name} × {item.quantity}
-                              </Typography>
-                            }
-                            secondary={
-                              <Box className={styles.itemDetails}>
-                                <Typography variant="body2" className={styles.itemField}>
-                                  <strong>{t('color')}:</strong> {item.color || t('unknown')}
-                                </Typography>
-                                <Typography variant="body2" className={styles.itemField}>
-                                  <strong>{t('size')}:</strong> {item.size || t('unknown')}
-                                </Typography>
-                                <Typography variant="body2" className={styles.itemField}>
-                                  <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
-                                </Typography>
-                              </Box>
-                            }
-                          />
+                          <Box>
+                            <Typography component="div" className={styles.itemTitle}>
+                              {item.name} × {item.quantity}
+                            </Typography>
+                            <Typography component="div" className={styles.itemField}>
+                              <strong>{t('color')}:</strong> {item.color || t('unknown')}
+                            </Typography>
+                            <Typography component="div" className={styles.itemField}>
+                              <strong>{t('size')}:</strong> {item.size || t('unknown')}
+                            </Typography>
+                            <Typography component="div" className={styles.itemField}>
+                              <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
+                            </Typography>
+                          </Box>
                         </ListItem>
                       ))}
                     </List>
                     <Divider sx={{ my: 1 }} />
-                    <Typography className={styles.field}>
+                    <Typography component="div" className={styles.field}>
                       <strong>{t('totalPrice')}:</strong> €{convertToEuro(order.totalPrice || 0)}
                     </Typography>
                   </Box>
                 </Box>
               </Grid>
 
-              {/* Order Status */}
+              {/* Status */}
               <Grid item xs={12}>
                 <Box mt={2}>
                   <Typography variant="body2" gutterBottom>
@@ -210,10 +207,7 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                     size="small"
                     className={styles.statusSelect}
                     MenuProps={{
-                      PaperProps: {
-                        elevation: 4,
-                        style: { maxHeight: 200 },
-                      },
+                      PaperProps: { elevation: 4, style: { maxHeight: 200 } },
                       disableScrollLock: true,
                     }}
                   >
