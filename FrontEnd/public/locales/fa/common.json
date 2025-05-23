@@ -141,6 +141,12 @@
   "items": "آیتم‌ها",
 
 
+
+"street": "خیابان",
+"postalCode": "کد پستی",
+
+  
+
   "unknown": "نامشخص",
   "totalPrice": "مجموع قیمت",
   "orderStatus": "وضعیت سفارش",

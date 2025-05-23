@@ -37,6 +37,8 @@
   "checkoutError": "Fehler beim Abschluss der Bestellung",
   "loadingUser": "Lade Benutzerinformationen...",
   "backToCart": "Zurück zum Warenkorb",
+"street": "Straße",
+"postalCode": "Postleitzahl",
 
   "confirm": "Bestätigen",
   "submit": "Absenden",

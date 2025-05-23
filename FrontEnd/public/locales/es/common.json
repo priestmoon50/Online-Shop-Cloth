@@ -131,7 +131,9 @@
   "checkoutError": "Error al realizar el pago",
   "loadingUser": "Cargando información del usuario...",
   "backToCart": "Volver al carrito",
-  
+  "street": "Calle",
+"postalCode": "Código postal",
+
   "confirm": "Confirmar",
   "submit": "Enviar",
   "yes": "Sí",
