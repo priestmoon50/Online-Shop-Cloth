@@ -12,6 +12,7 @@ import {
   Grid,
   Avatar,
   Divider,
+  Container,
 } from "@mui/material";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -135,8 +136,9 @@ const CheckoutPage: React.FC = () => {
   if (!ready) return <p>در حال بارگذاری اطلاعات کاربر...</p>;
 
   return (
-    <Box sx={{ px: { xs: 2, sm: 4 }, py: 4 }}>
-      <Toaster position="top-right" />
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Toaster position="bottom-center" />
+
       <Typography variant="h4" gutterBottom>
         Checkout
       </Typography>
@@ -162,14 +164,23 @@ const CheckoutPage: React.FC = () => {
                         {...field}
                         fullWidth
                         label={
-                          fieldName === "firstName" ? "First Name" :
-                          fieldName === "lastName" ? "Last Name" :
-                          fieldName === "email" ? "Email" :
-                          fieldName === "phone" ? "Phone" : "Address"
+                          fieldName === "firstName"
+                            ? "First Name"
+                            : fieldName === "lastName"
+                            ? "Last Name"
+                            : fieldName === "email"
+                            ? "Email"
+                            : fieldName === "phone"
+                            ? "Phone"
+                            : "Address"
                         }
                         error={!!errors[fieldName as keyof FormData]}
                         helperText={errors[fieldName as keyof FormData]?.message || ""}
-                        InputProps={isAuthenticated && fieldName !== "address" ? { readOnly: true } : undefined}
+                        InputProps={
+                          isAuthenticated && fieldName !== "address"
+                            ? { readOnly: true }
+                            : undefined
+                        }
                       />
                     )}
                   />
@@ -187,7 +198,7 @@ const CheckoutPage: React.FC = () => {
                 color: "#003087",
                 fontWeight: "bold",
                 fontSize: "16px",
-                padding: "12px",
+                py: 1.5,
                 "&:hover": {
                   backgroundColor: "#ffb347",
                 },
@@ -198,7 +209,6 @@ const CheckoutPage: React.FC = () => {
           </form>
         </Grid>
 
-        {/* جداکننده ظریف */}
         <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" }, mx: 2 }} />
 
         <Grid item xs={12} md={4}>
@@ -211,16 +221,19 @@ const CheckoutPage: React.FC = () => {
           ) : (
             <List>
               {cart.items.map((item) => (
-                <ListItem key={item.id} alignItems="flex-start">
+                <ListItem key={item.id} alignItems="flex-start" disableGutters>
                   <Avatar
                     src={item.image || "/placeholder.jpg"}
                     variant="rounded"
                     sx={{ width: 64, height: 64, mr: 2 }}
                   />
-                  <ListItemText
-                    primary={`${item.name} - €${convertToEuro(item.price)} x ${item.quantity}`}
-                    secondary={`Size: ${item.size || "N/A"} | Color: ${item.color || "N/A"}`}
-                  />
+                  <Box>
+                    <Typography fontWeight="bold">{item.name}</Typography>
+                    <Typography variant="body2">Price: €{convertToEuro(item.price)}</Typography>
+                    <Typography variant="body2">Quantity: {item.quantity}</Typography>
+                    <Typography variant="body2">Size: {item.size || "N/A"}</Typography>
+                    <Typography variant="body2">Color: {item.color || "N/A"}</Typography>
+                  </Box>
                 </ListItem>
               ))}
             </List>
@@ -230,14 +243,14 @@ const CheckoutPage: React.FC = () => {
             Total: €{convertToEuro(cart.items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0))}
           </Typography>
 
-          <Link href="/cart" passHref>
+          <Link href="/cart" passHref legacyBehavior>
             <Button variant="outlined" color="secondary" sx={{ mt: 2 }} fullWidth>
               Back to Cart
             </Button>
           </Link>
         </Grid>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 
