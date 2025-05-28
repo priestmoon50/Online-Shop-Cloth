@@ -79,7 +79,6 @@ const Footer: React.FC = () => {
                 { label: 'AGB', path: '/agb' },
                 { label: 'Datenschutz', path: '/datenschutz' },
                 { label: 'Widerrufsbelehrung', path: '/widerrufsbelehrung' },
-        
                 { label: 'Zahlung', path: '/zahlung' },
                 { label: 'Rückgabe & Umtausch', path: '/rueckgabe-umtausch' },
               ].map(({ label, path }) => (

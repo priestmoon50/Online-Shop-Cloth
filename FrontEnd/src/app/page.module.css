@@ -1,11 +1,15 @@
-/* کانتینر اسلایدر */
 .sliderContainer {
   position: relative;
   box-shadow: 0 8px 35px rgba(0, 0, 0, 0.85);
   border: 1px solid #070f18;
   transition: all 0.5s ease;
-    background-color: #000;
+  background-color: #000;
+
+  /* اضافه کن: */
+  border-radius: 20px;
+  overflow: hidden;
 }
+
 
 /* فلش‌های عمومی */
 .customArrow {
