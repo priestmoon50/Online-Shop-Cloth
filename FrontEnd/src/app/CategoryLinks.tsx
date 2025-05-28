@@ -24,13 +24,15 @@ export default function CategoryLinks() {
     <Box sx={{ mt: 4 }}>
       <Grid container spacing={4}>
         {categories.map((category) => (
-          <Grid item xs={12} sm={6} md={3} key={category.id}>
+          <Grid item xs={6} sm={6} md={3} key={category.id}>
+
             <Box
               onClick={() => handleCategoryClick(category.filter)}
               sx={{
                 cursor: 'pointer',
                 position: 'relative',
-                height: '300px',
+                height: { xs: '160px', sm: '220px', md: '300px' },
+
                 background: 'cover',
                 overflow: 'hidden',
                 borderRadius: '12px',
