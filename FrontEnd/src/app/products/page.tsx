@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Box, Typography, TextField } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
-import ProductCategories from "@/components/ProductCategories";
+
 import ProductFilters from "@/components/ProductFilters";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
 import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next"; // اضافه شد
+import { useTranslation } from "react-i18next";
+import CategoryLinks from "../CategoryLinks";
+import { useSearchParams } from "next/navigation";
 
 const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("/api/products");
@@ -25,9 +27,14 @@ const fetchProducts = async (): Promise<Product[]> => {
   return [];
 };
 
-export default function Home() {
-  const { t } = useTranslation(); // اضافه شد
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+export default function ProductsPage() {
+  const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  
+  const initialCategory = searchParams?.get("category") ?? "all";
+
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [priceRange, setPriceRange] = useState<number[]>([1, 1000]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -41,17 +48,13 @@ export default function Home() {
   });
 
   useEffect(() => {
-    if (allProducts.length > 0) {
-      console.log("✅ Products loaded:", allProducts);
+
+    const categoryFromUrl = searchParams?.get("category");
+
+    if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
+      setSelectedCategory(categoryFromUrl);
     }
-  }, [allProducts]);
-
-  if (isLoading) return <div>{t("loading")}</div>;
-
-  if (error) {
-    console.error("Error fetching products:", error.message);
-    return <div>{t("errorFetchingProducts")}</div>;
-  }
+  }, [searchParams]);
 
   const filteredProducts = allProducts.filter((product) => {
     const isInSelectedCategory =
@@ -71,6 +74,13 @@ export default function Home() {
     );
   });
 
+  if (isLoading) return <div>{t("loading")}</div>;
+
+  if (error) {
+    console.error("Error fetching products:", error.message);
+    return <div>{t("errorFetchingProducts")}</div>;
+  }
+
   return (
     <Box sx={{ mt: "100px", px: 2 }}>
       <Box sx={{ mb: 3 }}>
@@ -83,7 +93,8 @@ export default function Home() {
         />
       </Box>
 
-      <ProductCategories setSelectedCategory={setSelectedCategory} />
+      <CategoryLinks />
+    
       <ProductFilters priceRange={priceRange} setPriceRange={setPriceRange} />
 
       {filteredProducts.length === 0 && (

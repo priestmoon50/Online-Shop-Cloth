@@ -75,8 +75,8 @@ export default function HomeClient() {
           ))}
         </Slider>
       </Box>
-
-      <CategoryLinks />
+ 
+   
 
       <Box sx={{ mt: 6 }}>
         <ProductGrid />
