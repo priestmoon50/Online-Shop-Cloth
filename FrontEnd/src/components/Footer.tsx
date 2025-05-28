@@ -80,6 +80,7 @@ const Footer: React.FC = () => {
                 { label: 'Datenschutz', path: '/datenschutz' },
                 { label: 'Widerrufsbelehrung', path: '/widerrufsbelehrung' },
                 { label: 'Zahlung', path: '/zahlung' },
+                { label: 'Versand', path: '/versand' },
                 { label: 'Rückgabe & Umtausch', path: '/rueckgabe-umtausch' },
               ].map(({ label, path }) => (
                 <Typography key={label} variant="body2">
