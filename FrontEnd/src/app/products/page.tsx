@@ -1,9 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Grid, Box, Typography, TextField } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
 import ProductCard from "@/components/ProductCard";
-
 import ProductFilters from "@/components/ProductFilters";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -12,6 +17,8 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import CategoryLinks from "../CategoryLinks";
 import { useSearchParams } from "next/navigation";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 
 const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("/api/products");
@@ -30,9 +37,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 export default function ProductsPage() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
-  
   const initialCategory = searchParams?.get("category") ?? "all";
-
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [priceRange, setPriceRange] = useState<number[]>([1, 1000]);
@@ -48,9 +53,7 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
-
     const categoryFromUrl = searchParams?.get("category");
-
     if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
       setSelectedCategory(categoryFromUrl);
     }
@@ -75,26 +78,73 @@ export default function ProductsPage() {
   });
 
   if (isLoading) return <div>{t("loading")}</div>;
-
   if (error) {
     console.error("Error fetching products:", error.message);
     return <div>{t("errorFetchingProducts")}</div>;
   }
 
   return (
-    <Box sx={{ mt: "100px", px: 2 }}>
-      <Box sx={{ mb: 3 }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder={t("searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </Box>
-
+    <Box sx={{ mt: 0, px: 2 }}>
       <CategoryLinks />
-    
+
+<Box
+  sx={{
+    my: 3,
+    position: "relative",
+    maxWidth: { xs: "100%", sm: "500px" },
+    mx: "auto",
+  }}
+>
+  <TextField
+    fullWidth
+    size="small"
+    variant="outlined"
+    placeholder={t("searchPlaceholder")}
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <SearchIcon sx={{ color: "#000" }} />
+        </InputAdornment>
+      ),
+      endAdornment: searchTerm && (
+        <InputAdornment position="end">
+          <CloseIcon
+            onClick={() => setSearchTerm("")}
+            sx={{
+              cursor: "pointer",
+              fontSize: 18,
+              color: "#555",
+              "&:hover": {
+                color: "#000",
+              },
+            }}
+          />
+        </InputAdornment>
+      ),
+    }}
+    sx={{
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+        height: 38,
+        backgroundColor: "#fff",
+        transition: "all 0.3s ease",
+        "& fieldset": {
+          borderColor: "#ccc",
+        },
+        "&:hover fieldset": {
+          borderColor: "#aaa",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "#444",
+        },
+      },
+    }}
+  />
+</Box>
+
+
       <ProductFilters priceRange={priceRange} setPriceRange={setPriceRange} />
 
       {filteredProducts.length === 0 && (
