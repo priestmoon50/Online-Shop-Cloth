@@ -7,6 +7,7 @@ import {
   Typography,
   TextField,
   InputAdornment,
+  useMediaQuery,
 } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
 import ProductFilters from "@/components/ProductFilters";
@@ -37,6 +38,8 @@ const fetchProducts = async (): Promise<Product[]> => {
 export default function ProductsPage() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   const initialCategory = searchParams?.get("category") ?? "all";
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
@@ -87,65 +90,71 @@ export default function ProductsPage() {
     <Box sx={{ mt: 0, px: 2 }}>
       <CategoryLinks />
 
-<Box
-  sx={{
-    my: 3,
-    position: "relative",
-    maxWidth: { xs: "100%", sm: "500px" },
-    mx: "auto",
-  }}
->
-  <TextField
-    fullWidth
-    size="small"
-    variant="outlined"
-    placeholder={t("searchPlaceholder")}
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon sx={{ color: "#000" }} />
-        </InputAdornment>
-      ),
-      endAdornment: searchTerm && (
-        <InputAdornment position="end">
-          <CloseIcon
-            onClick={() => setSearchTerm("")}
+      {isMobile && (
+        <Box
+          sx={{
+            my: 3,
+            position: "relative",
+            maxWidth: "100%",
+            mx: "auto",
+          }}
+        >
+          <TextField
+            fullWidth
+            size="small"
+            variant="outlined"
+            placeholder={t("searchPlaceholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: "#000" }} />
+                </InputAdornment>
+              ),
+              endAdornment: searchTerm && (
+                <InputAdornment position="end">
+                  <CloseIcon
+                    onClick={() => setSearchTerm("")}
+                    sx={{
+                      cursor: "pointer",
+                      fontSize: 18,
+                      color: "#555",
+                      "&:hover": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                </InputAdornment>
+              ),
+            }}
             sx={{
-              cursor: "pointer",
-              fontSize: 18,
-              color: "#555",
-              "&:hover": {
-                color: "#000",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: 38,
+                backgroundColor: "#fff",
+                transition: "all 0.3s ease",
+                "& fieldset": {
+                  borderColor: "#ccc",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#aaa",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#444",
+                },
               },
             }}
           />
-        </InputAdornment>
-      ),
-    }}
-    sx={{
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "10px",
-        height: 38,
-        backgroundColor: "#fff",
-        transition: "all 0.3s ease",
-        "& fieldset": {
-          borderColor: "#ccc",
-        },
-        "&:hover fieldset": {
-          borderColor: "#aaa",
-        },
-        "&.Mui-focused fieldset": {
-          borderColor: "#444",
-        },
-      },
-    }}
-  />
-</Box>
+        </Box>
+      )}
 
-
-      <ProductFilters priceRange={priceRange} setPriceRange={setPriceRange} />
+      <ProductFilters
+        priceRange={priceRange}
+        setPriceRange={setPriceRange}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
 
       {filteredProducts.length === 0 && (
         <Typography variant="h6" align="center">
