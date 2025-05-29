@@ -23,6 +23,9 @@ import AccountMenu from "./AccountMenu";
 import { useCart } from "../context/CartContext";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector/LanguageSelector";
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 
 const NAVBAR_HEIGHT = 56;
 
@@ -170,39 +173,60 @@ const NavBar: React.FC = () => {
     },
   }}
 >
-  <List sx={{ mt: 2 }}>
-    {[
-      { key: "newArrivals", label: t("newArrivals"), href: "/products" },
-      { key: "collections", label: t("collections"), href: "/products" },
-      { key: "shop", label: t("shop"), href: "/products" },
-      { key: "viewCart", label: t("viewCart"), href: "/cart" },
-    ].map(({ key, label, href }, index, array) => (
-      <React.Fragment key={key}>
-        <Link href={href} passHref legacyBehavior>
-          <ListItemButton
-  component="a"
-  sx={{ px: 3 }}
-  onClick={() => {
-    if (isMobile) setDrawerOpen(false);
-  }}
->
+ <List sx={{ mt: 2 }}>
+  {[
+    {
+      key: "newArrivals",
+      label: t("newArrivals"),
+      href: "/products",
+      icon: <NewReleasesIcon sx={{ mr: 2, color: "#555" }} />,
+    },
+    {
+      key: "collections",
+      label: t("collections"),
+      href: "/products",
+      icon: <CollectionsIcon sx={{ mr: 2, color: "#555" }} />,
+    },
+    {
+      key: "shop",
+      label: t("shop"),
+      href: "/products",
+      icon: <StorefrontIcon sx={{ mr: 2, color: "#555" }} />,
+    },
+    {
+      key: "viewCart",
+      label: t("viewCart"),
+      href: "/cart",
+      icon: <ShoppingCartIcon sx={{ mr: 2, color: "#555" }} />,
+    },
+  ].map(({ key, label, href, icon }, index, array) => (
+    <React.Fragment key={key}>
+      <Link href={href} passHref legacyBehavior>
+        <ListItemButton
+          component="a"
+          sx={{ px: 3 }}
+          onClick={() => {
+            if (isMobile) setDrawerOpen(false);
+          }}
+        >
+          {icon}
+          <ListItemText
+            primary={label}
+            primaryTypographyProps={{
+              sx: {
+                fontFamily: "inherit",
+                fontSize: "1rem",
+                fontWeight: 500,
+              },
+            }}
+          />
+        </ListItemButton>
+      </Link>
+      {index < array.length - 1 && <Divider />}
+    </React.Fragment>
+  ))}
+</List>
 
-            <ListItemText
-              primary={label}
-              primaryTypographyProps={{
-                sx: {
-                  fontFamily: "inherit",
-                  fontSize: "1rem",
-                  fontWeight: 500,
-                },
-              }}
-            />
-          </ListItemButton>
-        </Link>
-        {index < array.length - 1 && <Divider />}
-      </React.Fragment>
-    ))}
-  </List>
 </Drawer>
 
       )}
