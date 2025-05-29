@@ -7,7 +7,6 @@ import styles from "./page.module.css";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ProductGrid from "./ProductGrid";
-import CategoryLinks from "./CategoryLinks";
 
 interface ArrowProps {
   className?: string;
@@ -45,23 +44,21 @@ const sliderSettings = {
   customPaging: () => <div className={styles.customPaging} />,
 };
 
-const images = [
-  "/images/HomeSlide1.webp",
-  "/images/HomeSlide2.webp",
-];
+const images = ["/images/HomeSlide1.webp", "/images/HomeSlide2.webp"];
 
 export default function HomeClient() {
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, md: 4 } }}>
       <Box className={styles.sliderContainer}>
         <Slider {...sliderSettings}>
           {images.map((src, index) => (
             <Box
               key={index}
               sx={{
-                width: "100%",
+                width: "100vw",
                 height: { xs: "50vh", sm: "60vh", md: "70vh" },
                 position: "relative",
+                margin: 0,
               }}
             >
               <Image
@@ -75,10 +72,8 @@ export default function HomeClient() {
           ))}
         </Slider>
       </Box>
- 
-   
 
-      <Box sx={{ mt: 6 }}>
+      <Box sx={{ mt: { xs: 2, sm: 4, md: 6 }, mb: 0, pb: 0 }}>
         <ProductGrid />
       </Box>
     </Container>

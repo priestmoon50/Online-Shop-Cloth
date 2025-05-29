@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
                 { label: 'Widerrufsbelehrung', path: '/widerrufsbelehrung' },
                 { label: 'Zahlung', path: '/zahlung' },
                 { label: 'Versand', path: '/versand' },
-                { label: 'Rückgabe & Umtausch', path: '/rueckgabe-umtausch' },
+                { label: 'Cookies rechtlinie', path: '/rueckgabe-umtausch' },
               ].map(({ label, path }) => (
                 <Typography key={label} variant="body2">
                   <Link href={path} color="inherit" underline="hover">
