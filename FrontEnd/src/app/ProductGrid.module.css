@@ -19,19 +19,14 @@
   flex-direction: column;
   justify-content: space-between;
   text-align: center;
-  border: 2px solid rgba(255, 105, 180, 0.3);
+  border: none;
+
+
   box-shadow: 0 4px 12px rgba(255, 105, 180, 0.1);
   transition: all 0.3s ease-in-out;
 }
 
-/* Hover فقط روی دستگاه‌های غیر لمسی */
-@media (hover: hover) and (pointer: fine) {
-  .productCard:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
-    border-color: rgba(255, 105, 180, 0.8);
-  }
-}
+
 
 /* تصویر محصول */
 .productImage {

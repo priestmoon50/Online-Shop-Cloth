@@ -122,9 +122,22 @@ export default function ProductGrid() {
                 </Box>
               )}
             </Box>
-            <Typography variant="h6" gutterBottom>
-              {name}
-            </Typography>
+<Typography
+  variant="h6"
+  gutterBottom
+  sx={{
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    minHeight: '3.2em', // ensures equal height
+  }}
+>
+  {name}
+</Typography>
+
+
             <Typography variant="body2" color="textSecondary">
               {category || "No Category"}
             </Typography>
