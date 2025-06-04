@@ -4,7 +4,7 @@ import React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
+
 import Box from "@mui/material/Box";
 import Image from "next/image";
 import { Product } from "@/data/types";
@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
-import { convertToEuro } from "@/utils/convertCurrency";
+
 
 const ProductCard: React.FC<Product> = ({
   id,
