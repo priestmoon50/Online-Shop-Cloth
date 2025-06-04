@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
 const categories = [
-  { id: 0, title: 'all', image: '/images/all-products.webp', filter: 'all' }, // آیکون دلخواه یا تکراری
+  { id: 0, title: 'all', image: '/images/all-products.webp', filter: 'all' },
   { id: 1, title: 'accessory', image: '/images/Accessory.webp', filter: 'accessory' },
   { id: 2, title: 'dress', image: '/images/piran.webp', filter: 'dress' },
   { id: 3, title: 'shoes', image: '/images/shos.webp', filter: 'shoes' },
@@ -29,6 +29,7 @@ export default function CategoryLinks() {
         sx={{
           flexWrap: { xs: 'nowrap', md: 'wrap' },
           width: '100%',
+          justifyContent: 'center',
         }}
       >
         {categories.map((category) => (
@@ -48,37 +49,46 @@ export default function CategoryLinks() {
                 position: 'relative',
                 width: '100%',
                 aspectRatio: '1 / 1',
-                overflow: 'hidden',
-                borderRadius: '8px',
-                boxShadow: '0px 1px 5px rgba(0,0,0,0.15)',
-                border: '1px solid rgba(0, 0, 0, 0.1)',
+                borderRadius: '50%',
+                p: '2px',
+                background: 'conic-gradient(red, orange, yellow, green, cyan, blue, violet, red)',
                 transition: 'transform 0.3s ease',
                 '&:hover': {
                   transform: 'scale(1.05)',
                 },
               }}
             >
-              <Image
-                src={category.image}
-                alt={t(category.title)}
-                fill
-                sizes="(max-width: 600px) 25vw, 140px"
-                style={{ objectFit: 'cover' }}
-              />
               <Box
                 sx={{
-                  position: 'absolute',
-                  bottom: 0,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
                   width: '100%',
-                  bgcolor: 'rgba(0, 0, 0, 0.45)',
-                  color: 'white',
-                  textAlign: 'center',
-                  py: 0.5,
+                  height: '100%',
+                  position: 'relative',
                 }}
               >
-                <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>
-                  {t(category.title)}
-                </Typography>
+                <Image
+                  src={category.image}
+                  alt={t(category.title)}
+                  fill
+                  sizes="(max-width: 600px) 25vw, 140px"
+                  style={{ objectFit: 'cover' }}
+                />
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                    bgcolor: 'rgba(0, 0, 0, 0.45)',
+                    color: 'white',
+                    textAlign: 'center',
+                    py: 0.5,
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>
+                    {t(category.title)}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </Grid>
