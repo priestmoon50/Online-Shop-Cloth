@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { useTranslation } from 'react-i18next'; // اضافه کردن i18n برای ترجمه
+import { useTranslation } from 'react-i18next';
 import { Button, TextField, Box, Typography } from '@mui/material';
-import { convertToEuro } from "@/utils/convertCurrency";
+import { convertToEuro } from '@/utils/convertCurrency';
 
 const CartManager: React.FC = () => {
   const { cart, addItem, removeItem, updateItem } = useCart();
-  const { t } = useTranslation(); // استفاده از ترجمه
+  const { t } = useTranslation();
+
   const [newItem, setNewItem] = useState({
     id: '',
     name: '',
@@ -15,23 +16,37 @@ const CartManager: React.FC = () => {
     size: '',
     color: '',
   });
-  const [error, setError] = useState<string | null>(null); // مدیریت خطا
+  const [error, setError] = useState<string | null>(null);
 
   const handleAddItem = () => {
     if (!newItem.id || !newItem.name || newItem.price <= 0) {
-      setError(t('error.requiredFields')); // نمایش پیام خطا
+      setError(t('error.requiredFields'));
       return;
     }
 
-    addItem(newItem);
+    addItem({
+      id: newItem.id,
+      name: newItem.name,
+      price: newItem.price,
+      image: '',
+      variants: [
+        {
+          size: newItem.size,
+          color: newItem.color,
+          quantity: newItem.quantity,
+        },
+      ],
+    });
+
     setNewItem({ id: '', name: '', price: 0, quantity: 1, size: '', color: '' });
-    setError(null); // پاک کردن خطا پس از موفقیت
+    setError(null);
   };
 
   return (
     <div>
       <Typography variant="h4">{t('cartManagerTitle')}</Typography>
-      <Box>
+
+      <Box display="flex" flexDirection="column" gap={2} maxWidth="400px" mb={4}>
         <TextField
           label={t('productId')}
           value={newItem.id}
@@ -69,18 +84,48 @@ const CartManager: React.FC = () => {
         </Button>
       </Box>
 
-      {error && <Typography color="error">{error}</Typography>} {/* نمایش خطا */}
+      {error && <Typography color="error">{error}</Typography>}
 
       <Typography variant="h5">{t('cartItems')}</Typography>
       <ul>
         {cart.items.map((item) => (
           <li key={item.id}>
-           {item.name} - €{convertToEuro(item.price)} x {item.quantity} ({item.size}, {item.color})
-            <Button onClick={() => removeItem(item.id)}>{t('remove')}</Button>
-            <Button onClick={() => updateItem(item.id, item.quantity + 1)}>{t('increase')}</Button>
-            <Button onClick={() => updateItem(item.id, item.quantity > 1 ? item.quantity - 1 : 1)}>
-              {t('decrease')}
-            </Button>
+            <Typography fontWeight={600}>{item.name}</Typography>
+            {item.variants.map((variant, index) => (
+              <Box key={index} mb={2}>
+                <Typography>
+                  €{convertToEuro(item.price)} x {variant.quantity} ({variant.size}, {variant.color})
+                </Typography>
+                <Box display="flex" gap={1} mt={1}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() =>
+                      updateItem(item.id, variant.size, variant.color, variant.quantity + 1)
+                    }
+                  >
+                    {t('increase')}
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() =>
+                      updateItem(item.id, variant.size, variant.color, Math.max(1, variant.quantity - 1))
+                    }
+                  >
+                    {t('decrease')}
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="error"
+                    onClick={() => removeItem(item.id, variant.size, variant.color)}
+                  >
+                    {t('remove')}
+                  </Button>
+                </Box>
+              </Box>
+            ))}
           </li>
         ))}
       </ul>
