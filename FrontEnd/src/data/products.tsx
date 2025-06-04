@@ -41,14 +41,19 @@ export const AllProducts = () => {
             />
           )}
 
-          {product.sizes && (
-            <div>
-              Size:{" "}
-              {Array.isArray(product.sizes)
-                ? product.sizes.join(", ")
-                : product.sizes}
-            </div>
-          )}
+{product.sizes && product.sizes.length > 0 && (
+  <div>
+    Sizes:
+    <ul>
+      {product.sizes.map((s, i) => (
+        <li key={i}>
+          {s.size} — {s.stock} in stock
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
 
           {product.colors && (
             <div>

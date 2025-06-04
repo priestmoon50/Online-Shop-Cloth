@@ -56,7 +56,7 @@ interface FormData {
 }
 
 const CheckoutPage: React.FC = () => {
-  const { cart } = useCart();
+  const { cart, discountPercent, couponCode } = useCart();
   const router = useRouter();
   const { token, isAuthenticated, ready } = useAuth();
   const { t } = useTranslation();
@@ -96,16 +96,25 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    const totalPrice = cart.items.reduce(
-      (acc, item) => acc + Number(item.price) * item.quantity,
+const rawTotal = cart.items.reduce(
+  (acc, item) =>
+    acc +
+    item.variants.reduce(
+      (sum, variant) => sum + Number(item.price) * variant.quantity,
       0
-    );
+    ),
+  0
+);
+
+const totalPrice = rawTotal * (1 - discountPercent / 100);
 
     const orderData = {
       name: `${data.firstName} ${data.lastName}`,
       email: data.email,
       phone: data.phone,
       street: data.street,
+      discountCode: couponCode,
+discountPercent,
       address: data.address,
       postalCode: data.postalCode,
       totalPrice,
@@ -430,15 +439,17 @@ const CheckoutPage: React.FC = () => {
     variant="rounded"
     sx={{ width: 64, height: 64 }}
   />
-  <Box>
-    <Typography fontWeight="bold">{item.name}</Typography>
+{item.variants.map((variant, idx) => (
+  <Box key={idx} ml={1}>
     <Typography variant="body2" color="text.secondary">
-      €{convertToEuro(item.price)} × {item.quantity}
+      €{convertToEuro(item.price)} × {variant.quantity}
     </Typography>
     <Typography variant="body2" color="text.secondary">
-      {t("size", "Size")}: {item.size || "N/A"} | {t("color", "Color")}: {item.color || "N/A"}
+      {t("size", "Size")}: {variant.size || "N/A"} | {t("color", "Color")}: {variant.color || "N/A"}
     </Typography>
   </Box>
+))}
+
 </Box>
 
               ))}
@@ -461,7 +472,16 @@ const CheckoutPage: React.FC = () => {
   }}
 >
   {t("total", "Total")}:
-  <span>€{convertToEuro(cart.items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0))}</span>
+ <span>€{convertToEuro(cart.items.reduce(
+  (acc, item) =>
+    acc +
+    item.variants.reduce(
+      (sum, variant) => sum + Number(item.price) * variant.quantity,
+      0
+    ),
+  0
+)
+ * (1 - discountPercent / 100))}</span>
 </Typography>
 
 

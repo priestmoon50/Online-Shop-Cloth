@@ -9,8 +9,9 @@ export interface Product {
   image: string;
   images?: string[];
   category?: string;
-  sizes?: Array<string | number>; // انعطاف‌پذیری در نوع سایزها
-  colors?: Array<string | number>; // انعطاف‌پذیری در نوع رنگ‌ها
+  sizes?: { size: string; stock: number }[];
+
+  colors?: Array<string | number>;
   description?: string;
   rating?: number;
   stock?: number;
@@ -20,18 +21,19 @@ export interface Product {
   discount?: number;
   imageUrl?: string;
   quantity?: number;
-  [x: string]: unknown; // انعطاف‌پذیری برای اضافه کردن هر فیلد اضافی
+  [x: string]: unknown; 
 }
 
-// تایپ‌های مربوط به آیتم‌های سبد خرید
 export interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantity: number;
-  size?: string | number;  // تغییر نوع به string | number
-  color?: string | number; // تغییر نوع به string | number
   image?: string;
+  variants: {
+    size?: string | number;
+    color?: string | number;
+    quantity: number;
+  }[];
 }
 
 // تایپ‌های مربوط به کاربران

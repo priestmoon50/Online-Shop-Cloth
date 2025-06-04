@@ -13,11 +13,14 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantity: number;
-  size?: string | number;
-  color?: string | number;
   image?: string;
+  variants: {
+    size: string;
+    quantity: number;
+    color?: string;
+  }[];
 }
+
 
 interface CartState {
   items: CartItem[];
@@ -28,7 +31,11 @@ interface CartContextProps {
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   updateItem: (id: string, quantity: number) => void;
-  clearCart: () => void; // اضافه شده
+  clearCart: () => void;
+  couponCode: string | null;
+  setCouponCode: (code: string | null) => void;
+  discountPercent: number;
+  setDiscountPercent: (percent: number) => void;
 }
 
 // ================== Initial ==================
@@ -77,6 +84,9 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, dispatch] = useReducer(cartReducer, initialState);
   const [isMounted, setIsMounted] = useState(false);
+// Edit 2: اضافه کردن stateهای جدید
+const [couponCode, setCouponCode] = useState<string | null>(null);
+const [discountPercent, setDiscountPercent] = useState<number>(0);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -123,7 +133,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <CartContext.Provider
-      value={{ cart, addItem, removeItem, updateItem, clearCart }}
+     value={{
+  cart,
+  addItem,
+  removeItem,
+  updateItem,
+  clearCart,
+  couponCode,
+  setCouponCode,
+  discountPercent,
+  setDiscountPercent,
+}}
+
     >
       {children}
     </CartContext.Provider>
@@ -132,6 +153,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useCart = (): CartContextProps => {
   const context = useContext(CartContext);
+  
   if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }

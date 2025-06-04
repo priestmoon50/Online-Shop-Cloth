@@ -36,7 +36,11 @@ const { t } = useTranslation();
   const { favorites, addFavorite, removeFavorite, isMounted } = useFavorites();
 const productId = String(product.id || product._id);
 const isLiked = favorites.items.some((item) => String(item.id) === productId);
-const availableStock = product.stock ?? 0;
+const currentSizeStock =
+  product.sizes?.find((s) => s.size === selectedSize)?.stock ?? 0;
+
+const availableStock = currentSizeStock;
+
 
 
 
@@ -85,15 +89,19 @@ const toggleLike = () => {
 
     const productImage = product.images?.[0] || "/placeholder.jpg";
 
-    addItem({
-      id: productId.toString(),
-      name: product.name,
-      price: product.price,
-      quantity,
+addItem({
+  id: productId.toString(),
+  name: product.name,
+  price: product.price,
+  image: productImage,
+  variants: [
+    {
       size: selectedSize,
       color: selectedColor,
-      image: productImage,
-    });
+      quantity,
+    },
+  ],
+});
 
     setOpenModal(true);
   };
@@ -106,8 +114,8 @@ const toggleLike = () => {
   disableGutters
   sx={{
     px: { xs: '2vw', sm: '3vw', md: 0 },
-    pt: { xs: '16px', md: '40px' }, // کنترل padding بالا
-    pb: { xs: '24px', md: '40px' }, // کنترل padding پایین
+    pt: { xs: '16px', md: '40px' }, 
+    pb: { xs: '24px', md: '40px' }, 
   }}
   className={styles.container}
 >
@@ -170,7 +178,10 @@ const toggleLike = () => {
   sx={{ px: { xs: 0, md: 3 } }} // همینجا هم پدینگ رو صفر کن
 >
 
+<div className={styles.zoomableImageWrapper}>
   <ProductImages images={imagesArray} />
+</div>
+
 </Grid>
 
 
@@ -235,17 +246,19 @@ const toggleLike = () => {
               Select Size:
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={1}>
-              {product.sizes?.map((size) => (
-                <Button
-                  key={size}
-                  variant={selectedSize === size ? "contained" : "outlined"}
-                  onClick={() => setSelectedSize(String(size))}
+{product.sizes
+  ?.filter((s) => s.stock > 0)
+  .map((s) => (
+    <Button
+      key={s.size}
+      variant={selectedSize === s.size ? "contained" : "outlined"}
+      onClick={() => setSelectedSize(s.size)}
+      sx={{ minWidth: 40, px: 2 }}
+    >
+      {s.size}
+    </Button>
+))}
 
-                  sx={{ minWidth: 40, px: 2 }}
-                >
-                  {size}
-                </Button>
-              ))}
             </Box>
           </Box>
 
@@ -305,7 +318,7 @@ const toggleLike = () => {
   onClick={() => setQuantity((prev) => Math.min(prev + 1, availableStock))}
   disabled={quantity >= availableStock}
 
-
+ 
 
                 size="small"
                 style={{ border: "1px solid #ccc", borderRadius: "50%", backgroundColor: "#f9f9f9", padding: "4px", margin: "0 4px" }}

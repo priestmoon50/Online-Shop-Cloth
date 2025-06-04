@@ -25,7 +25,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     if (!res.ok) {
       return notFound();
     }
-
+ 
     const product: Product = await res.json();
 
     return (

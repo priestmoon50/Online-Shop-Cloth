@@ -13,34 +13,20 @@ import {
   Container,
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { CartItem } from "@/data/types";
 import { convertToEuro } from "@/utils/convertCurrency";
 
 const Cart: React.FC = () => {
-  const { cart, removeItem, updateItem } = useCart();
+  const { cart, removeItem } = useCart();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-
-  const handleUpdateItem = async (id: string, newQuantity: number) => {
-    if (newQuantity < 1) {
-      setError(t("error.quantityTooLow"));
-      return;
-    }
-    setLoading(true);
-    try {
-      await updateItem(id, newQuantity);
-      setError(null);
-    } catch {
-      setError(t("error.updateFailed"));
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [couponCode, setCouponCode] = useState("");
+  const [discountPercent, setDiscountPercent] = useState(0);
 
   const handleRemoveItem = async (id: string) => {
     setLoading(true);
@@ -57,10 +43,34 @@ const Cart: React.FC = () => {
     window.location.href = "/checkout";
   };
 
-  const totalAmount = cart.items.reduce(
-    (total, item) => total + Number(item.price) * item.quantity,
+  const handleApplyDiscount = async () => {
+    try {
+      const res = await fetch(`/api/discounts/validate?code=${couponCode}`);
+      const data = await res.json();
+
+      if (data.valid) {
+        setDiscountPercent(data.percentage);
+        setError(null);
+      } else {
+        setDiscountPercent(0);
+        setError(data.error || "کد تخفیف نامعتبر است");
+      }
+    } catch {
+      setDiscountPercent(0);
+      setError("خطا در بررسی کد تخفیف");
+    }
+  };
+
+const totalAmount = cart.items.reduce((total, item) => {
+  const variants = Array.isArray(item.variants) ? item.variants : [];
+  const itemTotal = variants.reduce(
+    (sum, variant) => sum + Number(item.price) * variant.quantity,
     0
   );
+  return total + itemTotal;
+}, 0);
+
+  const discountedAmount = totalAmount * (1 - discountPercent / 100);
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -70,73 +80,66 @@ const Cart: React.FC = () => {
         <Typography variant="h6">{t("emptyCart")}</Typography>
       ) : (
         <>
-          {cart.items.map((item: CartItem) => (
-            <Box
-              key={item.id}
-              sx={{
-                borderBottom: "1px solid #eee",
-                pb: 3,
-                mb: 4,
-              }}
-            >
-              <Grid container spacing={3} alignItems="center">
-                <Grid item xs={12} md={3}>
-                  <Box
-                    component="img"
-                    src={item.image || "/placeholder.jpg"}
-                    alt={item.name}
-                    sx={{
-                      width: "100%",
-                      height: { xs: 200, md: 240 },
-                      objectFit: "cover",
-                      borderRadius: 2,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={9}>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    {item.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t("price")}: €{convertToEuro(item.price)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t("quantity")}: {item.quantity}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t("size")}: {item.size || "N/A"}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {t("color")}: {item.color || "N/A"}
-                  </Typography>
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handleUpdateItem(item.id, item.quantity + 1)}
-                    >
-                      +
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handleUpdateItem(item.id, Math.max(1, item.quantity - 1))}
-                    >
-                      -
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      color="error"
-                      onClick={() => handleRemoveItem(item.id)}
-                    >
-                      {t("remove")}
-                    </Button>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </Box>
-          ))}
+{cart.items.map((item: CartItem) => (
+  <Box
+    key={item.id}
+    sx={{
+      borderBottom: "1px solid #eee",
+      pb: 3,
+      mb: 4,
+    }}
+  >
+    <Grid container spacing={3} alignItems="center">
+      <Grid item xs={12} md={3}>
+        <Box
+          component="img"
+          src={item.image || "/placeholder.jpg"}
+          alt={item.name}
+          sx={{
+            width: "100%",
+            height: { xs: 200, md: 240 },
+            objectFit: "cover",
+            borderRadius: 2,
+          }}
+        />
+      </Grid>
+      <Grid item xs={12} md={9}>
+        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+          {item.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {t("price")}: €{convertToEuro(item.price)}
+        </Typography>
+
+{Array.isArray(item.variants) &&
+  item.variants.map((variant, idx) => (
+    <Box key={idx} mt={1}>
+      <Typography variant="body2" color="text.secondary">
+        {t("quantity")}: {variant.quantity}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {t("size")}: {variant.size || "N/A"}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" gutterBottom>
+        {t("color")}: {variant.color || "N/A"}
+      </Typography>
+    </Box>
+  ))}
+
+        <Stack direction="row" spacing={1} flexWrap="wrap">
+          <Button
+            variant="outlined"
+            size="small"
+            color="error"
+            onClick={() => handleRemoveItem(item.id)}
+          >
+            {t("remove")}
+          </Button>
+        </Stack>
+      </Grid>
+    </Grid>
+  </Box>
+))}
 
           {error && (
             <Typography color="error" sx={{ my: 2 }}>
@@ -146,8 +149,50 @@ const Cart: React.FC = () => {
 
           <Divider sx={{ my: 4 }} />
 
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            {t("total")}: €{convertToEuro(totalAmount)}
+          <Box sx={{ my: 3 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              {t("discountCode")}
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <input
+                type="text"
+                placeholder={t("enterDiscountCode")}
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "6px",
+                  minWidth: "0",
+                }}
+              />
+              <Button
+                variant="contained"
+                onClick={handleApplyDiscount}
+                sx={{
+                  backgroundColor: "#1976d2",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  px: 3,
+                  "&:hover": {
+                    backgroundColor: "#1565c0",
+                  },
+                }}
+              >
+                {t("apply")}
+              </Button>
+            </Stack>
+          </Box>
+
+          {discountPercent > 0 && (
+            <Typography color="success.main" sx={{ mb: 1 }}>
+              ✅ {discountPercent}% تخفیف اعمال شد!
+            </Typography>
+          )}
+
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            {t("total")}: €{convertToEuro(discountedAmount)}
           </Typography>
 
           <Grid container spacing={2}>

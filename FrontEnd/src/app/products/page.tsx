@@ -161,7 +161,7 @@ export default function ProductsPage() {
           {t("noProductsForFilters")}
         </Typography>
       )}
-
+ 
       <Grid container spacing={2}>
         {filteredProducts.map((product) => (
           <Grid item key={product.id} xs={6} sm={4} md={4} lg={3}>
