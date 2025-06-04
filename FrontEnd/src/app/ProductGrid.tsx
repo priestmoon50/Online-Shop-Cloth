@@ -55,7 +55,9 @@ export default function ProductGrid() {
   const sliderSettings = {
     infinite: true,
     speed: 8000,
-    slidesToShow: isMobile ? 2 : isTablet ? 4 : 6,
+    slidesToShow: isMobile ? 2 : isTablet ? 3 : 4,
+centerMode: false,
+
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 0,
