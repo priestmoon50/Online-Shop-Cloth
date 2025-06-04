@@ -96,7 +96,8 @@ const ProductCard: React.FC<Product> = ({
                     fontSize: { xs: "1rem", sm: "0.875rem" },
                   }}
                 >
-                  {t("price")}: €{convertToEuro(price)}
+                  {t("price")}: €{price}
+
                 </Typography>
                 <Typography
                   variant="body2"
@@ -105,12 +106,14 @@ const ProductCard: React.FC<Product> = ({
                     fontSize: { xs: "1.25rem", sm: "1rem" },
                   }}
                 >
-                  {t("discountedPrice")}: €{convertToEuro(discountedPrice)}
+                  {t("discountedPrice")}: €{discountedPrice}
+
                 </Typography>
               </>
             ) : (
               <Typography variant="body2" color="text.secondary">
-                {t("price")}: €{convertToEuro(price)}
+                {t("price")}: €{price}
+
               </Typography>
             )}
           </Box>
