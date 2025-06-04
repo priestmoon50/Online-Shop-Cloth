@@ -3,7 +3,7 @@
 import { Box, Container, Divider, Typography } from '@mui/material';
 
 const rueckgabeContent = `
-Rückgabe & Umtausch
+
 
 BEVOR ES LOSGEHT... 
 In dieser Cookie-Richtlinie finden Sie Informationen über unsere Verwendung von Cookies und ähnlichen Einrichtungen, die auf den Endgeräten unserer Kunden und Benutzer installiert werden. Manchmal kann die Verwendung von Cookies mit der Verarbeitung personenbezogener Daten zusammenhängen. Wir empfehlen Ihnen daher, unsere Datenschutzerklärung zu lesen, die auf unserer Plattform zugänglich ist, wenn Sie Informationen darüber wünschen, wie wir die personenbezogenen Daten unserer Kunden und Benutzer verwenden, wie Sie Ihre Rechte ausüben können oder welche Begriffe wir verwenden, um auf unsere Plattform (Web, App oder Filialen vor Ort) zu verweisen. 
@@ -69,7 +69,7 @@ export default function RueckgabeUmtauschPage() {
           gutterBottom
           sx={{ textAlign: 'center', mb: 3 }}
         >
-          Rückgabe & Umtausch
+          Cookies rechtlinie
         </Typography>
 
         <Divider sx={{ mb: 4, borderColor: '#ddd' }} />

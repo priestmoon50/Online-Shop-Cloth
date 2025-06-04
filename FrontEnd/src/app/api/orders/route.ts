@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // بررسی موجودی
+    // بررسی موجودی هر سایز
     for (const item of items) {
       const product = await db.collection("products").findOne({ id: item.id });
 
@@ -65,20 +65,30 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      if ((product.stock ?? 0) < item.quantity) {
-        return NextResponse.json(
-          { error: `Not enough stock for ${product.name}` },
-          { status: 400 }
+      for (const variant of item.variants) {
+        const sizeEntry = product.sizes?.find(
+          (s: any) => s.size === variant.size
         );
+
+        if (!sizeEntry || sizeEntry.stock < variant.quantity) {
+          return NextResponse.json(
+            {
+              error: `Not enough stock for ${product.name} (size: ${variant.size})`,
+            },
+            { status: 400 }
+          );
+        }
       }
     }
 
-    // کاهش موجودی
+    // کاهش موجودی هر سایز
     for (const item of items) {
-      await db.collection("products").updateOne(
-        { id: item.id },
-        { $inc: { stock: -item.quantity } }
-      );
+      for (const variant of item.variants) {
+        await db.collection("products").updateOne(
+          { id: item.id, "sizes.size": variant.size },
+          { $inc: { "sizes.$.stock": -variant.quantity } }
+        );
+      }
     }
 
     const order = {

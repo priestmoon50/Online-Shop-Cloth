@@ -76,7 +76,6 @@ const columns: GridColDef<Product>[] = [
   { field: "id", headerName: t("product_id"), width: 150 },
   { field: "name", headerName: t("name"), width: 140 },
   { field: "price", headerName: t("price"), width: 100 },
-  { field: "stock", headerName: t("stock"), width: 100 },
   { field: "category", headerName: t("category"), width: 120 },
   {
     field: "actions",

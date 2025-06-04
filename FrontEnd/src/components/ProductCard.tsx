@@ -41,7 +41,8 @@ const ProductCard: React.FC<Product> = ({
       transition={{ duration: 0.5 }}
       whileHover={{ scale: 1.05 }}
     >
-      <Card sx={{ position: "relative", overflow: "hidden", height: "100%" }}>
+      <Card sx={{ position: "relative", overflow: "hidden", height: 460, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+
         <Link href={`/product/${id}`} passHref>
           <Box
             sx={{
@@ -81,10 +82,23 @@ const ProductCard: React.FC<Product> = ({
           </Box>
         </Link>
 
-        <CardContent>
-          <Typography variant="h6" component="div">
-            {name}
-          </Typography>
+        <CardContent sx={{ flexGrow: 1 }}>
+
+  <Typography
+  variant="h6"
+  component="div"
+  sx={{
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    minHeight: '3.2em', // تقریباً ۲ خط متن
+  }}
+>
+  {name}
+</Typography>
+
           <Box>
             {discountedPrice ? (
               <>
