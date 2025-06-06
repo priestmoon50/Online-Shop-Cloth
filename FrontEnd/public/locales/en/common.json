@@ -115,6 +115,12 @@
   "emptyCart": "Your cart is currently empty.",
   "quantity": "Quantity",
   "size": "Size",
+
+    "discountCode": "Discount Code",
+  "enterDiscountCode": "Enter discount code",
+  "apply": "Apply",
+  "Please Login To Continue": "Please login to continue",
+
   "color": "Color",
   "remove": "Remove",
   "proceedToCheckout": "Proceed to Checkout",

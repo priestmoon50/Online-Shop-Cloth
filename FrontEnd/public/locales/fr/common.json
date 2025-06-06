@@ -88,6 +88,10 @@
   "yes": "Oui",
   "no": "Non",
   "product_name": "Nom du produit",
+  "discountCode": "Code de réduction",
+  "enterDiscountCode": "Entrez le code de réduction",
+  "apply": "Appliquer",
+  "Please Login To Continue": "Veuillez vous connecter pour continuer",
 
   "description": "Description",
 

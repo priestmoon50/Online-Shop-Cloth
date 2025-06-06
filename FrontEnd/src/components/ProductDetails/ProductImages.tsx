@@ -64,7 +64,9 @@ const settings = {
 <Box
   sx={{
     width: { xs: '95vw', sm: '90vw', md: '500px' },
-    maxWidth: '135%',
+    maxWidth: '100%',
+overflow: 'hidden',
+
     position: 'relative', // بسیار مهم برای موقعیت‌یابی فلش‌ها
   }}
 >

@@ -39,6 +39,10 @@
   "backToCart": "Zurück zum Warenkorb",
 "street": "Straße",
 "postalCode": "Postleitzahl",
+  "discountCode": "Rabattcode",
+  "enterDiscountCode": "Rabattcode eingeben",
+  "apply": "Anwenden",
+  "Please Login To Continue": "Bitte melden Sie sich an, um fortzufahren",
 
   "confirm": "Bestätigen",
   "submit": "Absenden",

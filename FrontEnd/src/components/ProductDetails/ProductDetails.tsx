@@ -201,9 +201,7 @@ addItem({
           <ProductPrice price={product.price} discount={product.discount} />
 <div className={styles.mobileDivider}></div>
 
-          <Typography variant="body2" className={styles.productDescription}>
-            {product.description}
-          </Typography>
+     
 <div className={styles.mobileDivider}></div>
 
           <Typography variant="body2">
@@ -339,11 +337,19 @@ addItem({
   {availableStock === 0 ? t('outOfStock') : t('addToCart')}
 </Button>
 
-
+<Typography
+  variant="body2"
+  className={styles.productDescription}
+  sx={{ mt: 3, lineHeight: 1.7 }}
+>
+  {product.description}
+</Typography>
 
           </Box>
+          
         </Grid>
       </Grid>
+
 
       <Modal open={openModal} onClose={handleCloseModal} aria-labelledby="success-modal-title" aria-describedby="success-modal-description">
         <Box sx={{ p: 4, backgroundColor: "white", borderRadius: 2, maxWidth: 400, margin: "auto", mt: "10%", textAlign: "center" }}>
@@ -359,6 +365,8 @@ addItem({
           <Button onClick={handleCheckout} sx={{ mt: 2 }} variant="contained" color="secondary">
             Checkout
           </Button>
+
+          
         </Box>
       </Modal>
     </Container>

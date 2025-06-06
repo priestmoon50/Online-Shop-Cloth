@@ -118,7 +118,10 @@
   "accountExists": "¡Ya existe una cuenta con este correo o número de teléfono! Por favor inicia sesión.",
   "emailNotVerified": "Ya estás registrado, pero no has verificado tu correo. Revisa tu bandeja de entrada.",
   "registerFailed": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-
+"discountCode": "Código de descuento",
+  "enterDiscountCode": "Introduce el código de descuento",
+  "apply": "Aplicar",
+  "Please Login To Continue": "Por favor inicia sesión para continuar",
 "checkoutTitle": "Pagar",
   "userInfoLoaded": "La información de su cuenta ha sido cargada.",
   "enterInfoOrLogin": "Para completar su compra, introduzca su información o inicie sesión.",
