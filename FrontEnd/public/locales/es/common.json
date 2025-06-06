@@ -108,10 +108,11 @@
   "messageSuccess": "Tu mensaje se ha enviado correctamente.",
 
   "phone": "Número de teléfono",
-
+"productNoLongerAvailable": "Este producto ya no está disponible"
+,
   "confirmPassword": "Confirmar contraseña",
   "nameRequired": "Nombre y apellido son obligatorios.",
-
+"new": "Nuevo",
   "invalidPhone": "Por favor, introduce un número de teléfono válido con código de país.",
   "shortPassword": "La contraseña debe tener al menos 6 caracteres.",
   "passwordsMismatch": "Las contraseñas no coinciden.",

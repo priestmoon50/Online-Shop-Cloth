@@ -27,7 +27,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ message: 'Invalid product ID' }, { status: 400 });
   }
 
-  const updatedData: Product = await request.json();
+const body = await request.json();
+const updatedData: Product = {
+  ...body,
+  isNew: !!body.isNew, // ✅ محکم‌کاری
+};
+
 
   // ✅ حذف فیلد _id از دادهٔ ورودی
   const { _id, ...productWithoutId } = updatedData;

@@ -113,7 +113,7 @@ const NavBar: React.FC = () => {
       {[
         { key: "shop", href: "/products" },
         { key: "newArrivals", href: "/products" },
-        { key: "sale", href: "/products" },
+    
       ].map(({ key, href }) => (
         <Link key={key} href={href} passHref>
           <Button

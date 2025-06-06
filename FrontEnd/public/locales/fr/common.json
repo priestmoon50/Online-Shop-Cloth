@@ -70,7 +70,8 @@
 "postalCode": "Code postal",
 
 
-
+"productNoLongerAvailable": "Ce produit n'est plus disponible"
+,
  "checkoutTitle": "Paiement",
   "userInfoLoaded": "Vos informations de compte ont été chargées.",
   "enterInfoOrLogin": "Pour finaliser votre achat, saisissez vos informations ou connectez-vous.",
@@ -92,7 +93,7 @@
   "enterDiscountCode": "Entrez le code de réduction",
   "apply": "Appliquer",
   "Please Login To Continue": "Veuillez vous connecter pour continuer",
-
+"new": "Nouveau",
   "description": "Description",
 
   "select_colors": "Sélectionner des couleurs",

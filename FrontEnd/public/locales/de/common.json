@@ -43,7 +43,9 @@
   "enterDiscountCode": "Rabattcode eingeben",
   "apply": "Anwenden",
   "Please Login To Continue": "Bitte melden Sie sich an, um fortzufahren",
-
+"new": "Neu",
+"productNoLongerAvailable": "Dieses Produkt ist nicht mehr verfügbar"
+,
   "confirm": "Bestätigen",
   "submit": "Absenden",
   "yes": "Ja",

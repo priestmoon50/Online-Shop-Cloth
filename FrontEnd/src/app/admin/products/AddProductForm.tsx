@@ -43,6 +43,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       sizes: [],
       category: '',
       images: [],
+      isNew: false,
     },
   });
 
@@ -75,6 +76,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
     setAddedImages([...addedImages, image]);
   };
 
+  
   const onSubmit = async (data: Product) => {
     try {
       await Promise.all(
@@ -349,6 +351,28 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
             </Grid>
           ))}
         </Grid>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+  <Grid item xs={12}>
+    <Controller
+      name="isNew"
+      control={control}
+      render={({ field }) => (
+        <Box display="flex" alignItems="center">
+<input
+  type="checkbox"
+  id="isNew"
+  checked={!!field.value}
+  onChange={(e) => field.onChange(e.target.checked)}
+  style={{ marginRight: 8 }}
+/>
+
+          <label htmlFor="isNew">{t('mark_as_new')}</label>
+        </Box>
+      )}
+    />
+  </Grid>
+</Grid>
+
       </Box>
 
       {/* Submit */}

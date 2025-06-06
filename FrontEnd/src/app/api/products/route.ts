@@ -38,11 +38,13 @@ export async function POST(req: NextRequest) {
   try {
     const { db } = await connectToDatabase();
     const collection = db.collection<Product>('products');
-
-    const newProduct: Product = {
-      ...(await req.json()),
-      id: Date.now(), // شناسه عددی یکتا
-    };
+const body = await req.json();
+const newProduct: Product = {
+  ...body,
+  id: Date.now(),
+  isNew: !!body.isNew, // ✅ اطمینان از نوع Boolean
+  createdAt: new Date(), // ⏱️ مفید برای فیلتر خودکار
+};
 
     await collection.insertOne(newProduct);
     return NextResponse.json(newProduct, { status: 201 });
@@ -54,7 +56,12 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const updatedProduct: Product = await req.json();
+const body = await req.json();
+const updatedProduct: Product = {
+  ...body,
+  isNew: !!body.isNew, // ✅ محکم‌کاری
+};
+
     if (!updatedProduct.id) {
       return NextResponse.json({ message: 'Product ID is required for update' }, { status: 400 });
     }

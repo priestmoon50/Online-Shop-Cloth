@@ -21,6 +21,7 @@ export interface Product {
   discount?: number;
   imageUrl?: string;
   quantity?: number;
+  isNew?: boolean;
   [x: string]: unknown; 
 }
 

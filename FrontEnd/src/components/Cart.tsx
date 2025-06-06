@@ -1,7 +1,6 @@
-// src/components/Cart.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -27,6 +26,31 @@ const Cart: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
+  const [validProducts, setValidProducts] = useState<{ [key: string]: boolean }>({});
+
+  useEffect(() => {
+    const checkProducts = async () => {
+      const results: { [key: string]: boolean } = {};
+
+      await Promise.all(
+        cart.items.map(async (item) => {
+          try {
+            const res = await fetch(`/api/products?id=${item.id}`);
+            const data = await res.json();
+            results[item.id] = !!data?.id;
+          } catch {
+            results[item.id] = false;
+          }
+        })
+      );
+
+      setValidProducts(results);
+    };
+
+    if (cart.items.length > 0) {
+      checkProducts();
+    }
+  }, [cart.items]);
 
   const handleRemoveItem = async (id: string, size: string, color?: string) => {
     setLoading(true);
@@ -80,72 +104,95 @@ const Cart: React.FC = () => {
         <Typography variant="h6">{t("emptyCart")}</Typography>
       ) : (
         <>
-          {cart.items.map((item: CartItem) => (
-            <Box
-              key={item.id}
-              sx={{
-                borderBottom: "1px solid #eee",
-                pb: 3,
-                mb: 4,
-              }}
-            >
-              <Grid container spacing={3} alignItems="center">
-                <Grid item xs={12} md={3}>
-                  <Box
-                    component="img"
-                    src={item.image || "/placeholder.jpg"}
-                    alt={item.name}
-                    sx={{
-                      width: "100%",
-                      height: { xs: 200, md: 240 },
-                      objectFit: "cover",
-                      borderRadius: 2,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={9}>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    {item.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t("price")}: €{convertToEuro(item.price)}
-                  </Typography>
+          {cart.items.map((item: CartItem) => {
+            const isValid = validProducts[item.id];
+            return (
+              <Box
+                key={item.id}
+                sx={{
+                  borderBottom: "1px solid #eee",
+                  pb: 3,
+                  mb: 4,
+                }}
+              >
+                <Grid container spacing={3} alignItems="center">
+                  <Grid item xs={12} md={3}>
+                    <Box
+                      component="img"
+                      src={item.image || "/placeholder.jpg"}
+                      alt={item.name}
+                      sx={{
+                        width: "100%",
+                        height: { xs: 200, md: 240 },
+                        objectFit: "cover",
+                        borderRadius: 2,
+                        opacity: isValid === false ? 0.5 : 1,
+                        filter: isValid === false ? "grayscale(100%)" : "none",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={9}>
+                 {isValid === false && (
+  <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
 
-                  {Array.isArray(item.variants) &&
-                    item.variants.map((variant, idx) => (
-                      <Box key={idx} mt={1} p={2} border="1px solid #ddd" borderRadius={2}>
-                        <Typography variant="body2" color="text.secondary">
-                          {t("quantity")}: {variant.quantity}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {t("size")}: {variant.size || "N/A"}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" gutterBottom>
-                          {t("color")}: {variant.color || "N/A"}
-                        </Typography>
+    <Button
+      size="small"
+      color="error"
+      variant="outlined"
+      onClick={() => handleRemoveItem(String(item.id), "", undefined)}
+    >
+      {t("remove")}
+    </Button>
+  </Stack>
+)}
 
-                        <Stack direction="row" spacing={1} flexWrap="wrap">
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            color="error"
-                            onClick={() =>
-                              handleRemoveItem(
-                                String(item.id),
-                                String(variant.size),
-                                variant.color ? String(variant.color) : undefined
-                              )
-                            }
-                          >
-                            {t("remove")}
-                          </Button>
-                        </Stack>
-                      </Box>
-                    ))}
+
+                    {isValid === false && (
+                      <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+                        ❌ {t("productNoLongerAvailable")}
+                      </Typography>
+                    )}
+
+                    <Typography variant="body2" color="text.secondary">
+                      {t("price")}: €{convertToEuro(item.price)}
+                    </Typography>
+
+                    {Array.isArray(item.variants) &&
+                      item.variants.map((variant, idx) => (
+                        <Box key={idx} mt={1} p={2} border="1px solid #ddd" borderRadius={2}>
+                          <Typography variant="body2" color="text.secondary">
+                            {t("quantity")}: {variant.quantity}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {t("size")}: {variant.size || "N/A"}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" gutterBottom>
+                            {t("color")}: {variant.color || "N/A"}
+                          </Typography>
+
+                          <Stack direction="row" spacing={1} flexWrap="wrap">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              color="error"
+                              onClick={() =>
+                                handleRemoveItem(
+                                  String(item.id),
+                                  String(variant.size),
+                                  variant.color ? String(variant.color) : undefined
+                                )
+                              }
+                            >
+                              {t("remove")}
+                            </Button>
+                          </Stack>
+                        </Box>
+                      ))}
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-          ))}
+              </Box>
+            );
+          })}
 
           {error && (
             <Typography color="error" sx={{ my: 2 }}>
