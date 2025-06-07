@@ -1,8 +1,8 @@
 // src/data/types.ts
 
-// تایپ‌های مربوط به محصولات
+
 export interface Product {
-  _id: string; // فرض اینکه همیشه _id رشته است
+  _id: string; 
   id: string | number;
   name: string;
   price: number;
@@ -40,27 +40,33 @@ export interface CartItem {
   }[];
 }
 
-// تایپ‌های مربوط به کاربران
+
 export interface User {
   id: string;
   username: string;
   phone: string;
-  role: 'Customer' | 'Admin'; // تعیین نقش کاربران
+  role: 'Customer' | 'Admin'; 
 }
 
-// تایپ‌های مربوط به سفارشات
+
 export interface Order {
   id: string;
   user: string;
   totalPrice: number;
-  status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled'; // محدود کردن مقادیر وضعیت
-  date: Date; // فرض بر اینکه سفارشات تاریخ دارند
-  [x: string]: string | number | Date | undefined; // انعطاف‌پذیری برای اضافه کردن فیلدهای دیگر
+  status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled'; 
+  date: Date; 
+  [x: string]: string | number | Date | undefined; 
 }
 
 export interface ProductRatingProps {
   rating: number;
   reviewsCount: number;
+}
+
+export interface HomeSlide {
+  _id?: string;
+  imageUrl: string;
+  title?: string;
 }
 
 export interface ProductPriceProps {
@@ -69,6 +75,11 @@ export interface ProductPriceProps {
   discountPrice?: number | null;
 }
 
+export interface CategoryLink {
+  _id?: string;
+  title: string;
+  imageUrl: string;
+}
 
 
 export interface ProductImagesProps {
@@ -88,13 +99,13 @@ export interface RegisterFormInputs {
   confirmPassword: string;
 }
 
-// تایپ‌های مورد نیاز برای کامپوننت‌های مشترک
+
 
 export interface PasswordFieldProps {
   label: string;
   error: boolean;
-  helperText?: string;  // string | undefined
-  register: (name: string) => { onChange: () => void }; // تایپ دقیق‌تر برای تابع register
+  helperText?: string;  
+  register: (name: string) => { onChange: () => void }; 
 }
 
 export interface SubmitButtonProps {

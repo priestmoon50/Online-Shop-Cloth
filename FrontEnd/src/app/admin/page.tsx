@@ -66,6 +66,34 @@ const AdminDashboard: React.FC = () => {
             </Link>
           </Paper>
         </Grid>
+
+        <Grid item xs={12} md={6}>
+  <Paper elevation={3} style={{ padding: '16px' }}>
+    <Typography variant="h6">Edit Category Links</Typography>
+    <Link href="/admin/category-links" passHref>
+      <Button
+        variant="contained"
+        color="info"
+        style={{ marginBottom: '16px' }}
+      >
+        Go to Category Links
+      </Button>
+    </Link>
+  </Paper>
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+  <Paper elevation={3} style={{ padding: '16px' }}>
+    <Typography variant="h6">Home Slider</Typography>
+    <Link href="/admin/home-slides" passHref>
+      <Button variant="contained" color="primary" style={{ marginBottom: '16px' }}>
+        مدیریت اسلایدر
+      </Button>
+    </Link>
+  </Paper>
+</Grid>
+
       </Grid>
     </Container>
   );

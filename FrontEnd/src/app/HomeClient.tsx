@@ -1,12 +1,15 @@
-"use client";
+'use client';
 
-import { Container, Box } from "@mui/material";
-import Slider from "react-slick";
-import Image from "next/image";
-import styles from "./page.module.css";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ProductGrid from "./ProductGrid";
+import { useEffect, useState } from 'react';
+import { Container, Box } from '@mui/material';
+import Slider from 'react-slick';
+import Image from 'next/image';
+import axios from 'axios';
+import styles from './page.module.css';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ProductGrid from './ProductGrid';
+import { HomeSlide } from '@/data/types';
 
 interface ArrowProps {
   className?: string;
@@ -33,7 +36,7 @@ const sliderSettings = {
   slidesToShow: 1,
   slidesToScroll: 1,
   autoplay: true,
-  autoplaySpeed: 2000,
+  autoplaySpeed: 3000,
   nextArrow: <NextArrow />,
   prevArrow: <PreviousArrow />,
   appendDots: (dots: React.ReactNode) => (
@@ -44,33 +47,42 @@ const sliderSettings = {
   customPaging: () => <div className={styles.customPaging} />,
 };
 
-const images = ["/images/HomeSlide1.webp", "/images/HomeSlide2.webp"];
-
 export default function HomeClient() {
+  const [images, setImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    axios.get('/api/home-slides').then((res) => {
+      const urls = res.data.map((item: HomeSlide) => item.imageUrl);
+      setImages(urls);
+    });
+  }, []);
+
   return (
     <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, md: 4 } }}>
       <Box className={styles.sliderContainer}>
-        <Slider {...sliderSettings}>
-          {images.map((src, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: "100vw",
-                height: { xs: "50vh", sm: "60vh", md: "70vh" },
-                position: "relative",
-                margin: 0,
-              }}
-            >
-              <Image
-                src={src}
-                alt={`Slide ${index + 1}`}
-                fill
-                sizes="100vw"
-                style={{ objectFit: "cover" }}
-              />
-            </Box>
-          ))}
-        </Slider>
+        {images.length > 0 && (
+          <Slider {...sliderSettings}>
+            {images.map((src, index) => (
+              <Box
+                key={index}
+                sx={{
+                  width: '100vw',
+                  height: { xs: '50vh', sm: '60vh', md: '70vh' },
+                  position: 'relative',
+                  margin: 0,
+                }}
+              >
+                <Image
+                  src={src}
+                  alt={`Slide ${index + 1}`}
+                  fill
+                  sizes="100vw"
+                  style={{ objectFit: 'cover' }}
+                />
+              </Box>
+            ))}
+          </Slider>
+        )}
       </Box>
 
       <Box sx={{ mt: { xs: 2, sm: 4, md: 6 }, mb: 0, pb: 0 }}>

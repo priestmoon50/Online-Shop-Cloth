@@ -4,19 +4,32 @@ import { Box, Grid, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const categories = [
-  { id: 0, title: 'all', image: '/images/all-products.webp', filter: 'all' },
-  { id: 1, title: 'accessory', image: '/images/Accessory.webp', filter: 'accessory' },
-  { id: 2, title: 'dress', image: '/images/piran.webp', filter: 'dress' },
-  { id: 3, title: 'shoes', image: '/images/shos.webp', filter: 'shoes' },
-  { id: 4, title: 'pants', image: '/images/shalvar.webp', filter: 'pants' },
-  { id: 5, title: 'sale', image: '/images/sale.webp', filter: 'sale' },
+const staticCategories = [
+  { id: 0, title: 'all', filter: 'all' },
+  { id: 1, title: 'accessory', filter: 'accessory' },
+  { id: 2, title: 'dress', filter: 'dress' },
+  { id: 3, title: 'shoes', filter: 'shoes' },
+  { id: 4, title: 'pants', filter: 'pants' },
+  { id: 5, title: 'sale', filter: 'sale' },
 ];
 
 export default function CategoryLinks() {
   const { t } = useTranslation();
   const router = useRouter();
+  const [imageMap, setImageMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    axios.get('/api/category-links').then((res) => {
+      const map: Record<string, string> = {};
+      res.data.forEach((item: { title: string; imageUrl: string }) => {
+        map[item.title] = item.imageUrl;
+      });
+      setImageMap(map);
+    });
+  }, []);
 
   const handleCategoryClick = (filter: string) => {
     router.push(`/products?category=${filter}`);
@@ -33,7 +46,7 @@ export default function CategoryLinks() {
           justifyContent: 'center',
         }}
       >
-        {categories.map((category) => (
+        {staticCategories.map((category) => (
           <Grid
             item
             key={category.id}
@@ -52,7 +65,8 @@ export default function CategoryLinks() {
                 aspectRatio: '1 / 1',
                 borderRadius: '50%',
                 p: '2px',
-                background: 'conic-gradient(red, orange, yellow, green, cyan, blue, violet, red)',
+                background:
+                  'conic-gradient(red, orange, yellow, green, cyan, blue, violet, red)',
                 transition: 'transform 0.3s ease',
                 '&:hover': {
                   transform: 'scale(1.05)',
@@ -69,7 +83,7 @@ export default function CategoryLinks() {
                 }}
               >
                 <Image
-                  src={category.image}
+                  src={imageMap[category.title] || '/placeholder.jpg'}
                   alt={t(category.title)}
                   fill
                   sizes="(max-width: 600px) 25vw, 140px"
@@ -98,4 +112,3 @@ export default function CategoryLinks() {
     </Box>
   );
 }
- 
