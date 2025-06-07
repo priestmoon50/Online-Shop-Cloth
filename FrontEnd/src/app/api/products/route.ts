@@ -15,12 +15,15 @@ export async function GET(req: NextRequest) {
     if (id) {
       const numericId = Number(id);
       if (isNaN(numericId)) {
-        return NextResponse.json({ message: 'Invalid product ID' }, { status: 400 });
+        return NextResponse.json({ message: 'invalidProductId' }, { status: 400 });
+
+        
       }
 
       const found = await collection.findOne({ id: numericId });
       if (!found) {
-        return NextResponse.json({ message: 'Product not found' }, { status: 404 });
+        return NextResponse.json({ message: 'productNotFound' }, { status: 404 });
+
       }
 
       return NextResponse.json(found, { status: 200 });
@@ -30,7 +33,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(all, { status: 200 });
   } catch (error: any) {
     console.error('❌ GET Error:', error);
-    return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
+    return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
+
   }
 }
 
@@ -42,15 +46,16 @@ const body = await req.json();
 const newProduct: Product = {
   ...body,
   id: Date.now(),
-  isNew: !!body.isNew, // ✅ اطمینان از نوع Boolean
-  createdAt: new Date(), // ⏱️ مفید برای فیلتر خودکار
+  isNew: !!body.isNew, 
+  createdAt: new Date(), 
 };
 
     await collection.insertOne(newProduct);
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error: any) {
     console.error('❌ POST Error:', error);
-    return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
+    return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
+
   }
 }
 
@@ -63,7 +68,8 @@ const updatedProduct: Product = {
 };
 
     if (!updatedProduct.id) {
-      return NextResponse.json({ message: 'Product ID is required for update' }, { status: 400 });
+      return NextResponse.json({ message: 'productIdRequired' }, { status: 400 });
+
     }
 
     const { db } = await connectToDatabase();
@@ -75,13 +81,15 @@ const updatedProduct: Product = {
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json({ message: 'Product not found' }, { status: 404 });
+      return NextResponse.json({ message: 'productNotFound' }, { status: 404 });
+
     }
 
     return NextResponse.json({ success: true, updated: updatedProduct }, { status: 200 });
   } catch (error: any) {
     console.error('❌ PUT Error:', error);
-    return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
+    return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
+
   }
 }
 
@@ -90,7 +98,8 @@ export async function DELETE(req: NextRequest) {
   const id = searchParams.get('id');
 
   if (!id || isNaN(Number(id))) {
-    return NextResponse.json({ message: 'Invalid product ID' }, { status: 400 });
+    return NextResponse.json({ message: 'invalidProductId' }, { status: 400 });
+
   }
 
   const numericId = Number(id);
@@ -102,12 +111,14 @@ export async function DELETE(req: NextRequest) {
     const result = await collection.deleteOne({ id: numericId });
 
     if (result.deletedCount === 0) {
-      return NextResponse.json({ message: 'Product not found' }, { status: 404 });
+      return NextResponse.json({ message: 'productNotFound' }, { status: 404 });
+
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
     console.error('❌ DELETE Error:', error);
-    return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
+    return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
+
   }
 }

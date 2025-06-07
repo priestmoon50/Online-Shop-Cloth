@@ -71,7 +71,7 @@ const OrderConfirmationEmail = ({
                 <tr key={i}>
                   <td style={{ padding: '8px 0' }}>{item.name}</td>
                   <td align="center">{item.quantity}</td>
-                  <td align="right">€{item.price.toFixed(2)}</td>
+                  <td align="right">€{Number(item.price).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -82,11 +82,11 @@ const OrderConfirmationEmail = ({
             <tbody>
               <tr>
                 <td style={{ paddingTop: '10px', fontWeight: 'bold' }}>Zwischensumme</td>
-                <td align="right">€{totalPrice.toFixed(2)}</td>
+                <td align="right">€{Number(totalPrice).toFixed(2)}</td>
               </tr>
               <tr>
                 <td style={{ fontWeight: 'bold' }}>Rechnungsbetrag</td>
-                <td align="right">€{totalPrice.toFixed(2)}</td>
+                <td align="right">€{Number(totalPrice).toFixed(2)}</td>
               </tr>
             </tbody>
           </table>

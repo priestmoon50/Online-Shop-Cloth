@@ -74,6 +74,35 @@
 ,
 "pleaseSelectSize": "Veuillez sélectionner une taille pour voir la disponibilité"
 ,
+"discountErrorHasDiscountedItem": "Le code promo ne peut être appliqué qu'aux articles sans réduction existante."
+,
+"invalidDiscountCode": "Code de réduction invalide",
+"error.validatingDiscountCode": "Erreur lors de la vérification du code de réduction"
+,
+ "addToFavorites": "Ajouter aux favoris",
+  "addedToFavorites": "Ajouté aux favoris",
+  "selectSize": "Sélectionner la taille :",
+  "selectColor": "Sélectionner la couleur :",
+  "howMany": "Combien ?",
+  "productAdded": "Produit ajouté au panier",
+  "productAddedMessage": "Le produit a été ajouté avec succès à votre panier.",
+  "continueShopping": "Continuer vos achats",
+  "checkout": "Passer à la caisse",
+"invalidProductId": "ID de produit invalide",
+"productNotFound": "Produit non trouvé",
+
+ "back": "Retour",
+  "manageDiscountCodes": "Gérer les codes promo",
+ 
+  "percentage": "Pourcentage",
+
+  "noExpiration": "Pas d'expiration",
+  "noDiscountsDefined": "Aucun code promo défini.",
+  "error.fetchingDiscounts": "Erreur lors du chargement des codes promo.",
+  "error.addingDiscount": "Erreur lors de l’ajout du code promo.",
+  "error.deletingDiscount": "Erreur lors de la suppression du code promo.",
+"productIdRequired": "L'ID du produit est requis pour la mise à jour"
+,
  "checkoutTitle": "Paiement",
   "userInfoLoaded": "Vos informations de compte ont été chargées.",
   "enterInfoOrLogin": "Pour finaliser votre achat, saisissez vos informations ou connectez-vous.",

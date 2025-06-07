@@ -67,35 +67,52 @@ const Cart: React.FC = () => {
     window.location.href = "/checkout";
   };
 
-  const handleApplyDiscount = async () => {
-    try {
-      const res = await fetch(`/api/discounts/validate?code=${couponCode}`);
-      const data = await res.json();
+const handleApplyDiscount = async () => {
+  const hasDiscountedItem = cart.items.some(
+    (item) =>
+      typeof item.discountPrice === "number" &&
+      item.discountPrice > 0 &&
+      item.discountPrice < item.price
+  );
 
-      if (data.valid) {
-        setDiscountPercent(data.percentage);
-        setError(null);
-      } else {
-        setDiscountPercent(0);
-        setError(data.error || "کد تخفیف نامعتبر است");
-      }
-    } catch {
+  if (hasDiscountedItem) {
+    setDiscountPercent(0);
+    setError(t("discountErrorHasDiscountedItem"));
+
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/discounts/validate?code=${couponCode}`);
+    const data = await res.json();
+
+    if (data.valid) {
+      setDiscountPercent(data.percentage);
+      setError(null);
+    } else {
       setDiscountPercent(0);
-      setError("خطا در بررسی کد تخفیف");
+setError(data.error || t("invalidDiscountCode"));
+
     }
-  };
+  } catch {
+    setDiscountPercent(0);
+   setError(t("error.validatingDiscountCode"));
 
-  const totalAmount = cart.items.reduce((total, item) => {
-    const variants = Array.isArray(item.variants) ? item.variants : [];
-    const unitPrice = item.discountPrice ?? item.price;
-    const itemTotal = variants.reduce(
-      (sum, variant) =>
-        sum + Number(item.discountPrice ?? item.price) * variant.quantity,
-      0
-    );
+  }
+};
 
-    return total + itemTotal;
-  }, 0);
+
+const totalAmount = cart.items.reduce((total, item) => {
+  const variants = Array.isArray(item.variants) ? item.variants : [];
+  const rawPrice = item.discountPrice ?? item.price;
+const euroPrice = rawPrice;
+
+  const itemTotal = variants.reduce(
+    (sum, variant) => sum + euroPrice * variant.quantity,
+    0
+  );
+  return total + itemTotal;
+}, 0);
 
   const discountedAmount = totalAmount * (1 - discountPercent / 100);
 
@@ -156,32 +173,27 @@ const Cart: React.FC = () => {
                       </Typography>
                     )}
 
-                    {item.discountPrice ? (
-                      <>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ textDecoration: "line-through" }}
-                        >
-                         {t("price")}: €
-                      {item.discountPrice
-                        ? `${convertToEuro(item.discountPrice)} `
-                        : convertToEuro(item.price)}
+{typeof item.discountPrice === "number" &&
+ item.discountPrice > 0 &&
+ item.discountPrice < item.price ? (
+  <>
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      sx={{ textDecoration: "line-through" }}
+    >
+      €{Number(item.price).toFixed(2)}
+    </Typography>
+    <Typography variant="body2" color="error">
+      {t("discountedPrice")}: €{Number(item.discountPrice).toFixed(2)}
+    </Typography>
+  </>
+) : (
+  <Typography variant="body2" color="text.secondary">
+    €{Number(item.price).toFixed(2)}
+  </Typography>
+)}
 
-                        </Typography>
-                        <Typography variant="body2" color="error">
-                          {t("discountedPrice")}: €{convertToEuro(item.discountPrice)}
-                        </Typography>
-                      </>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        {t("price")}: €
-                      {item.discountPrice
-                        ? `${convertToEuro(item.discountPrice)} `
-                        : convertToEuro(item.price)}
-
-                      </Typography>
-                    )}
 
                     {Array.isArray(item.variants) &&
                       item.variants.map((variant, idx) => (
@@ -271,7 +283,9 @@ const Cart: React.FC = () => {
           )}
 
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {t("total")}: €{convertToEuro(discountedAmount)}
+      
+{t("total")}: €{discountedAmount.toFixed(2)}
+
           </Typography>
 
           <Grid container spacing={2}>

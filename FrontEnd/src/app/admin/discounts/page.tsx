@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 
 type Discount = {
   _id: string;
@@ -34,7 +35,7 @@ export default function AdminDiscountPage() {
   const [percentage, setPercentage] = useState(10);
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [error, setError] = useState("");
-
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -43,7 +44,7 @@ export default function AdminDiscountPage() {
       const res = await axios.get("/api/discounts");
       setDiscounts(res.data);
     } catch {
-      setError("خطا در دریافت لیست تخفیف‌ها");
+      setError("error.fetchingDiscounts");
     }
   };
 
@@ -55,7 +56,7 @@ export default function AdminDiscountPage() {
       setError("");
       fetchDiscounts();
     } catch (err: any) {
-      setError(err?.response?.data?.error || "خطا در افزودن تخفیف");
+      setError(err?.response?.data?.error || "error.addingDiscount");
     }
   };
 
@@ -64,7 +65,7 @@ export default function AdminDiscountPage() {
       await axios.delete("/api/discounts", { data: { id } });
       fetchDiscounts();
     } catch {
-      setError("خطا در حذف تخفیف");
+      setError("error.deletingDiscount");
     }
   };
 
@@ -75,15 +76,15 @@ export default function AdminDiscountPage() {
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 900, mx: "auto" }}>
       <Box display="flex" justifyContent="center" sx={{ mb: 4 }}>
-        <Button variant="contained" color="warning" href="/admin">
-          بازگشت
-        </Button>
+<Button variant="contained" color="warning" href="/admin">
+  {t("back")}
+</Button>
       </Box>
 
       <Paper elevation={3} sx={{ p: { xs: 2, md: 4 }, borderRadius: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom textAlign="center">
-          مدیریت کدهای تخفیف
-        </Typography>
+<Typography variant="h5" fontWeight="bold" gutterBottom textAlign="center">
+  {t("manageDiscountCodes")}
+</Typography>
 
         <Divider sx={{ my: 3 }} />
 
@@ -95,13 +96,13 @@ export default function AdminDiscountPage() {
           sx={{ mb: 3 }}
         >
           <TextField
-            label="کد تخفیف"
+            label={t("discountCode")}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             fullWidth={isMobile}
           />
           <TextField
-            label="درصد"
+            label={t("percentage")}
             type="number"
             value={percentage}
             onChange={(e) => setPercentage(Number(e.target.value))}
@@ -119,7 +120,7 @@ export default function AdminDiscountPage() {
 
         {error && (
           <Typography color="error" textAlign="center" sx={{ mb: 2 }}>
-            {error}
+            {t(error)}
           </Typography>
         )}
 
@@ -132,11 +133,11 @@ export default function AdminDiscountPage() {
                     <Typography fontWeight="bold">{d.code}</Typography>
                   </TableCell>
                   <TableCell>{d.percentage}%</TableCell>
-                  <TableCell>
-                    {d.expiresAt
-                      ? new Date(d.expiresAt).toLocaleDateString()
-                      : "بدون انقضا"}
-                  </TableCell>
+               <TableCell>
+                {d.expiresAt
+                  ? new Date(d.expiresAt).toLocaleDateString()
+                  : t("noExpiration")}
+              </TableCell>
                   <TableCell>
                     <IconButton
                       aria-label="delete"
@@ -150,9 +151,9 @@ export default function AdminDiscountPage() {
               ))}
               {discounts.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} align="center">
-                    هیچ کد تخفیفی ثبت نشده است.
-                  </TableCell>
+                <TableCell colSpan={4} align="center">
+  {t("noDiscountsDefined")}
+</TableCell>
                 </TableRow>
               )}
             </TableBody>

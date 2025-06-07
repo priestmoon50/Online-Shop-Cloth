@@ -112,9 +112,11 @@ const CartManager: React.FC = () => {
             {item.variants.map((variant, index) => (
               <Box key={index} mb={2}>
                 <Typography>
-                  {item.discountPrice
-                    ? `€${convertToEuro(item.discountPrice)} (${t('discounted')})`
-                    : `€${convertToEuro(item.price)}`}
+              {typeof item.discountPrice === "number" &&
+item.discountPrice > 0 &&
+item.discountPrice < item.price
+  ? `€${convertToEuro(item.discountPrice)} (${t('discounted')})`
+  : `€${convertToEuro(item.price)}`}
                   {' '}x {variant.quantity} ({variant.size}, {variant.color})
                 </Typography>
                 <Box display="flex" gap={1} mt={1}>

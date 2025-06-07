@@ -169,6 +169,35 @@
     "accountSettings": "تنظیمات حساب",
     "support": "پشتیبانی",
     "shoppingCart": "سبد خرید شما",
+    "discountErrorHasDiscountedItem": "کد تخفیف فقط برای محصولاتی قابل استفاده است که قبلاً تخفیف نخورده‌اند."
+,
+
+
+
+
+  "addToFavorites": "افزودن به علاقه‌مندی‌ها",
+  "addedToFavorites": "به علاقه‌مندی‌ها اضافه شد",
+  "selectSize": "انتخاب سایز:",
+  "selectColor": "انتخاب رنگ:",
+  "howMany": "چند عدد؟",
+ 
+  "productAdded": "محصول به سبد خرید افزوده شد",
+  "productAddedMessage": "محصول با موفقیت به سبد خرید شما افزوده شد.",
+  "continueShopping": "ادامه خرید",
+  "checkout": "تسویه حساب",
+
+
+  "back": "بازگشت",
+  "manageDiscountCodes": "مدیریت کدهای تخفیف",
+
+  "percentage": "درصد",
+
+  "noExpiration": "بدون انقضا",
+  "noDiscountsDefined": "هیچ کد تخفیفی ثبت نشده است.",
+  "error.fetchingDiscounts": "خطا در دریافت لیست تخفیف‌ها",
+  "error.addingDiscount": "خطا در افزودن تخفیف",
+  "error.deletingDiscount": "خطا در حذف تخفیف",
+
     "emptyCart": "سبد خرید شما خالی است.",
 "new": "جدید",
 "productNoLongerAvailable": "این محصول دیگر در دسترس نیست"
@@ -179,7 +208,15 @@
   "Please Login To Continue": "لطفاً برای ادامه وارد شوید",
 "pleaseSelectSize": "لطفاً سایز مورد نظر را انتخاب کنید"
 ,
+"invalidProductId": "شناسه محصول نامعتبر است",
+"productNotFound": "محصولی با این شناسه یافت نشد",
 
+"productIdRequired": "شناسه محصول برای بروزرسانی لازم است"
+,
+
+"invalidDiscountCode": "کد تخفیف نامعتبر است",
+"error.validatingDiscountCode": "خطا در بررسی کد تخفیف"
+,
     "quantity": "تعداد",
     "size": "سایز",
     "color": "رنگ",

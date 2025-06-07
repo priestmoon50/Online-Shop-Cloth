@@ -162,7 +162,7 @@ addItem({
         },
       }}
     >
-      Back 
+      {t("back")}
     </Button>
   </Link>
 </Box>
@@ -213,7 +213,7 @@ addItem({
 
           <Typography variant="body2">
             <br />
-            Category: {product.category || "N/A"}
+            {t("category")}: {product.category || "N/A"}
           </Typography>
 <Typography variant="body2" color="textSecondary">
   {!selectedSize
@@ -243,14 +243,14 @@ addItem({
 
 
             <Typography variant="body2" sx={{ ml: 1 }}>
-              {isLiked ? "Added to Favorites" : "Add to Favorites"}
+              {isLiked ? t("addedToFavorites") : t("addToFavorites")}
             </Typography>
           </Box>
 
           {/* انتخاب سایز */}
           <Box className={styles.selectWrapper}>
             <Typography variant="body2" className={styles.selectLabel}>
-              Select Size:
+             {t("selectSize")}
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={1}>
 {product.sizes
@@ -272,7 +272,7 @@ addItem({
           {/* انتخاب رنگ */}
           <Box className={styles.selectWrapper}>
             <Typography variant="body2" className={styles.selectLabel}>
-              Select Color:
+             {t("selectColor")}
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={1}>
               {product.colors?.map((color) => (
@@ -292,7 +292,7 @@ addItem({
           {/* انتخاب تعداد */}
           <Box className={styles.quantityInput} display="flex" alignItems="center" justifyContent="space-between" padding="8px" margin="20px 0" width="100%" maxWidth="200px">
             <Typography variant="body2" className={styles.selectLabel} style={{ fontSize: "0.9rem", marginRight: "15px" }}>
-              <b> How many? </b>
+             <b>{t("howMany")}</b>
             </Typography>
             <Box display="flex" alignItems="center" justifyContent="center">
               <IconButton
@@ -363,16 +363,16 @@ addItem({
       <Modal open={openModal} onClose={handleCloseModal} aria-labelledby="success-modal-title" aria-describedby="success-modal-description">
         <Box sx={{ p: 4, backgroundColor: "white", borderRadius: 2, maxWidth: 400, margin: "auto", mt: "10%", textAlign: "center" }}>
           <Typography id="success-modal-title" variant="h6">
-            Product Added to Cart
+            {t("productAdded")}
           </Typography>
           <Typography id="success-modal-description" sx={{ mt: 2 }}>
-            The product has been successfully added to your cart.
+            {t("productAddedMessage")}
           </Typography>
           <Button onClick={handleContinueShopping} sx={{ mt: 2, mr: 2 }} variant="contained" color="primary">
-            Continue Shopping
+           Continue Shopping → {t("continueShopping")}
           </Button>
           <Button onClick={handleCheckout} sx={{ mt: 2 }} variant="contained" color="secondary">
-            Checkout
+            Checkout → {t("checkout")}
           </Button>
 
           

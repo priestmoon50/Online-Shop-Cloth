@@ -106,7 +106,36 @@
   "messageRequired": "Por favor, escribe un mensaje.",
   "sendFailed": "No se pudo enviar.",
   "messageSuccess": "Tu mensaje se ha enviado correctamente.",
+"discountErrorHasDiscountedItem": "El código de descuento solo se puede aplicar a productos sin descuento previo."
+,
+"addToFavorites": "Agregar a favoritos",
+  "addedToFavorites": "Agregado a favoritos",
+  "selectSize": "Seleccionar talla:",
+  "selectColor": "Seleccionar color:",
+  "howMany": "¿Cuántos?",
+  "productAdded": "Producto agregado al carrito",
+  "productAddedMessage": "El producto se ha agregado correctamente a tu carrito.",
+  "continueShopping": "Seguir comprando",
+  "checkout": "Finalizar compra",
+  "back": "Volver",
+  "manageDiscountCodes": "Gestionar códigos de descuento",
 
+  "percentage": "Porcentaje",
+
+  "noExpiration": "Sin expiración",
+  "noDiscountsDefined": "No hay códigos de descuento definidos.",
+  "error.fetchingDiscounts": "Error al obtener la lista de descuentos.",
+  "error.addingDiscount": "Error al añadir el código de descuento.",
+  "error.deletingDiscount": "Error al eliminar el código de descuento."
+,
+"invalidProductId": "ID de producto no válido",
+"productNotFound": "Producto no encontrado",
+
+"productIdRequired": "Se requiere ID del producto para actualizar"
+,
+"invalidDiscountCode": "Código de descuento inválido",
+"error.validatingDiscountCode": "Error al validar el código de descuento"
+,
   "phone": "Número de teléfono",
 "productNoLongerAvailable": "Este producto ya no está disponible"
 ,

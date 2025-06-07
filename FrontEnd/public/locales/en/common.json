@@ -138,8 +138,36 @@
   "backToCart": "Back to Cart",
 "pleaseSelectSize": "Please select a size to see availability"
 ,
+ "addToFavorites": "Add to Favorites",
+  "addedToFavorites": "Added to Favorites",
+  "selectSize": "Select Size:",
+  "selectColor": "Select Color:",
+  "howMany": "How many?",
+  "productAdded": "Product Added to Cart",
+  "productAddedMessage": "The product has been successfully added to your cart.",
+  "continueShopping": "Continue Shopping",
+  "checkout": "Checkout",
 
+"back": "Back",
+  "manageDiscountCodes": "Manage Discount Codes",
 
+  "percentage": "Percentage",
+
+  "noExpiration": "No expiration",
+  "noDiscountsDefined": "No discount codes defined.",
+  "error.fetchingDiscounts": "Error fetching discount list.",
+  "error.addingDiscount": "Error adding discount.",
+  "error.deletingDiscount": "Error deleting discount.",
+"discountErrorHasDiscountedItem": "The discount code can only be applied to items without existing discounts."
+,
+"invalidProductId": "Invalid product ID",
+"productNotFound": "Product not found",
+
+"productIdRequired": "Product ID is required for update"
+,
+"invalidDiscountCode": "Invalid discount code",
+"error.validatingDiscountCode": "Error validating discount code"
+,
 
 "street": "Street",
 "postalCode": "Postal Code",

@@ -170,6 +170,34 @@
   "nameRequired": "Vorname und Nachname sind erforderlich.",
 "pleaseSelectSize": "Bitte wählen Sie eine Größe, um die Verfügbarkeit zu sehen"
 ,
+"discountErrorHasDiscountedItem": "Der Rabattcode kann nur auf Artikel angewendet werden, die keinen bestehenden Rabatt haben."
+,
+ "back": "Zurück",
+  "manageDiscountCodes": "Rabattcodes verwalten",
+ "addToFavorites": "Zu Favoriten hinzufügen",
+  "addedToFavorites": "Zu Favoriten hinzugefügt",
+  "selectSize": "Größe auswählen:",
+  "selectColor": "Farbe auswählen:",
+  "howMany": "Wie viele?",
+  "productAdded": "Produkt zum Warenkorb hinzugefügt",
+  "productAddedMessage": "Das Produkt wurde erfolgreich in Ihren Warenkorb gelegt.",
+  "continueShopping": "Weiter einkaufen",
+  "checkout": "Zur Kasse",
+  "percentage": "Prozentsatz",
+
+  "noExpiration": "Kein Ablaufdatum",
+  "noDiscountsDefined": "Keine Rabattcodes vorhanden.",
+  "error.fetchingDiscounts": "Fehler beim Abrufen der Rabattliste.",
+  "error.addingDiscount": "Fehler beim Hinzufügen des Rabattcodes.",
+  "error.deletingDiscount": "Fehler beim Löschen des Rabattcodes.",
+"invalidDiscountCode": "Ungültiger Rabattcode",
+"error.validatingDiscountCode": "Fehler bei der Überprüfung des Rabattcodes"
+,
+"invalidProductId": "Ungültige Produkt-ID",
+"productNotFound": "Produkt nicht gefunden",
+
+"productIdRequired": "Produkt-ID ist für die Aktualisierung erforderlich"
+,
   "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer mit Ländervorwahl ein.",
   "shortPassword": "Das Passwort muss mindestens 6 Zeichen lang sein.",
   "passwordsMismatch": "Die Passwörter stimmen nicht überein.",

@@ -4,9 +4,32 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
+  const cartRaw = searchParams.get("cart");
 
   if (!code) {
     return NextResponse.json({ valid: false, error: "کد تخفیف وارد نشده است" }, { status: 400 });
+  }
+
+  let cart: any[] = [];
+
+  try {
+    cart = cartRaw ? JSON.parse(cartRaw) : [];
+  } catch (e) {
+    return NextResponse.json({ valid: false, error: "فرمت سبد خرید نامعتبر است" }, { status: 400 });
+  }
+
+  const hasDiscountedItem = cart.some(
+    (item) =>
+      typeof item.discountPrice === "number" &&
+      item.discountPrice > 0 &&
+      item.discountPrice < item.price
+  );
+
+  if (hasDiscountedItem) {
+    return NextResponse.json({
+      valid: false,
+      error: "کد تخفیف فقط روی محصولات بدون تخفیف قابل استفاده است",
+    });
   }
 
   const { db } = await connectToDatabase();
