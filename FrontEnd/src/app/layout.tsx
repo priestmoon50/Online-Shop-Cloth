@@ -68,7 +68,9 @@ const bodyClass = language === 'fa' ? 'font-fa' : 'font-latin';
                 <FavoriteProvider>
                   <LanguageSelector />
                   <NavBar />
-                  <Container sx={{ minWidth: '80%' }}>
+                 <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, md: 4 } }}>
+
+
                     <Box my={4}>{children}</Box>
                   </Container>
                   <Footer />
