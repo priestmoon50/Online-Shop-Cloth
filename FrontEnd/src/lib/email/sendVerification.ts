@@ -24,7 +24,9 @@ export async function sendVerificationEmail({
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
             <!-- Logo -->
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://yourdomain.com/logo.png" alt="MopaStyle" height="40" />
+              <img src="${process.env.NEXT_PUBLIC_BASE_URL}/images/Logo.png" alt="MopaStyle" height="40" />
+
+
             </div>
 
             <!-- Title -->

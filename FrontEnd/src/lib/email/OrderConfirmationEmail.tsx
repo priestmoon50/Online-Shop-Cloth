@@ -34,10 +34,18 @@ const OrderConfirmationEmail = ({
     <Head />
     <Preview>Order Confirmation - #{orderId}</Preview>
     <Body style={{ backgroundColor: '#f6f9fc', padding: '20px' }}>
-      <Container style={{ backgroundColor: '#ffffff', borderRadius: '8px', padding: '30px', fontFamily: 'Arial, sans-serif' }}>
+      <Container
+        style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '8px',
+          padding: '30px',
+          fontFamily: 'Arial, sans-serif',
+        }}
+      >
         {/* LOGO */}
         <Section style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <Img src="https://yourdomain.com/logo.png" alt="MopaStyle" height="40" />
+          <Img src="https://mopastyle.de/images/Logo.png" alt="MopaStyle" height="40" />
+
         </Section>
 
         {/* MAIN CONTENT */}
@@ -69,10 +77,29 @@ const OrderConfirmationEmail = ({
             </tbody>
           </table>
 
-          <Text style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '20px' }}>
-            Total: €{totalPrice.toFixed(2)}
+          {/* TOTALS */}
+          <table width="100%" style={{ borderCollapse: 'collapse', marginBottom: '20px' }}>
+            <tbody>
+              <tr>
+                <td style={{ paddingTop: '10px', fontWeight: 'bold' }}>Zwischensumme</td>
+                <td align="right">€{totalPrice.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 'bold' }}>Rechnungsbetrag</td>
+                <td align="right">€{totalPrice.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* TAX + PROFIT NOTICE */}
+          <Text style={{ fontSize: '14px', color: '#444', marginBottom: '8px' }}>
+            gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
+          </Text>
+          <Text style={{ fontSize: '14px', color: '#444', marginBottom: '20px' }}>
+            Ihr Gewinn aus diesem Verkauf beträgt z. B. €{(totalPrice * 0.3).toFixed(2)}
           </Text>
 
+          {/* Delivery Notice */}
           <Text style={{ color: '#555' }}>
             We'll notify you once your items are on the way.
           </Text>
