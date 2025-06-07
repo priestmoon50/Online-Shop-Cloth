@@ -25,11 +25,12 @@ const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("/api/products");
 
   if (Array.isArray(data)) {
-    return data.map((product: any) => ({
-      ...product,
-      id: product.id || product._id?.toString(),
-      price: Number(product.price),
-    }));
+return data.map((product: any) => ({
+  ...product,
+  id: product.id || product._id?.toString(),
+  price: Number(product.price),
+  discountPrice: Number(product.discountPrice) || 0,
+}));
   }
 
   return [];
@@ -63,12 +64,16 @@ export default function ProductsPage() {
   }, [searchParams]);
 
   const filteredProducts = allProducts.filter((product) => {
-    const isInSelectedCategory =
-      selectedCategory === "all" ||
-      product.category === selectedCategory ||
-      (selectedCategory === "others" &&
-        product.category !== "men" &&
-        product.category !== "women");
+ const isInSelectedCategory =
+  selectedCategory === "all" ||
+  product.category === selectedCategory ||
+  (selectedCategory === "others" &&
+    product.category !== "men" &&
+    product.category !== "women") ||
+  (selectedCategory === "sale" &&
+    typeof product.discountPrice === "number" &&
+    product.discountPrice > 0 &&
+    product.discountPrice < product.price);
 
     const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase());
 

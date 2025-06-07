@@ -11,6 +11,7 @@ const categories = [
   { id: 2, title: 'dress', image: '/images/piran.webp', filter: 'dress' },
   { id: 3, title: 'shoes', image: '/images/shos.webp', filter: 'shoes' },
   { id: 4, title: 'pants', image: '/images/shalvar.webp', filter: 'pants' },
+  { id: 5, title: 'sale', image: '/images/sale.webp', filter: 'sale' },
 ];
 
 export default function CategoryLinks() {
@@ -97,3 +98,4 @@ export default function CategoryLinks() {
     </Box>
   );
 }
+ 

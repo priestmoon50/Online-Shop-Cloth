@@ -22,7 +22,7 @@ const ProductList: React.FC = () => {
     queryKey: ["products"],
     queryFn: fetchProducts,
   });
-
+ 
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="400px">
