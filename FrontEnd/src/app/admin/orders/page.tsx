@@ -24,6 +24,7 @@ interface OrderItem {
   id: string;
   name: string;
   price: number;
+   priceBeforeDiscount?: number;
   quantity: number;
   size?: string;
   color?: string;

@@ -1,39 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Typography,
   Button,
   List,
-  ListItem,
-  TextField,
   Grid,
   Avatar,
   Divider,
   Container,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
-import { useCart } from "@/context/CartContext";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {
+  Person as PersonIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Home as HomeIcon,
+  LocationOn as LocationOnIcon,
+  LocalPostOffice as LocalPostOfficeIcon,
+  ShoppingCartCheckout as ShoppingCartCheckoutIcon,
+  ReceiptLong as ReceiptLongIcon,
+} from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useAuth } from "@/context/AuthContext";
-import { convertToEuro } from "@/utils/convertCurrency";
 import toast, { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import PersonIcon from "@mui/icons-material/Person";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import HomeIcon from "@mui/icons-material/Home";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 
-import LocalPostOfficeIcon from "@mui/icons-material/LocalPostOffice";
-
-import InputAdornment from "@mui/material/InputAdornment";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { convertToEuro } from "@/utils/convertCurrency";
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -41,7 +41,10 @@ const validationSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   phone: yup.string().required("Phone is required"),
   address: yup.string().required("Address is required"),
-  postalCode: yup.string().required("Postal code is required").matches(/^[0-9]{4,10}$/, "Invalid postal code"),
+  postalCode: yup
+    .string()
+    .required("Postal code is required")
+    .matches(/^[0-9]{4,10}$/, "Invalid postal code"),
   street: yup.string().required("Street is required"),
 });
 
@@ -90,25 +93,85 @@ const CheckoutPage: React.FC = () => {
       .catch(() => toast.error("Failed to load user info."));
   }, [ready, isAuthenticated, token, setValue]);
 
+  const calculateRawTotal = () =>
+    cart.items.reduce(
+      (acc, item) =>
+        acc +
+        item.variants.reduce(
+          (sum, variant) => sum + item.price * variant.quantity,
+          0
+        ),
+      0
+    );
+
+  const calculateTotal = () =>
+    cart.items.reduce((acc, item) => {
+      const isDiscounted =
+        item.discountPrice !== undefined && item.discountPrice < item.price;
+      const unitPrice = isDiscounted ? item.discountPrice! : item.price;
+      const effectivePrice = isDiscounted
+        ? unitPrice
+        : unitPrice * (1 - discountPercent / 100);
+      return (
+        acc +
+        item.variants.reduce(
+          (sum, variant) => sum + effectivePrice * variant.quantity,
+          0
+        )
+      );
+    }, 0);
+
+  const renderField = (
+    name: keyof FormData,
+    label: string,
+    icon: React.ReactNode,
+    readOnly = false
+  ) => (
+    <Controller
+      name={name}
+      control={control}
+      defaultValue=""
+      render={({ field }) => (
+        <TextField
+          {...field}
+          fullWidth
+          label={label}
+          error={!!errors[name]}
+          helperText={errors[name]?.message}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">{icon}</InputAdornment>
+            ),
+            readOnly,
+          }}
+        />
+      )}
+    />
+  );
+
   const handlePlaceOrder = async (data: FormData) => {
     if (cart.items.length === 0) {
       toast.error("Your cart is empty!");
       return;
     }
 
-const rawTotal = cart.items.reduce(
-  (acc, item) =>
-    acc +
-    item.variants.reduce(
-      (sum, variant) =>
-        sum + Number(item.discountPrice ?? item.price) * variant.quantity,
-      0
-    ),
-  0
-);
+    const itemsWithAdjustedPrices = cart.items.map((item) => {
+      const isDiscounted =
+        item.discountPrice !== undefined && item.discountPrice < item.price;
+      const priceBeforeDiscount = item.price;
+      const price = isDiscounted
+        ? item.discountPrice!
+        : item.price * (1 - discountPercent / 100);
 
+      return {
+        ...item,
+        priceBeforeDiscount,
+        price,
+      };
+    });
 
-const totalPrice = rawTotal * (1 - discountPercent / 100);
+    const rawTotal = calculateRawTotal();
+    const totalPrice = calculateTotal();
 
     const orderData = {
       name: `${data.firstName} ${data.lastName}`,
@@ -116,11 +179,12 @@ const totalPrice = rawTotal * (1 - discountPercent / 100);
       phone: data.phone,
       street: data.street,
       discountCode: couponCode,
-discountPercent,
+      discountPercent,
       address: data.address,
       postalCode: data.postalCode,
       totalPrice,
-      items: cart.items,
+      rawTotal,
+      items: itemsWithAdjustedPrices,
       createdAt: new Date().toISOString(),
       status: "Pending",
     };
@@ -168,220 +232,86 @@ discountPercent,
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Toaster position="bottom-center" />
 
-<Box textAlign="center" mb={4}>
-  <Typography
-    variant="h4"
-    fontWeight="bold"
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    gap={1}
-    gutterBottom
-  >
-    <ShoppingCartCheckoutIcon sx={{ color: "#1976d2", fontSize: 32 }} />
+      <Box textAlign="center" mb={4}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={1}
+          gutterBottom
+        >
+          <ShoppingCartCheckoutIcon sx={{ color: "#1976d2", fontSize: 32 }} />
+          {t("checkoutTitle", "Checkout")}
+        </Typography>
 
-    {t("checkoutTitle", "Checkout")}
-  </Typography>
-
-  <Typography variant="body1">
-    {isAuthenticated
-      ? t("userInfoLoaded", "Your account information has been loaded.")
-      : t("enterInfoOrLogin", "To complete your purchase, enter your information or log in.")}
-  </Typography>
-</Box>
-
+        <Typography variant="body1">
+          {isAuthenticated
+            ? t("userInfoLoaded", "Your account information has been loaded.")
+            : t(
+                "enterInfoOrLogin",
+                "To complete your purchase, enter your information or log in."
+              )}
+        </Typography>
+      </Box>
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={7}>
-
-
           <form onSubmit={handleSubmit(handlePlaceOrder)}>
             <Grid container spacing={2}>
-              {/* First Name */}
               <Grid item xs={12} sm={6}>
-                <Controller
-                  name="firstName"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-<TextField
-  {...field}
-  fullWidth
-  label={t("firstName", "First Name")}
-  error={!!errors.firstName}
-  helperText={errors.firstName?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <PersonIcon sx={{ color: "#1976d2" }} />
-      </InputAdornment>
-    ),
-    readOnly: isAuthenticated,
-  }}
-/>
-
-                  )}
-                />
+                {renderField(
+                  "firstName",
+                  t("firstName", "First Name"),
+                  <PersonIcon sx={{ color: "#1976d2" }} />,
+                  isAuthenticated
+                )}
               </Grid>
-
-              {/* Last Name */}
               <Grid item xs={12} sm={6}>
-                <Controller
-                  name="lastName"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-       <TextField
-  {...field}
-  fullWidth
-  label={t("lastName", "Last Name")}
-  error={!!errors.lastName}
-  helperText={errors.lastName?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <PersonIcon sx={{ color: "#1976d2" }} />
-      </InputAdornment>
-    ),
-    readOnly: isAuthenticated,
-  }}
-/>
-
-                  )}
-                />
+                {renderField(
+                  "lastName",
+                  t("lastName", "Last Name"),
+                  <PersonIcon sx={{ color: "#1976d2" }} />,
+                  isAuthenticated
+                )}
               </Grid>
-
-              {/* Email */}
               <Grid item xs={12} sm={6}>
-                <Controller
-                  name="email"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-          <TextField
-  {...field}
-  fullWidth
-  label={t("email", "Email")}
-  error={!!errors.email}
-  helperText={errors.email?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <EmailIcon sx={{ color: "#d81b60" }} />
-      </InputAdornment>
-    ),
-    readOnly: isAuthenticated,
-  }}
-/>
-
-                  )}
-                />
+                {renderField(
+                  "email",
+                  t("email", "Email"),
+                  <EmailIcon sx={{ color: "#d81b60" }} />,
+                  isAuthenticated
+                )}
               </Grid>
-
-              {/* Phone */}
               <Grid item xs={12} sm={6}>
-                <Controller
-                  name="phone"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-           <TextField
-  {...field}
-  fullWidth
-  label={t("phone", "Phone")}
-  error={!!errors.phone}
-  helperText={errors.phone?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <PhoneIcon sx={{ color: "#43a047" }} />
-      </InputAdornment>
-    ),
-    readOnly: isAuthenticated,
-  }}
-/>
-
-                  )}
-                />
+                {renderField(
+                  "phone",
+                  t("phone", "Phone"),
+                  <PhoneIcon sx={{ color: "#43a047" }} />,
+                  isAuthenticated
+                )}
               </Grid>
-
-              {/* Address */}
               <Grid item xs={12}>
-                <Controller
-                  name="address"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-        <TextField
-  {...field}
-  fullWidth
-  label={t("address", "Address")}
-  error={!!errors.address}
-  helperText={errors.address?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <HomeIcon sx={{ color: "#6d4c41" }} />
-      </InputAdornment>
-    ),
-  }}
-/>
-
-                  )}
-                />
+                {renderField(
+                  "address",
+                  t("address", "Address"),
+                  <HomeIcon sx={{ color: "#6d4c41" }} />
+                )}
               </Grid>
-
-              {/* Street */}
               <Grid item xs={12}>
-                <Controller
-                  name="street"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-    <TextField
-  {...field}
-  fullWidth
-  label={t("street", "Street")}
-  error={!!errors.street}
-  helperText={errors.street?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <LocationOnIcon sx={{ color: "#5c6bc0" }} />
-      </InputAdornment>
-    ),
-  }}
-/>
-
-                  )}
-                />
+                {renderField(
+                  "street",
+                  t("street", "Street"),
+                  <LocationOnIcon sx={{ color: "#5c6bc0" }} />
+                )}
               </Grid>
-
-              {/* Postal Code */}
               <Grid item xs={12} sm={6}>
-                <Controller
-                  name="postalCode"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-<TextField
-  {...field}
-  fullWidth
-  label={t("postalCode", "Postal Code")}
-  error={!!errors.postalCode}
-  helperText={errors.postalCode?.message}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <LocalPostOfficeIcon sx={{ color: "#fbc02d" }} />
-      </InputAdornment>
-    ),
-  }}
-/>
-
-
-                  )}
-                />
+                {renderField(
+                  "postalCode",
+                  t("postalCode", "Postal Code"),
+                  <LocalPostOfficeIcon sx={{ color: "#fbc02d" }} />
+                )}
               </Grid>
             </Grid>
 
@@ -406,90 +336,88 @@ discountPercent,
           </form>
         </Grid>
 
-        <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" }, mx: 2 }} />
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{ display: { xs: "none", md: "block" }, mx: 2 }}
+        />
 
         <Grid item xs={12} md={4}>
-         <Typography
-  variant="h5"
-  gutterBottom
-  display="flex"
-  alignItems="center"
-  gap={1}
->
-  <ReceiptLongIcon sx={{ color: "#1976d2" }} />
-  {t("orderSummary", "Order Summary")}
-</Typography>
-
+          <Typography
+            variant="h5"
+            gutterBottom
+            display="flex"
+            alignItems="center"
+            gap={1}
+          >
+            <ReceiptLongIcon sx={{ color: "#1976d2" }} />
+            {t("orderSummary", "Order Summary")}
+          </Typography>
 
           {cart.items.length === 0 ? (
-            <Typography variant="h6">{t("cartEmpty", "Your cart is currently empty.")}</Typography>
+            <Typography variant="h6">
+              {t("cartEmpty", "Your cart is currently empty.")}
+            </Typography>
           ) : (
             <List>
               {cart.items.map((item) => (
-        <Box
-  key={item.id}
-  display="flex"
-  gap={2}
-  mb={2}
-  p={2}
-  border="1px solid #e0e0e0"
-  borderRadius="8px"
-  bgcolor="#fafafa"
->
-  <Avatar
-    src={item.image || "/placeholder.jpg"}
-    variant="rounded"
-    sx={{ width: 64, height: 64 }}
-  />
-{item.variants.map((variant, idx) => (
-  <Box key={idx} ml={1}>
-    <Typography variant="body2" color="text.secondary">
-      €{convertToEuro(item.price)} × {variant.quantity}
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      {t("size", "Size")}: {variant.size || "N/A"} | {t("color", "Color")}: {variant.color || "N/A"}
-    </Typography>
-  </Box>
-))}
-
-</Box>
-
+                <Box
+                  key={item.id}
+                  display="flex"
+                  gap={2}
+                  mb={2}
+                  p={2}
+                  border="1px solid #e0e0e0"
+                  borderRadius="8px"
+                  bgcolor="#fafafa"
+                >
+                  <Avatar
+                    src={item.image || "/placeholder.jpg"}
+                    variant="rounded"
+                    sx={{ width: 64, height: 64 }}
+                  />
+                  {item.variants.map((variant, idx) => (
+                    <Box key={idx} ml={1}>
+                      <Typography variant="body2" color="text.secondary">
+                        €{convertToEuro(item.price)} × {variant.quantity}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {t("size", "Size")}: {variant.size || "N/A"} |{" "}
+                        {t("color", "Color")}: {variant.color || "N/A"}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
               ))}
             </List>
           )}
 
-        <Typography
-  variant="h6"
-  sx={{
-    mt: 2,
-    backgroundColor: "#f1f8e9",
-    padding: "12px 16px",
-    borderRadius: "8px",
-    fontWeight: "bold",
-    fontSize: "18px",
-    color: "#2e7d32",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }}
->
-  {t("total", "Total")}:
-<span>€{convertToEuro(cart.items.reduce(
-  (acc, item) =>
-    acc +
-    item.variants.reduce(
-      (sum, variant) =>
-        sum + Number(item.discountPrice ?? item.price) * variant.quantity,
-      0
-    ),
-  0
-) * (1 - discountPercent / 100))}</span>
-
-</Typography>
-
+          <Typography
+            variant="h6"
+            sx={{
+              mt: 2,
+              backgroundColor: "#f1f8e9",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              fontWeight: "bold",
+              fontSize: "18px",
+              color: "#2e7d32",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {t("total", "Total")}:
+            <span>€{convertToEuro(calculateTotal())}</span>
+          </Typography>
 
           <Link href="/cart" passHref legacyBehavior>
-            <Button variant="outlined" color="secondary" sx={{ mt: 2 }} fullWidth>
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{ mt: 2 }}
+              fullWidth
+            >
               {t("backToCart", "Back to Cart")}
             </Button>
           </Link>

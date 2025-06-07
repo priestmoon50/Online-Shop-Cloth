@@ -92,7 +92,7 @@ addItem({
   id: productId.toString(),
   name: product.name,
   price: product.price,
-  discountPrice: product.discountPrice,
+  ...(product.discountPrice ? { discountPrice: product.discountPrice } : {}),
   image: productImage,
   variants: [
     {
@@ -102,6 +102,7 @@ addItem({
     },
   ],
 });
+
 
     setOpenModal(true);
   };

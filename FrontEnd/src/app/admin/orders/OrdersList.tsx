@@ -23,6 +23,7 @@ interface OrderItem {
   id: string;
   name: string;
   price: number;
+  priceBeforeDiscount?: number;
   quantity: number;
   size?: string;
   color?: string;
@@ -143,9 +144,15 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, onUpdateStatus }) => {
                           <Typography component="div" className={styles.itemField}>
                             <strong>{t('size')}:</strong> {item.size || t('unknown')}
                           </Typography>
-                          <Typography component="div" className={styles.itemField}>
-                            <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
-                          </Typography>
+              <Typography component="div" className={styles.itemField}>
+              <strong>{t('price')}:</strong> €{convertToEuro(item.price)}
+              {item.priceBeforeDiscount && item.priceBeforeDiscount > item.price && (
+                <span style={{ textDecoration: 'line-through', marginLeft: '8px', color: '#999' }}>
+                  €{convertToEuro(item.priceBeforeDiscount)}
+                </span>
+              )}
+            </Typography>
+
                         </Box>
                       </ListItem>
                     ))}
