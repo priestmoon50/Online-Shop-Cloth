@@ -2,79 +2,42 @@
   direction: rtl;
 }
 
-/* کارت محصول با طراحی لطیف و جذاب برای خانم‌ها */
 .productCard {
-  width: auto;
-  min-width: 220px;
-  max-width: 100%;
   padding: 16px;
-margin: 0 10px;
-
-  box-sizing: border-box;
   background: linear-gradient(145deg, #ffffffee, #fff0f5dd);
   border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  height: 450px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-align: center;
   border: none;
-
-
   box-shadow: 0 4px 12px rgba(255, 105, 180, 0.1);
   transition: all 0.3s ease-in-out;
 }
 
+.productCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+}
 
-
-/* تصویر محصول */
 .productImage {
   border-radius: 12px;
   object-fit: cover;
-  height: 250px;
   width: 100%;
+  height: 100%;
 }
 
-/* عنوان محصول */
-.productTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-/* دسته‌بندی محصول */
-.productCategory {
-  font-size: 0.85rem;
-  color: #888;
-  margin-top: 4px;
-  word-break: break-word;
-  overflow: hidden;
-}
-
-/* قیمت محصول */
-.productPrice {
-  font-size: 1.1rem;
-  color: #d81b60;
-  font-weight: bold;
-  margin-top: auto;
-}
-
-/* وضعیت محصول */
 .productStatus {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(0, 123, 255, 0.85);
+  background-color: rgba(255, 0, 0, 0.8);
   color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 5px 10px;
+  border-radius: 5px;
   font-size: 12px;
   font-weight: bold;
-  direction: rtl;
 }
