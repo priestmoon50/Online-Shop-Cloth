@@ -69,12 +69,12 @@ export default function ManageHomeSlidesPage() {
         {slides.map((slide) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={slide._id}>
             <Card>
-              <CardMedia sx={{ height: 180, position: 'relative' }}>
+              <CardMedia sx={{ aspectRatio: '16 / 9', position: 'relative' }}>
                 <Image
                   src={slide.imageUrl}
                   alt="slider"
                   fill
-                  style={{ objectFit: 'cover' }}
+                 style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
               </CardMedia>
               <CardActions>

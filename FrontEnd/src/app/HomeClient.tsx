@@ -66,8 +66,10 @@ export default function HomeClient() {
               <Box
                 key={index}
                 sx={{
-                  width: '100vw',
-                  height: { xs: '50vh', sm: '60vh', md: '70vh' },
+              
+aspectRatio: '16 / 9',
+maxHeight: '600px',
+width: '100%',
                   position: 'relative',
                   margin: 0,
                 }}
@@ -77,7 +79,7 @@ export default function HomeClient() {
                   alt={`Slide ${index + 1}`}
                   fill
                   sizes="100vw"
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', objectPosition: 'center', borderRadius: '0px' }}
                 />
               </Box>
             ))}

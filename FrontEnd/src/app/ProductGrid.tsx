@@ -3,12 +3,12 @@
 import {
   Box,
   Typography,
-  useMediaQuery,
   useTheme,
-  CircularProgress,
+  Skeleton,
   Alert,
 } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
@@ -16,10 +16,7 @@ import styles from "./ProductGrid.module.css";
 
 const fetchProducts = async (): Promise<Product[]> => {
   try {
-    const baseUrl =
-      typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL;
-
-    const { data } = await axios.get(`${baseUrl}/api/products`);
+    const { data } = await axios.get(`/api/products`);
 
     if (!Array.isArray(data)) {
       console.error("❌ API did not return an array");
@@ -35,6 +32,97 @@ const fetchProducts = async (): Promise<Product[]> => {
     return [];
   }
 };
+function ProductCard({ product }: { product: Product }) {
+  const { id, name, images, price, discountPrice, isNew, status } = product;
+
+  const hasDiscount =
+    typeof discountPrice === "number" &&
+    !isNaN(discountPrice) &&
+    discountPrice > 0 &&
+    discountPrice < price;
+
+  return (
+    <Link href={`/product/${id}`} passHref legacyBehavior>
+      <a className={styles.productCard}>
+        <Box sx={{ position: "relative", height: 250, mb: 2 }}>
+          <Image
+            src={images?.[0] || "/placeholder.jpg"}
+            alt={name}
+            fill
+            className={styles.productImage}
+            sizes="100%"
+          />
+          {isNew && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                backgroundColor: "#1976d2",
+                color: "white",
+                px: 1.5,
+                py: 0.5,
+                borderRadius: "5px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              NEW
+            </Box>
+          )}
+          {status && (
+            <Box className={styles.productStatus}>
+              {String(status).toUpperCase()}
+            </Box>
+          )}
+        </Box>
+
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            minHeight: "3.2em",
+          }}
+        >
+          {name}
+        </Typography>
+
+        {hasDiscount ? (
+          <Box display="flex" justifyContent="center" alignItems="center" gap={1} mt={1}>
+            <Typography
+              variant="body2"
+              sx={{
+                textDecoration: "line-through",
+                color: "text.secondary",
+              }}
+            >
+              €{Number(price).toLocaleString()}
+            </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "error.main",
+                fontWeight: "bold",
+              }}
+            >
+              €{Number(discountPrice).toLocaleString()}
+            </Typography>
+          </Box>
+        ) : (
+          <Typography variant="h6" color="primary" mt={1}>
+            €{Number(price).toLocaleString()}
+          </Typography>
+        )}
+      </a>
+    </Link>
+  );
+}
+
 
 export default function ProductGrid() {
   const theme = useTheme();
@@ -48,15 +136,33 @@ export default function ProductGrid() {
     queryFn: fetchProducts,
   });
 
-  const handleProductClick = (id: string | number) => {
-    if (!id) return;
-    window.location.href = `/product/${id}`;
-  };
-
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="400px">
-        <CircularProgress />
+      <Box
+        sx={{
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: "repeat(2, 1fr)",
+            sm: "repeat(3, 1fr)",
+            md: "repeat(4, 1fr)",
+            lg: "repeat(5, 1fr)",
+          },
+          gap: 2,
+          px: 2,
+          pt: { xs: 2, md: 4 },
+          pb: { xs: 0, md: 2 },
+        }}
+      >
+        {Array.from({ length: 10 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            variant="rectangular"
+            height={300}
+            animation="wave"
+            sx={{ borderRadius: 2 }}
+          />
+        ))}
       </Box>
     );
   }
@@ -85,47 +191,8 @@ export default function ProductGrid() {
         pb: { xs: 0, md: 2 },
       }}
     >
-      {products.map(({ id, name, images, category, price, status }) => (
-        <Box
-          key={id}
-          className={styles.productCard}
-          onClick={() => handleProductClick(id)}
-        >
-          <Box sx={{ position: "relative", height: 250, mb: 2 }}>
-            <Image
-              src={images?.[0] || "/placeholder.jpg"}
-              alt={name}
-              fill
-              className={styles.productImage}
-              sizes="100%"
-            />
-            {status && (
-              <Box className={styles.productStatus}>
-                {String(status).toUpperCase()}
-              </Box>
-            )}
-          </Box>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              minHeight: "3.2em",
-            }}
-          >
-            {name}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {category || "No Category"}
-          </Typography>
-          <Typography variant="h6" color="primary">
-            €{price}
-          </Typography>
-        </Box>
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
       ))}
     </Box>
   );
