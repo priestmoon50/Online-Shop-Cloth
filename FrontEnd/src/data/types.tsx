@@ -6,6 +6,7 @@ export interface Product {
   id: string | number;
   name: string;
   price: number;
+  discountPrice?: number;
   image: string;
   images?: string[];
   category?: string;
@@ -29,7 +30,9 @@ export interface CartItem {
   id: string;
   name: string;
   price: number;
+  discountPrice?: number;
   image?: string;
+  
   variants: {
     size?: string | number;
     color?: string | number;
@@ -62,8 +65,10 @@ export interface ProductRatingProps {
 
 export interface ProductPriceProps {
   price: number;
-  discount?: number;
+  discountPrice?: number;
+  discount?: number; // ⬅️ این خط را اضافه کن
 }
+
 
 export interface ProductImagesProps {
   images: string[];

@@ -133,6 +133,23 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         </Grid>
       </Grid>
 
+<Grid item xs={12} md={6}>
+  <Controller
+    name="discountPrice"
+    control={control}
+    rules={{ min: 0 }}
+    render={({ field }) => (
+      <TextField
+        {...field}
+        label={t('discount_price') || 'Discount Price (optional)'}
+        type="number"
+        fullWidth
+      />
+    )}
+  />
+</Grid>
+
+
       {/* Description */}
       <Controller
         name="description"

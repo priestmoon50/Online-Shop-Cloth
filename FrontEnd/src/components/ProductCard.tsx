@@ -17,12 +17,12 @@ const ProductCard: React.FC<Product> = ({
   images,
   name,
   price,
-  discount,
+  discountPrice,
   isNew,
 }) => {
   const { t } = useTranslation();
-  const discountedPrice = discount ? price - (price * discount) / 100 : null;
   const imagesArray = images || [];
+  const hasDiscount = typeof discountPrice === "number" && discountPrice < price;
 
   const sliderSettings = {
     dots: true,
@@ -103,7 +103,7 @@ const ProductCard: React.FC<Product> = ({
                 alt={name}
                 layout="fill"
                 objectFit="cover"
-                priority={true}
+                priority
               />
             )}
           </Box>
@@ -126,7 +126,7 @@ const ProductCard: React.FC<Product> = ({
           </Typography>
 
           <Box>
-            {discountedPrice ? (
+            {hasDiscount ? (
               <>
                 <Typography
                   variant="body2"
@@ -136,7 +136,7 @@ const ProductCard: React.FC<Product> = ({
                     fontSize: { xs: "1rem", sm: "0.875rem" },
                   }}
                 >
-                  {t("price")}: €{price}
+                  €{price}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -145,12 +145,12 @@ const ProductCard: React.FC<Product> = ({
                     fontSize: { xs: "1.25rem", sm: "1rem" },
                   }}
                 >
-                  {t("discountedPrice")}: €{discountedPrice}
+                  €{discountPrice}
                 </Typography>
               </>
             ) : (
               <Typography variant="body2" color="text.secondary">
-                {t("price")}: €{price}
+                €{price}
               </Typography>
             )}
           </Box>

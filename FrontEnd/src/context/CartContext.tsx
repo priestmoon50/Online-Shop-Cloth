@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import type { CartItem } from '@/data/types';
 
 // ============ Types ============
 interface Variant {
@@ -15,13 +16,7 @@ interface Variant {
   color?: string;
 }
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  image?: string;
-  variants: Variant[];
-}
+
 
 interface CartState {
   items: CartItem[];

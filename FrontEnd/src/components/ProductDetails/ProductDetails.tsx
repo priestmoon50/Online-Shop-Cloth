@@ -15,10 +15,9 @@ import ProductImages from "./ProductImages";
 import ProductPrice from "./ProductPrice";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { Product } from "@/data/types";
+import { Product , CartItem } from "@/data/types";
 import Link from "next/link";
 import styles from "./ProductDetails.module.css";
-
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoriteContext";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -93,6 +92,7 @@ addItem({
   id: productId.toString(),
   name: product.name,
   price: product.price,
+  discountPrice: product.discountPrice,
   image: productImage,
   variants: [
     {
@@ -198,7 +198,8 @@ addItem({
             {product.name}
           </Typography>
 
-          <ProductPrice price={product.price} discount={product.discount} />
+          <ProductPrice price={product.price} discountPrice={product.discountPrice} />
+
 <div className={styles.mobileDivider}></div>
 
      

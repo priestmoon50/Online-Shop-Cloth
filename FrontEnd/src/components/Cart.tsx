@@ -87,10 +87,13 @@ const Cart: React.FC = () => {
 
   const totalAmount = cart.items.reduce((total, item) => {
     const variants = Array.isArray(item.variants) ? item.variants : [];
-    const itemTotal = variants.reduce(
-      (sum, variant) => sum + Number(item.price) * variant.quantity,
-      0
-    );
+    const unitPrice = item.discountPrice ?? item.price;
+const itemTotal = variants.reduce(
+  (sum, variant) =>
+    sum + Number(item.discountPrice ?? item.price) * variant.quantity,
+  0
+);
+
     return total + itemTotal;
   }, 0);
 
@@ -106,6 +109,8 @@ const Cart: React.FC = () => {
         <>
           {cart.items.map((item: CartItem) => {
             const isValid = validProducts[item.id];
+            const unitPrice = item.discountPrice ?? item.price;
+
             return (
               <Box
                 key={item.id}
@@ -132,20 +137,18 @@ const Cart: React.FC = () => {
                     />
                   </Grid>
                   <Grid item xs={12} md={9}>
-                 {isValid === false && (
-  <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-
-    <Button
-      size="small"
-      color="error"
-      variant="outlined"
-      onClick={() => handleRemoveItem(String(item.id), "", undefined)}
-    >
-      {t("remove")}
-    </Button>
-  </Stack>
-)}
-
+                    {isValid === false && (
+                      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                        <Button
+                          size="small"
+                          color="error"
+                          variant="outlined"
+                          onClick={() => handleRemoveItem(String(item.id), "", undefined)}
+                        >
+                          {t("remove")}
+                        </Button>
+                      </Stack>
+                    )}
 
                     {isValid === false && (
                       <Typography variant="body2" color="error" sx={{ mb: 1 }}>
@@ -153,9 +156,32 @@ const Cart: React.FC = () => {
                       </Typography>
                     )}
 
-                    <Typography variant="body2" color="text.secondary">
-                      {t("price")}: €{convertToEuro(item.price)}
-                    </Typography>
+                    {item.discountPrice ? (
+                      <>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ textDecoration: "line-through" }}
+                        >
+                         {t("price")}: €
+{item.discountPrice
+  ? `${convertToEuro(item.discountPrice)} `
+  : convertToEuro(item.price)}
+
+                        </Typography>
+                        <Typography variant="body2" color="error">
+                          {t("discountedPrice")}: €{convertToEuro(item.discountPrice)}
+                        </Typography>
+                      </>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        {t("price")}: €
+{item.discountPrice
+  ? `${convertToEuro(item.discountPrice)} `
+  : convertToEuro(item.price)}
+
+                      </Typography>
+                    )}
 
                     {Array.isArray(item.variants) &&
                       item.variants.map((variant, idx) => (

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +14,7 @@ const CartManager: React.FC = () => {
     id: '',
     name: '',
     price: 0,
+    discountPrice: 0,
     quantity: 1,
     size: '',
     color: '',
@@ -28,6 +31,7 @@ const CartManager: React.FC = () => {
       id: newItem.id,
       name: newItem.name,
       price: newItem.price,
+      discountPrice: newItem.discountPrice || undefined,
       image: '',
       variants: [
         {
@@ -38,7 +42,15 @@ const CartManager: React.FC = () => {
       ],
     });
 
-    setNewItem({ id: '', name: '', price: 0, quantity: 1, size: '', color: '' });
+    setNewItem({
+      id: '',
+      name: '',
+      price: 0,
+      discountPrice: 0,
+      quantity: 1,
+      size: '',
+      color: '',
+    });
     setError(null);
   };
 
@@ -62,6 +74,12 @@ const CartManager: React.FC = () => {
           type="number"
           value={newItem.price}
           onChange={(e) => setNewItem({ ...newItem, price: Number(e.target.value) })}
+        />
+        <TextField
+          label={t('discountPrice')}
+          type="number"
+          value={newItem.discountPrice}
+          onChange={(e) => setNewItem({ ...newItem, discountPrice: Number(e.target.value) })}
         />
         <TextField
           label={t('quantity')}
@@ -94,14 +112,18 @@ const CartManager: React.FC = () => {
             {item.variants.map((variant, index) => (
               <Box key={index} mb={2}>
                 <Typography>
-                  €{convertToEuro(item.price)} x {variant.quantity} ({variant.size}, {variant.color})
+                  {item.discountPrice
+                    ? `€${convertToEuro(item.discountPrice)} (${t('discounted')})`
+                    : `€${convertToEuro(item.price)}`}
+                  {' '}x {variant.quantity} ({variant.size}, {variant.color})
                 </Typography>
                 <Box display="flex" gap={1} mt={1}>
                   <Button
                     size="small"
                     variant="outlined"
                     onClick={() =>
-                      updateItem(item.id, variant.size, variant.color, variant.quantity + 1)
+                      updateItem(item.id, String(variant.size), variant.color ? String(variant.color) : undefined, variant.quantity + 1)
+
                     }
                   >
                     {t('increase')}
@@ -110,7 +132,8 @@ const CartManager: React.FC = () => {
                     size="small"
                     variant="outlined"
                     onClick={() =>
-                      updateItem(item.id, variant.size, variant.color, Math.max(1, variant.quantity - 1))
+                    updateItem(item.id, String(variant.size), variant.color ? String(variant.color) : undefined, Math.max(1, variant.quantity - 1))
+
                     }
                   >
                     {t('decrease')}
@@ -119,7 +142,8 @@ const CartManager: React.FC = () => {
                     size="small"
                     variant="outlined"
                     color="error"
-                    onClick={() => removeItem(item.id, variant.size, variant.color)}
+                    onClick={() => removeItem(item.id, String(variant.size), variant.color ? String(variant.color) : undefined)
+}
                   >
                     {t('remove')}
                   </Button>

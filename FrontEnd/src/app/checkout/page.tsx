@@ -100,11 +100,13 @@ const rawTotal = cart.items.reduce(
   (acc, item) =>
     acc +
     item.variants.reduce(
-      (sum, variant) => sum + Number(item.price) * variant.quantity,
+      (sum, variant) =>
+        sum + Number(item.discountPrice ?? item.price) * variant.quantity,
       0
     ),
   0
 );
+
 
 const totalPrice = rawTotal * (1 - discountPercent / 100);
 
@@ -472,16 +474,17 @@ discountPercent,
   }}
 >
   {t("total", "Total")}:
- <span>€{convertToEuro(cart.items.reduce(
+<span>€{convertToEuro(cart.items.reduce(
   (acc, item) =>
     acc +
     item.variants.reduce(
-      (sum, variant) => sum + Number(item.price) * variant.quantity,
+      (sum, variant) =>
+        sum + Number(item.discountPrice ?? item.price) * variant.quantity,
       0
     ),
   0
-)
- * (1 - discountPercent / 100))}</span>
+) * (1 - discountPercent / 100))}</span>
+
 </Typography>
 
 
