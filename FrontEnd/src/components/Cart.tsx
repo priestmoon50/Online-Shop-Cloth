@@ -88,11 +88,11 @@ const Cart: React.FC = () => {
   const totalAmount = cart.items.reduce((total, item) => {
     const variants = Array.isArray(item.variants) ? item.variants : [];
     const unitPrice = item.discountPrice ?? item.price;
-const itemTotal = variants.reduce(
-  (sum, variant) =>
-    sum + Number(item.discountPrice ?? item.price) * variant.quantity,
-  0
-);
+    const itemTotal = variants.reduce(
+      (sum, variant) =>
+        sum + Number(item.discountPrice ?? item.price) * variant.quantity,
+      0
+    );
 
     return total + itemTotal;
   }, 0);
@@ -164,9 +164,9 @@ const itemTotal = variants.reduce(
                           sx={{ textDecoration: "line-through" }}
                         >
                          {t("price")}: €
-{item.discountPrice
-  ? `${convertToEuro(item.discountPrice)} `
-  : convertToEuro(item.price)}
+                      {item.discountPrice
+                        ? `${convertToEuro(item.discountPrice)} `
+                        : convertToEuro(item.price)}
 
                         </Typography>
                         <Typography variant="body2" color="error">
@@ -176,9 +176,9 @@ const itemTotal = variants.reduce(
                     ) : (
                       <Typography variant="body2" color="text.secondary">
                         {t("price")}: €
-{item.discountPrice
-  ? `${convertToEuro(item.discountPrice)} `
-  : convertToEuro(item.price)}
+                      {item.discountPrice
+                        ? `${convertToEuro(item.discountPrice)} `
+                        : convertToEuro(item.price)}
 
                       </Typography>
                     )}

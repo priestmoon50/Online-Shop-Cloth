@@ -136,7 +136,8 @@
   "checkoutError": "Checkout failed",
   "loadingUser": "Loading user info...",
   "backToCart": "Back to Cart",
-
+"pleaseSelectSize": "Please select a size to see availability"
+,
 
 
 

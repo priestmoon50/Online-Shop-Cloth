@@ -168,7 +168,8 @@
 
   "confirmPassword": "Passwort bestätigen",
   "nameRequired": "Vorname und Nachname sind erforderlich.",
-
+"pleaseSelectSize": "Bitte wählen Sie eine Größe, um die Verfügbarkeit zu sehen"
+,
   "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer mit Ländervorwahl ein.",
   "shortPassword": "Das Passwort muss mindestens 6 Zeichen lang sein.",
   "passwordsMismatch": "Die Passwörter stimmen nicht überein.",

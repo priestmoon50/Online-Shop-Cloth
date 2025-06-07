@@ -110,6 +110,8 @@
   "phone": "Número de teléfono",
 "productNoLongerAvailable": "Este producto ya no está disponible"
 ,
+"pleaseSelectSize": "Por favor, selecciona una talla para ver la disponibilidad"
+,
   "confirmPassword": "Confirmar contraseña",
   "nameRequired": "Nombre y apellido son obligatorios.",
 "new": "Nuevo",

@@ -199,7 +199,12 @@ addItem({
             {product.name}
           </Typography>
 
-          <ProductPrice price={product.price} discountPrice={product.discountPrice} />
+          <ProductPrice
+  price={product.price}
+  discountPrice={product.discountPrice}
+  discount={product.discount}
+/>
+
 
 <div className={styles.mobileDivider}></div>
 
@@ -210,8 +215,10 @@ addItem({
             <br />
             Category: {product.category || "N/A"}
           </Typography>
-<Typography variant="body2" color={availableStock === 0 ? "error" : "textSecondary"}>
-  {availableStock > 0
+<Typography variant="body2" color="textSecondary">
+  {!selectedSize
+    ? t('pleaseSelectSize')  
+    : availableStock > 0
     ? t('inStock', { count: availableStock })
     : t('outOfStock')}
 </Typography>

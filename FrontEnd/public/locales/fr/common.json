@@ -72,6 +72,8 @@
 
 "productNoLongerAvailable": "Ce produit n'est plus disponible"
 ,
+"pleaseSelectSize": "Veuillez sélectionner une taille pour voir la disponibilité"
+,
  "checkoutTitle": "Paiement",
   "userInfoLoaded": "Vos informations de compte ont été chargées.",
   "enterInfoOrLogin": "Pour finaliser votre achat, saisissez vos informations ou connectez-vous.",

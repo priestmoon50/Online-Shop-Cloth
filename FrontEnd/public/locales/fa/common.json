@@ -177,7 +177,8 @@
   "enterDiscountCode": "کد تخفیف را وارد کنید",
   "apply": "اعمال",
   "Please Login To Continue": "لطفاً برای ادامه وارد شوید",
-
+"pleaseSelectSize": "لطفاً سایز مورد نظر را انتخاب کنید"
+,
 
     "quantity": "تعداد",
     "size": "سایز",

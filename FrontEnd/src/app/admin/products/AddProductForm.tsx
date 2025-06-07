@@ -85,12 +85,13 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
         )
       );
 
-      const productData = {
-        ...data,
-        colors: Array.isArray(data.colors) ? data.colors : [],
-        sizes: sizeStockList,
-        images: addedImages.map((img) => img.url),
-      };
+const productData = {
+  ...data,
+  discountPrice: data.discountPrice ? Number(data.discountPrice) : undefined,
+  colors: Array.isArray(data.colors) ? data.colors : [],
+  sizes: sizeStockList,
+  images: addedImages.map((img) => img.url),
+};
 
       const response = initialProduct
         ? await axios.put(`/api/products/${initialProduct.id}`, productData)

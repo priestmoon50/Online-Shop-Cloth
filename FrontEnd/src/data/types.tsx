@@ -65,9 +65,10 @@ export interface ProductRatingProps {
 
 export interface ProductPriceProps {
   price: number;
-  discountPrice?: number;
-  discount?: number; // ⬅️ این خط را اضافه کن
+  discount?: number | null;
+  discountPrice?: number | null;
 }
+
 
 
 export interface ProductImagesProps {
