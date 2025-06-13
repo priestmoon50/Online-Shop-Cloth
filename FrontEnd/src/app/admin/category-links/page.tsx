@@ -10,7 +10,6 @@ import {
   CardMedia,
   CardContent,
   CardActions,
-  IconButton,
 } from '@mui/material';
 import Image from 'next/image';
 import axios from 'axios';
@@ -56,24 +55,30 @@ export default function EditCategoryLinksPage() {
   const handleSeedCategories = async () => {
     const fixedCategories = ['all', 'accessory', 'dress', 'shoes', 'pants', 'sale'];
 
-await Promise.all(
-  fixedCategories.map(async (title) => {
-    try {
-      const res = await axios.get(`/api/category-links?title=${title}`);
-      if (!res.data?.exists) {
-        await axios.post('/api/category-links', { title, imageUrl: '' });
-      }
-    } catch (err) {
-      console.error("Seed error:", err);
-    }
-  })
-);
+    await Promise.all(
+      fixedCategories.map(async (title) => {
+        try {
+          const res = await axios.get(`/api/category-links?title=${title}`);
+          if (!res.data?.exists) {
+            await axios.post('/api/category-links', { title, imageUrl: '' });
+          }
+        } catch (err) {
+          console.error('Seed error:', err);
+        }
+      })
+    );
 
     fetchCategories();
   };
 
   return (
     <Box sx={{ mt: 4, px: { xs: 2, md: 6 } }}>
+      <Box display="flex" justifyContent="center" sx={{ mb: 4 }}>
+        <Button variant="contained" color="warning" href="/admin">
+          {t('back')}
+        </Button>
+      </Box>
+
       <Typography variant="h4" gutterBottom textAlign="center">
         {t('edit_category_links')}
       </Typography>

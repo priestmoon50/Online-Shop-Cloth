@@ -45,6 +45,12 @@ export default function ManageHomeSlidesPage() {
 
   return (
     <Box sx={{ mt: 4, px: 2 }}>
+      <Box display="flex" justifyContent="center" sx={{ mb: 4 }}>
+        <Button variant="contained" color="warning" href="/admin">
+          Back
+        </Button>
+      </Box>
+
       <Typography variant="h4" align="center" gutterBottom>
         مدیریت اسلایدر صفحه اصلی
       </Typography>
@@ -74,7 +80,7 @@ export default function ManageHomeSlidesPage() {
                   src={slide.imageUrl}
                   alt="slider"
                   fill
-                 style={{ objectFit: 'cover', objectPosition: 'center' }}
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
               </CardMedia>
               <CardActions>
