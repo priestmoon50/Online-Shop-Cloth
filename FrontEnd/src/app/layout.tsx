@@ -15,21 +15,22 @@ import '../../i18n';
 import { FavoriteProvider } from '@/context/FavoriteContext';
 import theme from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
+import { SnackbarProvider } from 'notistack';
 
 const Layout: React.FC<{ children: React.ReactNode; dehydratedState?: unknown }> = ({ children, dehydratedState }) => {
   const [queryClient] = useState(() => new QueryClient());
-const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState('en');
 
-useEffect(() => {
-  const storedLang = localStorage.getItem('selectedLanguage') || 'en';
-  setLanguage(storedLang);
-}, []);
+  useEffect(() => {
+    const storedLang = localStorage.getItem('selectedLanguage') || 'en';
+    setLanguage(storedLang);
+  }, []);
 
-const bodyClass = language === 'fa' ? 'font-fa' : 'font-latin';
+  const bodyClass = language === 'fa' ? 'font-fa' : 'font-latin';
 
 
   return (
-   <html lang={language} dir="ltr">
+    <html lang={language} dir="ltr">
 
 
       <Head>
@@ -38,11 +39,14 @@ const bodyClass = language === 'fa' ? 'font-fa' : 'font-latin';
           name="description"
           content="Discover the exclusive high-class women's fashion collection at MopaStyle. Shop now for elegant dresses, t-shirts, and more."
         />
+        <meta name="color-scheme" content="only light" />
+
         <meta
           name="keywords"
           content="women's fashion, Mopa, mopastyle, AHADI, clothing, high-class fashion, online shopping, dresses, ModaPersia"
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
         <meta name="robots" content="index, follow" />
         <link rel="icon" href="/images/Logo.png" type="image/png" />
         <script
@@ -61,25 +65,29 @@ const bodyClass = language === 'fa' ? 'font-fa' : 'font-latin';
 
       <body className={bodyClass}>
         <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <HydrationBoundary state={dehydratedState}>
-            <AuthProvider>
-              <CartProvider>
-                <FavoriteProvider>
-                  <LanguageSelector />
-                  <NavBar />
-                 <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, md: 4 } }}>
+          <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
+            <QueryClientProvider client={queryClient}>
+              <HydrationBoundary state={dehydratedState}>
+                <AuthProvider>
+
+                  <CartProvider>
+                    <FavoriteProvider>
+                      <LanguageSelector />
+                      <NavBar />
+                      <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, md: 4 } }}>
 
 
-                    <Box my={4}>{children}</Box>
-                  </Container>
-                  <Footer />
-                </FavoriteProvider>
-              </CartProvider>
-            </AuthProvider>
-          </HydrationBoundary>
-        </QueryClientProvider>
+                        <Box my={4}>{children}</Box>
+                      </Container>
+                      <Footer />
+                    </FavoriteProvider>
+                  </CartProvider>
+                </AuthProvider>
+              </HydrationBoundary>
+            </QueryClientProvider>
+          </SnackbarProvider>
         </ThemeProvider>
+
       </body>
     </html>
   );

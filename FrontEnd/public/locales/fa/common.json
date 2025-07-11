@@ -23,6 +23,9 @@
     "enterEmail": "ایمیل خود را وارد کنید",
     "subscribe": "عضویت",
     "paymentMethods": "روش‌های پرداخت",
+    "shippingFee": "هزینه ارسال: €{{value}} (برای سفارش‌های زیر ۶۰ یورو)",
+ 
+    "normalShipping": "هزینه معمول ارسال: €3.99",
     "allRightsReserved": "کلیه حقوق محفوظ است",
     "newArrivals": "تازه‌ترین محصولات",
     "sale": "تخفیف‌ها",
@@ -36,17 +39,15 @@
     "register": "ثبت‌نام",
     "firstName": "نام",
     "lastName": "نام خانوادگی",
-
+    "pleaseSelectColorFirst": "برای دیدن سایز، ابتدا رنگ را انتخاب کنید",
     "phone": "شماره موبایل",
     "yourEmail": "ایمیل شما",
     "yourMessage": "پیام شما",
     "send": "ارسال",
     "sending": "در حال ارسال...",
-
     "messageRequired": "لطفاً یک پیام بنویسید.",
     "sendFailed": "ارسال پیام ناموفق بود.",
     "messageSuccess": "پیام شما با موفقیت ارسال شد.",
-
     "confirmPassword": "تکرار رمز عبور",
     "nameRequired": "لطفاً نام و نام خانوادگی را وارد کنید.",
     "invalidEmail": "لطفاً یک ایمیل معتبر وارد کنید.",
@@ -57,18 +58,18 @@
     "emailNotVerified": "شما قبلاً ثبت‌نام کرده‌اید ولی ایمیل را تأیید نکرده‌اید. لطفاً صندوق ایمیل را بررسی کنید.",
     "registerFailed": "ثبت‌نام ناموفق بود. لطفاً دوباره تلاش کنید.",
     "serverError": "خطای سرور. لطفاً بعداً دوباره تلاش کنید.",
-  "searchPlaceholder": "جستجو بر اساس نام محصول...",
+    "searchPlaceholder": "جستجو بر اساس نام محصول...",
     "noProductsForFilters": "محصولی برای فیلترهای انتخاب‌شده یافت نشد.",
     "loading": "در حال بارگذاری...",
     "errorFetchingProducts": "خطا در دریافت محصولات. لطفاً بعداً تلاش کنید.",
-  "ordersListTitle": "لیست سفارش‌ها",
+    "ordersListTitle": "لیست سفارش‌ها",
     "noOrders": "هیچ سفارشی وجود ندارد.",
     "orderId": "سفارش",
     "date": "تاریخ",
     "name": "نام",
-  "inStock": "موجودی: {{count}} عدد",
-  "outOfStock": "ناموجود",
-  "upload_new_image": "آپلود تصویر جدید",
+    "inStock": "موجودی: {{count}} عدد",
+    "outOfStock": "ناموجود",
+    "upload_new_image": "آپلود تصویر جدید",
     "upload_button": "آپلود تصویر",
     "upload_success": "تصویر با موفقیت آپلود شد!",
     "upload_error": "خطا در آپلود تصویر.",
@@ -81,18 +82,12 @@
     "instruction_3": "تصویر ذخیره شده و در پایین نمایش داده می‌شود.",
     "instruction_2_full": "روی دکمه <1>{{button}}</1> کلیک کنید.",
     "select_image_gallery": "انتخاب تصویر از گالری",
-
-
-
-
     "confirm": "تأیید",
     "submit": "ثبت",
     "yes": "بله",
     "no": "خیر",
     "product_name": "نام محصول",
-
     "description": "توضیحات",
-
     "checkoutTitle": "تسویه حساب",
     "userInfoLoaded": "اطلاعات حساب شما بارگذاری شده است.",
     "enterInfoOrLogin": "برای تکمیل خرید، اطلاعات خود را وارد کنید یا وارد حساب کاربری شوید.",
@@ -121,9 +116,7 @@
     "selected_image": "تصویر انتخاب‌شده:",
     "add": "افزودن",
     "product_id": "شناسه محصول",
-
     "stock": "موجودی",
-
     "actions": "عملیات",
     "edit": "ویرایش",
     "delete": "حذف",
@@ -133,33 +126,29 @@
     "yes_delete": "بله، حذف شود",
     "delete_success": "محصول با موفقیت حذف شد.",
     "delete_failed": "حذف محصول با خطا مواجه شد.",
-    
     "address": "آدرس",
     "payment": "پرداخت",
     "paid": "پرداخت‌شده",
     "notPaid": "پرداخت‌نشده",
     "items": "آیتم‌ها",
-
-
-
-  "street": "خیابان",
-  "postalCode": "کد پستی",
-
-    
-
+    "street": "خیابان",
+    "freeShipping": "ارسال رایگان اعمال شد (برای سفارش‌های بالای ۶۰ یورو)."
+,
+    "postalCode": "کد پستی",
     "unknown": "نامشخص",
     "totalPrice": "مجموع قیمت",
     "orderStatus": "وضعیت سفارش",
     "pending": "در انتظار",
     "processing": "در حال پردازش",
     "completed": "تکمیل‌شده",
-      "total": "جمع کل",
+    "total": "جمع کل",
     "backToProducts": "بازگشت به محصولات",
     "loginToContinue": "لطفاً برای ادامه وارد شوید.",
     "goToLogin": "ورود به حساب",
     "error": {
       "quantityTooLow": "تعداد باید حداقل ۱ باشد.",
       "updateFailed": "به‌روزرسانی آیتم ناموفق بود.",
+      "stockExceeded": "حداکثر موجودی: {{stock}} عدد",
       "failedToRemoveItem": "حذف آیتم ناموفق بود."
     },
     "account": "حساب کاربری",
@@ -169,57 +158,43 @@
     "accountSettings": "تنظیمات حساب",
     "support": "پشتیبانی",
     "shoppingCart": "سبد خرید شما",
-    "discountErrorHasDiscountedItem": "کد تخفیف فقط برای محصولاتی قابل استفاده است که قبلاً تخفیف نخورده‌اند."
-,
-
-
-
-
-  "addToFavorites": "افزودن به علاقه‌مندی‌ها",
-  "addedToFavorites": "به علاقه‌مندی‌ها اضافه شد",
-  "selectSize": "انتخاب سایز:",
-  "selectColor": "انتخاب رنگ:",
-  "howMany": "چند عدد؟",
- 
-  "productAdded": "محصول به سبد خرید افزوده شد",
-  "productAddedMessage": "محصول با موفقیت به سبد خرید شما افزوده شد.",
-  "continueShopping": "ادامه خرید",
-  "checkout": "تسویه حساب",
-
-
-  "back": "بازگشت",
-  "manageDiscountCodes": "مدیریت کدهای تخفیف",
-
-  "percentage": "درصد",
-
-  "noExpiration": "بدون انقضا",
-  "noDiscountsDefined": "هیچ کد تخفیفی ثبت نشده است.",
-  "error.fetchingDiscounts": "خطا در دریافت لیست تخفیف‌ها",
-  "error.addingDiscount": "خطا در افزودن تخفیف",
-  "error.deletingDiscount": "خطا در حذف تخفیف",
-
+    "discountErrorHasDiscountedItem": "کد تخفیف فقط برای محصولاتی قابل استفاده است که قبلاً تخفیف نخورده‌اند.",
+    "addToFavorites": "افزودن به علاقه‌مندی‌ها",
+    "addedToFavorites": "به علاقه‌مندی‌ها اضافه شد",
+    "selectSize": "انتخاب سایز:",
+    "selectColor": "انتخاب رنگ:",
+    "howMany": "چند عدد؟",
+    "productAdded": "محصول به سبد خرید افزوده شد",
+    "productAddedMessage": "محصول با موفقیت به سبد خرید شما افزوده شد.",
+    "continueShopping": "ادامه خرید",
+    "checkout": "تسویه حساب",
+    "back": "بازگشت",
+    "manageDiscountCodes": "مدیریت کدهای تخفیف",
+    "percentage": "درصد",
+    "noExpiration": "بدون انقضا",
+    "noDiscountsDefined": "هیچ کد تخفیفی ثبت نشده است.",
+    "error.fetchingDiscounts": "خطا در دریافت لیست تخفیف‌ها",
+    "error.addingDiscount": "خطا در افزودن تخفیف",
+    "error.deletingDiscount": "خطا در حذف تخفیف",
     "emptyCart": "سبد خرید شما خالی است.",
-"new": "جدید",
-"productNoLongerAvailable": "این محصول دیگر در دسترس نیست"
-,
-     "discountCode": "کد تخفیف",
-  "enterDiscountCode": "کد تخفیف را وارد کنید",
-  "apply": "اعمال",
-  "Please Login To Continue": "لطفاً برای ادامه وارد شوید",
-"pleaseSelectSize": "لطفاً سایز مورد نظر را انتخاب کنید"
-,
-"invalidProductId": "شناسه محصول نامعتبر است",
-"productNotFound": "محصولی با این شناسه یافت نشد",
-
-"productIdRequired": "شناسه محصول برای بروزرسانی لازم است"
-,
-
-"invalidDiscountCode": "کد تخفیف نامعتبر است",
-"error.validatingDiscountCode": "خطا در بررسی کد تخفیف"
-,
+    "new": "جدید",
+    "productNoLongerAvailable": "این محصول دیگر در دسترس نیست",
+    "discountCode": "کد تخفیف",
+    "enterDiscountCode": "کد تخفیف را وارد کنید",
+    "apply": "اعمال",
+    "Please Login To Continue": "لطفاً برای ادامه وارد شوید",
+    "pleaseSelectSize": " لطفاً برای دیدن سایزهای موجود، ابتدا رنگ را انتخاب کنید.",
+    "invalidProductId": "شناسه محصول نامعتبر است",
+    "productNotFound": "محصولی با این شناسه یافت نشد",
+    "productIdRequired": "شناسه محصول برای بروزرسانی لازم است",
+    "saveLabel": "صرفه‌جویی €{{amount}}",
+    "invalidDiscountCode": "کد تخفیف نامعتبر است",
+    "error.validatingDiscountCode": "خطا در بررسی کد تخفیف",
     "quantity": "تعداد",
     "size": "سایز",
     "color": "رنگ",
+    "quantityUpdated": "تعداد بروزرسانی شد",
+    "noSizeAvailable": "هیچ سایزی برای این رنگ موجود نیست.",
     "remove": "حذف",
     "proceedToCheckout": "ادامه به پرداخت"
   }

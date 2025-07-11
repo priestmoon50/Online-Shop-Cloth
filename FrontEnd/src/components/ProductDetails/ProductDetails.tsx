@@ -15,7 +15,7 @@ import ProductImages from "./ProductImages";
 import ProductPrice from "./ProductPrice";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { Product , CartItem } from "@/data/types";
+import { Product, CartItem } from "@/data/types";
 import Link from "next/link";
 import styles from "./ProductDetails.module.css";
 import { useCart } from "@/context/CartContext";
@@ -23,6 +23,7 @@ import { useFavorites } from "@/context/FavoriteContext";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from 'react-i18next';
+import { useSnackbar } from 'notistack';
 
 
 const ProductDetails: FC<{ product: Product }> = ({ product }) => {
@@ -30,43 +31,45 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const { favorites, addFavorite, removeFavorite, isMounted } = useFavorites();
-const productId = String(product.id || product._id);
-const isLiked = favorites.items.some((item) => String(item.id) === productId);
-const currentSizeStock =
-  product.sizes?.find((s) => s.size === selectedSize)?.stock ?? 0;
+  const productId = String(product.id || product._id);
+  const isLiked = favorites.items.some((item) => String(item.id) === productId);
+  const selectedVariant = product.variants?.find(
+    (v) => v.size === selectedSize && v.color === selectedColor
+  );
+  const availableStock = selectedVariant?.stock ?? 0;
 
-const availableStock = currentSizeStock;
+  const { enqueueSnackbar } = useSnackbar();
 
 
 
 
-  const { addItem } = useCart();
+  const { addItem, updateItem, cart } = useCart();
   const imagesArray = product.images ? product.images : [product.image];
 
-const toggleLike = () => {
-  const productId = String(product.id || product._id);
-  if (!productId) return;
+  const toggleLike = () => {
+    const productId = String(product.id || product._id);
+    if (!productId) return;
 
-  const alreadyLiked = favorites.items.some((item) => String(item.id) === productId);
+    const alreadyLiked = favorites.items.some((item) => String(item.id) === productId);
 
-  if (alreadyLiked) {
-    removeFavorite(productId);
-  } else {
-    const favoriteItem = {
-      id: productId,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.images?.[0] || "/placeholder.jpg",
-      images: product.images || [],
-      description: product.description || "",
-      category: product.category || "N/A",
-    };
-    addFavorite(favoriteItem);
-  }
-};
+    if (alreadyLiked) {
+      removeFavorite(productId);
+    } else {
+      const favoriteItem = {
+        id: productId,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.images?.[0] || "/placeholder.jpg",
+        images: product.images || [],
+        description: product.description || "",
+        category: product.category || "N/A",
+      };
+      addFavorite(favoriteItem);
+    }
+  };
 
 
   const handleContinueShopping = () => {
@@ -86,157 +89,184 @@ const toggleLike = () => {
       return;
     }
 
+    if (quantity > availableStock) {
+      enqueueSnackbar(t("error.stockExceeded", { stock: availableStock }), { variant: "error" });
+      return;
+    }
+
     const productImage = product.images?.[0] || "/placeholder.jpg";
 
-addItem({
-  id: productId.toString(),
-  name: product.name,
-  price: product.price,
-  ...(product.discountPrice ? { discountPrice: product.discountPrice } : {}),
-  image: productImage,
-  variants: [
-    {
-      size: selectedSize,
-      color: selectedColor,
-      quantity,
-    },
-  ],
-});
+    const existingItem = cart.items.find(item => item.id === productId.toString());
+    const existingVariant = existingItem?.variants.find(
+      v => v.size === selectedSize && v.color === selectedColor
+    );
 
 
-    setOpenModal(true);
+    const currentQuantity = existingVariant?.quantity ?? 0;
+    const totalRequested = currentQuantity + quantity;
+
+    if (totalRequested > availableStock) {
+      enqueueSnackbar(
+        t("error.stockExceeded", { stock: availableStock }),
+        { variant: "error" }
+      );
+      return;
+    }
+
+    if (existingVariant) {
+      updateItem(productId.toString(), selectedSize, selectedColor, totalRequested);
+      enqueueSnackbar(t("quantityUpdated"), { variant: "success" });
+    } else {
+      addItem({
+        id: productId.toString(),
+        name: product.name,
+        price: product.price,
+        ...(product.discountPrice ? { discountPrice: product.discountPrice } : {}),
+        image: productImage,
+        variants: [
+          {
+            size: selectedSize,
+            color: selectedColor,
+            quantity,
+            stock: availableStock,
+          },
+        ],
+      });
+      enqueueSnackbar(t("productAdded"), { variant: "success" });
+    }
   };
+
 
   const handleCloseModal = () => setOpenModal(false);
 
   return (
-<Container
-  maxWidth="lg"
-  disableGutters
-  sx={{
-    px: { xs: '2vw', sm: '3vw', md: 0 },
-    pt: { xs: '16px', md: '40px' }, 
-    pb: { xs: '24px', md: '40px' }, 
-  }}
-  className={styles.container}
->
-
-
-
-
-<Box
-  sx={{
-    position: {
-      xs: "absolute",
-      sm: "static",
-    },
-    top: { xs: 16 },
-    left: { xs: 16 },
-    zIndex: { xs: 10 },
-    display: "flex",
-    justifyContent: {
-      xs: "flex-start",
-      sm: "center",
-    },
-    alignItems: "center",
-    mt: {
-      xs: 0,
-      sm: -3,
-      md: -5,
-    },
-    mb: {
-      xs: 4,
-      sm: 6, // در دسکتاپ فاصله بیشتر پایین
-    },
-  }}
->
-  <Link href="/products" passHref>
-    <Button
-      variant="contained"
-      className={styles.backButton}
+    <Container
+      maxWidth="lg"
+      disableGutters
       sx={{
-        backgroundColor: "#FFD700",
-        color: "#000",
-        '&:hover': {
-          backgroundColor: "#FFC107",
-        },
+        px: { xs: '2vw', sm: '3vw', md: 0 },
+        pt: { xs: '16px', md: '40px' },
+        pb: { xs: '24px', md: '40px' },
       }}
+      className={styles.container}
     >
-      {t("back")}
-    </Button>
-  </Link>
-</Box>
+
+
+
+
+      <Box
+        sx={{
+          position: {
+            xs: "absolute",
+            sm: "static",
+          },
+          top: { xs: 16 },
+          left: { xs: 16 },
+          zIndex: { xs: 10 },
+          display: "flex",
+          justifyContent: {
+            xs: "flex-start",
+            sm: "center",
+          },
+          alignItems: "center",
+          mt: {
+            xs: 0,
+            sm: -3,
+            md: -5,
+          },
+          mb: {
+            xs: 4,
+            sm: 6, // در دسکتاپ فاصله بیشتر پایین
+          },
+        }}
+      >
+        <Link href="/products" passHref>
+          <Button
+            variant="contained"
+            className={styles.backButton}
+            sx={{
+              backgroundColor: "#FFD700",
+              color: "#000",
+              '&:hover': {
+                backgroundColor: "#FFC107",
+              },
+            }}
+          >
+            {t("back")}
+          </Button>
+        </Link>
+      </Box>
 
 
 
 
 
       <Grid container spacing={4}>
-<Grid
-  item
-  xs={12}
-  md={6}
-  sx={{ px: { xs: 0, md: 3 } }} // همینجا هم پدینگ رو صفر کن
->
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{ px: { xs: 0, md: 3 } }} // همینجا هم پدینگ رو صفر کن
+        >
 
-<div className={styles.zoomableImageWrapper}>
-  <ProductImages images={imagesArray} />
-</div>
+          <div className={styles.zoomableImageWrapper}>
+            <ProductImages images={imagesArray} />
+          </div>
 
-</Grid>
+        </Grid>
 
 
 
         <Grid
-  item
-  xs={12}
-  md={6}
-  className={styles.productInfo}
-  sx={{ px: { xs: 0, md: 3 } }} // حذف padding افقی در موبایل
->
+          item
+          xs={12}
+          md={6}
+          className={styles.productInfo}
+          sx={{ px: { xs: 0, md: 3 } }} // حذف padding افقی در موبایل
+        >
 
           <Typography variant="h4" component="h1" className={styles.productTitle}>
             {product.name}
           </Typography>
 
           <ProductPrice
-  price={product.price}
-  discountPrice={product.discountPrice}
-  discount={product.discount}
-/>
+            price={product.price}
+            discountPrice={product.discountPrice}
+            discount={product.discount}
+          />
 
 
-<div className={styles.mobileDivider}></div>
+          <div className={styles.mobileDivider}></div>
 
-     
-<div className={styles.mobileDivider}></div>
+
+          <div className={styles.mobileDivider}></div>
 
           <Typography variant="body2">
             <br />
             {t("category")}: {product.category || "N/A"}
           </Typography>
-<Typography variant="body2" color="textSecondary">
-  {!selectedSize
-    ? t('pleaseSelectSize')  
-    : availableStock > 0
-    ? t('inStock', { count: availableStock })
-    : t('outOfStock')}
-</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {!selectedSize
+              ? t('pleaseSelectSize')
+              : availableStock > 0
+                ? t('inStock', { count: availableStock })
+                : t('outOfStock')}
+          </Typography>
 
 
 
-          
-<div className={styles.mobileDivider}></div>
+
+          <div className={styles.mobileDivider}></div>
           <Box sx={{ mt: 2, display: "flex", alignItems: "center" }}>
 
-            
-<IconButton onClick={toggleLike}>
-  {isMounted && isLiked ? (
-    <FavoriteIcon sx={{ color: '#e53935' }} />
-  ) : (
-    <FavoriteBorderIcon sx={{ color: '#9e9e9e' }} />
-  )}
-</IconButton>
+
+            <IconButton onClick={toggleLike}>
+              {isMounted && isLiked ? (
+                <FavoriteIcon sx={{ color: '#e53935' }} />
+              ) : (
+                <FavoriteBorderIcon sx={{ color: '#9e9e9e' }} />
+              )}
+            </IconButton>
 
 
 
@@ -247,52 +277,79 @@ addItem({
             </Typography>
           </Box>
 
-          {/* انتخاب سایز */}
-          <Box className={styles.selectWrapper}>
-            <Typography variant="body2" className={styles.selectLabel}>
-             {t("selectSize")}
-            </Typography>
-            <Box display="flex" flexWrap="wrap" gap={1}>
-{product.sizes
-  ?.filter((s) => s.stock > 0)
-  .map((s) => (
-    <Button
-      key={s.size}
-      variant={selectedSize === s.size ? "contained" : "outlined"}
-      onClick={() => setSelectedSize(s.size)}
-      sx={{ minWidth: 40, px: 2 }}
-    >
-      {s.size}
-    </Button>
-))}
 
-            </Box>
-          </Box>
 
           {/* انتخاب رنگ */}
           <Box className={styles.selectWrapper}>
             <Typography variant="body2" className={styles.selectLabel}>
-             {t("selectColor")}
+              {t("selectColor")}
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={1}>
-              {product.colors?.map((color) => (
-                <Button
-                  key={color}
-                  variant={selectedColor === color ? "contained" : "outlined"}
-                  onClick={() => setSelectedColor(String(color))}
+              {[...new Set(product.variants?.map((v) => v.color))].map((color) => {
+                const hasStock = product.variants?.some((v) => v.color === color && v.stock > 0);
+                return (
+                  <Button
+                    key={color}
+                    variant={selectedColor === color ? "contained" : "outlined"}
+                    onClick={() => {
+                      setSelectedColor(color);
+                      setSelectedSize(null);
+                      setQuantity(1);
+                    }}
 
-                  sx={{ minWidth: 40, px: 2 }}
-                >
-                  {color}
-                </Button>
-              ))}
+                    disabled={!hasStock}
+                    sx={{ minWidth: 40, px: 2 }}
+                  >
+                    {color}
+                  </Button>
+                );
+              })}
             </Box>
           </Box>
+          {/* انتخاب سایز */}
+          <Box className={styles.selectWrapper} mt={2}>
+            <Typography variant="body2" className={styles.selectLabel}>
+              {t("selectSize")}
+            </Typography>
+
+            {!selectedColor ? (
+              <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                {t("pleaseSelectColorFirst")}
+              </Typography>
+            ) : (
+              <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
+                {product.variants
+                  ?.filter((v) => v.color === selectedColor && v.stock > 0)
+                  .map((v) => v.size)
+                  .filter((v, i, self) => self.indexOf(v) === i)
+                  .map((size) => (
+                    <Button
+                      key={size}
+                      variant={selectedSize === size ? "contained" : "outlined"}
+                      onClick={() => {
+                        setSelectedSize(size);
+                        setQuantity(1); // ✅ reset quantity
+                      }}
+                      sx={{ minWidth: 40, px: 2 }}
+                    >
+                      {size}
+                    </Button>
+                  ))}
+                {product.variants?.filter((v) => v.color === selectedColor && v.stock > 0).length === 0 && (
+                  <Typography variant="body2" color="error">
+                    {t('noSizeAvailable')}
+                  </Typography>
+                )}
+              </Box>
+            )}
+          </Box>
+
+
 
           {/* انتخاب تعداد */}
           <Box className={styles.quantityInput} display="flex" alignItems="center" justifyContent="space-between" padding="8px" margin="20px 0" width="100%" maxWidth="200px">
             <Typography variant="body2" className={styles.selectLabel} style={{ fontSize: "0.9rem", marginRight: "15px" }}>
-             <b>{t("howMany")}</b>
+              <b>{t("howMany")}</b>
             </Typography>
             <Box display="flex" alignItems="center" justifyContent="center">
               <IconButton
@@ -303,29 +360,29 @@ addItem({
               >
                 <RemoveIcon fontSize="small" />
               </IconButton>
-<TextField
-  type="number"
-  value={quantity}
-  onChange={(e) => {
-    const value = Number(e.target.value);
-    if (value > availableStock) {
-      setQuantity(availableStock);
-    } else if (value >= 1) {
-      setQuantity(value);
-    }
-  }}
-  inputProps={{ min: 1, max: availableStock, className: styles.inputNoArrows }}
+              <TextField
+                type="number"
+                value={quantity}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value > availableStock) {
+                    setQuantity(availableStock);
+                  } else if (value >= 1) {
+                    setQuantity(value);
+                  }
+                }}
+                inputProps={{ min: 1, max: availableStock, className: styles.inputNoArrows }}
 
 
-             
+
                 size="small"
                 style={{ width: "50px", textAlign: "center", margin: "0 8px" }}
               />
-<IconButton
-  onClick={() => setQuantity((prev) => Math.min(prev + 1, availableStock))}
-  disabled={quantity >= availableStock}
+              <IconButton
+                onClick={() => setQuantity((prev) => Math.min(prev + 1, availableStock))}
+                disabled={quantity >= availableStock}
 
- 
+
 
                 size="small"
                 style={{ border: "1px solid #ccc", borderRadius: "50%", backgroundColor: "#f9f9f9", padding: "4px", margin: "0 4px" }}
@@ -336,26 +393,27 @@ addItem({
           </Box>
 
           <Box sx={{ mt: 2 }}>
-<Button
-  variant="contained"
-  className={styles.backButton}
-  color="primary"
-  onClick={handleAddToCart}
-  disabled={availableStock === 0}
->
-  {availableStock === 0 ? t('outOfStock') : t('addToCart')}
-</Button>
+            <Button
+              variant="contained"
+              className={styles.backButton}
+              color="primary"
+              onClick={handleAddToCart}
+              disabled={availableStock === 0}
+            >
+              {t('addToCart')}
+            </Button>
 
-<Typography
-  variant="body2"
-  className={styles.productDescription}
-  sx={{ mt: 3, lineHeight: 1.7 }}
->
-  {product.description}
-</Typography>
+
+            <Typography
+              variant="body2"
+              className={styles.productDescription}
+              sx={{ mt: 3, lineHeight: 1.7 }}
+            >
+              {product.description}
+            </Typography>
 
           </Box>
-          
+
         </Grid>
       </Grid>
 
@@ -369,13 +427,13 @@ addItem({
             {t("productAddedMessage")}
           </Typography>
           <Button onClick={handleContinueShopping} sx={{ mt: 2, mr: 2 }} variant="contained" color="primary">
-           Continue Shopping → {t("continueShopping")}
+            Continue Shopping → {t("continueShopping")}
           </Button>
           <Button onClick={handleCheckout} sx={{ mt: 2 }} variant="contained" color="secondary">
             Checkout → {t("checkout")}
           </Button>
 
-          
+
         </Box>
       </Modal>
     </Container>

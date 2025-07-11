@@ -108,18 +108,26 @@ const CheckoutPage: React.FC = () => {
     cart.items.reduce((acc, item) => {
       const isDiscounted =
         item.discountPrice !== undefined && item.discountPrice < item.price;
-      const unitPrice = isDiscounted ? item.discountPrice! : item.price;
-      const effectivePrice = isDiscounted
-        ? unitPrice
-        : unitPrice * (1 - discountPercent / 100);
+      const basePrice = isDiscounted
+        ? item.discountPrice!
+        : item.price;
+
       return (
         acc +
         item.variants.reduce(
-          (sum, variant) => sum + effectivePrice * variant.quantity,
+          (sum, variant) => sum + basePrice * variant.quantity,
           0
         )
       );
     }, 0);
+
+
+  const shippingFee = calculateTotal() < 60 ? 3.99 : 0;
+
+  const totalPriceWithShipping = Number((
+    calculateTotal() * (1 - discountPercent / 100) + shippingFee
+  ).toFixed(2));
+
 
   const renderField = (
     name: keyof FormData,
@@ -158,20 +166,25 @@ const CheckoutPage: React.FC = () => {
     const itemsWithAdjustedPrices = cart.items.map((item) => {
       const isDiscounted =
         item.discountPrice !== undefined && item.discountPrice < item.price;
-      const priceBeforeDiscount = item.price;
-      const price = isDiscounted
+      const basePrice = isDiscounted
         ? item.discountPrice!
         : item.price * (1 - discountPercent / 100);
 
       return {
         ...item,
-        priceBeforeDiscount,
-        price,
+        priceBeforeDiscount: item.price,
+        variants: item.variants.map((variant) => ({
+          ...variant,
+          price: basePrice,
+        })),
       };
     });
 
+
     const rawTotal = calculateRawTotal();
-    const totalPrice = calculateTotal();
+    const totalPrice = totalPriceWithShipping;
+
+
 
     const orderData = {
       name: `${data.firstName} ${data.lastName}`,
@@ -204,6 +217,7 @@ const CheckoutPage: React.FC = () => {
       }
 
       localStorage.setItem("orderId", saveResult.insertedId);
+      localStorage.setItem("savedOrderData", JSON.stringify(orderData));
 
       const paypalRes = await fetch("/api/paypal/create-order", {
         method: "POST",
@@ -250,9 +264,9 @@ const CheckoutPage: React.FC = () => {
           {isAuthenticated
             ? t("userInfoLoaded", "Your account information has been loaded.")
             : t(
-                "enterInfoOrLogin",
-                "To complete your purchase, enter your information or log in."
-              )}
+              "enterInfoOrLogin",
+              "To complete your purchase, enter your information or log in."
+            )}
         </Typography>
       </Box>
 
@@ -392,24 +406,52 @@ const CheckoutPage: React.FC = () => {
             </List>
           )}
 
-          <Typography
-            variant="h6"
-            sx={{
-              mt: 2,
-              backgroundColor: "#f1f8e9",
-              padding: "12px 16px",
-              borderRadius: "8px",
-              fontWeight: "bold",
-              fontSize: "18px",
-              color: "#2e7d32",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            {t("total", "Total")}:
-            <span>€{convertToEuro(calculateTotal())}</span>
-          </Typography>
+          <Box mt={2}>
+            <Typography
+              variant="h6"
+              sx={{
+                backgroundColor: "#f1f8e9",
+                padding: "12px 16px",
+                borderRadius: "8px",
+                fontWeight: "bold",
+                fontSize: "18px",
+                color: "#2e7d32",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              {t("total", "Total")}:
+              <span>€{totalPriceWithShipping.toFixed(2)}</span>
+            </Typography>
+
+            {shippingFee > 0 ? (
+              <>
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 1, color: "#999", fontStyle: "italic" }}
+                >
+                  {t("shippingFee", `Shipping Fee: €${shippingFee.toFixed(2)} (applied for orders under €60)`)}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 1, color: "#4caf50", fontWeight: "medium" }}
+                >
+                  ✅ {t("freeShipping", "Free shipping applied (orders over €60).")}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 0.5, color: "#999", fontStyle: "italic" }}
+                >
+                  {t("normalShipping", `Normal shipping fee: €3.99`)}
+                </Typography>
+              </>
+            )}
+
+          </Box>
 
           <Link href="/cart" passHref legacyBehavior>
             <Button

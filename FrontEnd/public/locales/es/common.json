@@ -18,8 +18,8 @@
   "contact": "Contacto",
   "privacyPolicy": "Política de privacidad",
   "stayConnected": "Mantente conectado",
-"newsletter": "Contáctanos",
-"subscribeMessage": "Si tienes preguntas o sugerencias, envíanoslas — estamos aquí para ayudarte.",
+  "newsletter": "Contáctanos",
+  "subscribeMessage": "Si tienes preguntas o sugerencias, envíanoslas — estamos aquí para ayudarte.",
   "ordersListTitle": "Lista de pedidos",
   "noOrders": "No hay pedidos disponibles.",
   "orderId": "Pedido",
@@ -27,9 +27,8 @@
   "name": "Nombre",
   "inStock": "En stock: {{count}} unidades",
   "outOfStock": "Agotado",
-"upload_new_image": "Subir nueva imagen",
+  "upload_new_image": "Subir nueva imagen",
   "upload_button": "Subir imagen",
-  
   "upload_success": "¡Imagen subida con éxito!",
   "upload_error": "Error al subir la imagen.",
   "final_url": "URL final de la imagen:",
@@ -44,7 +43,6 @@
   "paid": "Pagado",
   "notPaid": "No pagado",
   "items": "Artículos",
-
   "unknown": "Desconocido",
   "totalPrice": "Precio total",
   "orderStatus": "Estado del pedido",
@@ -73,11 +71,10 @@
   "color": "Color",
   "remove": "Eliminar",
   "proceedToCheckout": "Proceder al pago",
-    "email": "Correo electrónico",
+  "email": "Correo electrónico",
   "password": "Contraseña",
   "forgotPassword": "¿Olvidaste tu contraseña?",
   "noAccount": "¿No tienes una cuenta?",
-
   "invalidEmail": "Por favor, introduce una dirección de correo válida.",
   "enterPassword": "Por favor, introduce tu contraseña.",
   "loginFailed": "Error al iniciar sesión.",
@@ -89,13 +86,14 @@
   "goToLogin": "Ir a Iniciar sesión",
   "error": {
     "quantityTooLow": "La cantidad debe ser al menos 1.",
+    "stockExceeded": "Cantidad máxima disponible: {{stock}}",
     "updateFailed": "No se pudo actualizar el artículo.",
     "failedToRemoveItem": "No se pudo eliminar el artículo."
   },
   "register": "Registrarse",
   "firstName": "Nombre",
   "lastName": "Apellido",
- "yourEmail": "Tu correo electrónico",
+  "yourEmail": "Tu correo electrónico",
   "yourMessage": "Tu mensaje",
   "send": "Enviar",
   "sending": "Enviando...",
@@ -106,9 +104,8 @@
   "messageRequired": "Por favor, escribe un mensaje.",
   "sendFailed": "No se pudo enviar.",
   "messageSuccess": "Tu mensaje se ha enviado correctamente.",
-"discountErrorHasDiscountedItem": "El código de descuento solo se puede aplicar a productos sin descuento previo."
-,
-"addToFavorites": "Agregar a favoritos",
+  "discountErrorHasDiscountedItem": "El código de descuento solo se puede aplicar a productos sin descuento previo.",
+  "addToFavorites": "Agregar a favoritos",
   "addedToFavorites": "Agregado a favoritos",
   "selectSize": "Seleccionar talla:",
   "selectColor": "Seleccionar color:",
@@ -119,42 +116,39 @@
   "checkout": "Finalizar compra",
   "back": "Volver",
   "manageDiscountCodes": "Gestionar códigos de descuento",
-
   "percentage": "Porcentaje",
-
   "noExpiration": "Sin expiración",
   "noDiscountsDefined": "No hay códigos de descuento definidos.",
   "error.fetchingDiscounts": "Error al obtener la lista de descuentos.",
   "error.addingDiscount": "Error al añadir el código de descuento.",
-  "error.deletingDiscount": "Error al eliminar el código de descuento."
-,
-"invalidProductId": "ID de producto no válido",
-"productNotFound": "Producto no encontrado",
-
-"productIdRequired": "Se requiere ID del producto para actualizar"
-,
-"invalidDiscountCode": "Código de descuento inválido",
-"error.validatingDiscountCode": "Error al validar el código de descuento"
-,
+  "error.deletingDiscount": "Error al eliminar el código de descuento.",
+  "invalidProductId": "ID de producto no válido",
+  "productNotFound": "Producto no encontrado",
+  "productIdRequired": "Se requiere ID del producto para actualizar",
+  "invalidDiscountCode": "Código de descuento inválido",
+  "error.validatingDiscountCode": "Error al validar el código de descuento",
   "phone": "Número de teléfono",
-"productNoLongerAvailable": "Este producto ya no está disponible"
-,
-"pleaseSelectSize": "Por favor, selecciona una talla para ver la disponibilidad"
-,
+  "productNoLongerAvailable": "Este producto ya no está disponible",
+  "pleaseSelectSize": "Por favor seleccione un color para ver las tallas disponibles.",
+  "saveLabel": "Ahorra €{{amount}}",
   "confirmPassword": "Confirmar contraseña",
   "nameRequired": "Nombre y apellido son obligatorios.",
-"new": "Nuevo",
+  "new": "Nuevo",
+  "pleaseSelectColorFirst": "Por favor, seleccione un color primero.",
+  "quantityUpdated": "Cantidad actualizada",
+  
+  "noSizeAvailable": "No hay tallas disponibles para este color.",
   "invalidPhone": "Por favor, introduce un número de teléfono válido con código de país.",
   "shortPassword": "La contraseña debe tener al menos 6 caracteres.",
   "passwordsMismatch": "Las contraseñas no coinciden.",
   "accountExists": "¡Ya existe una cuenta con este correo o número de teléfono! Por favor inicia sesión.",
   "emailNotVerified": "Ya estás registrado, pero no has verificado tu correo. Revisa tu bandeja de entrada.",
   "registerFailed": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-"discountCode": "Código de descuento",
+  "discountCode": "Código de descuento",
   "enterDiscountCode": "Introduce el código de descuento",
   "apply": "Aplicar",
   "Please Login To Continue": "Por favor inicia sesión para continuar",
-"checkoutTitle": "Pagar",
+  "checkoutTitle": "Pagar",
   "userInfoLoaded": "La información de su cuenta ha sido cargada.",
   "enterInfoOrLogin": "Para completar su compra, introduzca su información o inicie sesión.",
   "payWithPaypal": "Pagar con PayPal",
@@ -167,16 +161,13 @@
   "loadingUser": "Cargando información del usuario...",
   "backToCart": "Volver al carrito",
   "street": "Calle",
-"postalCode": "Código postal",
-
+  "postalCode": "Código postal",
   "confirm": "Confirmar",
   "submit": "Enviar",
   "yes": "Sí",
   "no": "No",
   "product_name": "Nombre del producto",
-
   "description": "Descripción",
-  
   "select_colors": "Seleccionar colores",
   "select_sizes": "Seleccionar tallas",
   "select_category": "Seleccionar categoría",
@@ -190,14 +181,14 @@
   "category_shoes": "Zapatos",
   "category_dress": "Vestido",
   "category_accessory": "Accesorios",
-    "product_id": "ID del producto",
- 
- "select_image_gallery": "Seleccionar una imagen de la galería",
-
+  "product_id": "ID del producto",
+  "select_image_gallery": "Seleccionar una imagen de la galería",
   "selected_image": "Imagen seleccionada:",
   "add": "Añadir",
   "stock": "Stock",
-
+  "shippingFee": "Costo de envío: €{{value}} (aplica para pedidos menores de 60 €)",
+  "freeShipping": "Envío gratuito aplicado (pedidos superiores a 60 €).",
+  "normalShipping": "Costo de envío estándar: €3.99",
   "actions": "Acciones",
   "edit": "Editar",
   "delete": "Eliminar",
@@ -207,5 +198,4 @@
   "yes_delete": "Sí, eliminar",
   "delete_success": "Producto eliminado correctamente.",
   "delete_failed": "No se pudo eliminar el producto."
-
 }

@@ -10,21 +10,13 @@ import React, {
 import type { CartItem } from '@/data/types';
 
 // ============ Types ============
-interface Variant {
-  size: string;
-  quantity: number;
-  color?: string;
-}
-
-
-
 interface CartState {
   items: CartItem[];
 }
 
 interface CartContextProps {
   cart: CartState;
-  addItem: (item: CartItem) => void;
+  addItem: (item: CartItem) => Promise<void>;
   removeItem: (id: string, size?: string, color?: string) => void;
   updateItem: (id: string, size: string, color: string | undefined, quantity: number) => void;
   clearCart: () => void;
@@ -59,23 +51,44 @@ const cartReducer = (state: CartState, action: Action): CartState => {
       }
 
       const updatedItems = [...state.items];
-      const existingItem = updatedItems[existingIndex];
+      const existingItem = { ...updatedItems[existingIndex] };
+      const mergedVariants = [...existingItem.variants];
 
       action.payload.variants.forEach((incomingVariant) => {
-        const variantIndex = existingItem.variants.findIndex(
+        const variantIndex = mergedVariants.findIndex(
           (v) => v.size === incomingVariant.size && v.color === incomingVariant.color
         );
 
         if (variantIndex === -1) {
-          existingItem.variants.push(incomingVariant);
+       mergedVariants.push({
+  ...incomingVariant,
+stock: incomingVariant.stock ?? 9999,
+});
+
         } else {
-          existingItem.variants[variantIndex].quantity += incomingVariant.quantity;
+          const maxAllowed =
+            mergedVariants[variantIndex].stock ??
+            mergedVariants[variantIndex].quantity + incomingVariant.quantity;
+
+          mergedVariants[variantIndex] = {
+            ...mergedVariants[variantIndex],
+            quantity: Math.min(
+              mergedVariants[variantIndex].quantity + incomingVariant.quantity,
+              maxAllowed
+            ),
+          };
+
         }
       });
 
-      updatedItems[existingIndex] = { ...existingItem };
+      updatedItems[existingIndex] = {
+        ...existingItem,
+        variants: mergedVariants,
+      };
+
       return { ...state, items: updatedItems };
     }
+
 
     case 'REMOVE_ITEM':
       return {
@@ -84,7 +97,6 @@ const cartReducer = (state: CartState, action: Action): CartState => {
           .map((item) => {
             if (item.id !== action.payload.id) return item;
 
-            // حذف کامل محصول اگر size مشخص نشده باشد
             if (!action.payload.size) return null;
 
             const newVariants = (item.variants || []).filter(
@@ -153,8 +165,38 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cart.items, isMounted]);
 
-  const addItem = (item: CartItem) => {
-    dispatch({ type: 'ADD_ITEM', payload: item });
+  const addItem = async (item: CartItem) => {
+    try {
+      const res = await fetch(`/api/products?id=${item.id}`);
+      const product = await res.json();
+
+      if (!product || !product.variants) return;
+
+      const existingItem = cart.items.find((i) => i.id === item.id);
+
+      for (const newVariant of item.variants) {
+        const productVariant = product.variants.find(
+          (v: any) =>
+            v.size === newVariant.size && v.color === newVariant.color
+        );
+
+        if (!productVariant) return;
+
+        const existingQuantity =
+          existingItem?.variants.find(
+            (v) => v.size === newVariant.size && v.color === newVariant.color
+          )?.quantity || 0;
+
+        if (existingQuantity + newVariant.quantity > productVariant.stock) {
+          console.warn('Exceeds available stock');
+          return;
+        }
+      }
+
+      dispatch({ type: 'ADD_ITEM', payload: item });
+    } catch (err) {
+      console.error('Failed to add item:', err);
+    }
   };
 
   const removeItem = (id: string, size?: string, color?: string) => {

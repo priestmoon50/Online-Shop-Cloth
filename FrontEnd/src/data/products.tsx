@@ -41,26 +41,18 @@ export const AllProducts = () => {
             />
           )}
 
-{product.sizes && product.sizes.length > 0 && (
-  <div>
-    Sizes:
-    <ul>
-      {product.sizes.map((s, i) => (
-        <li key={i}>
-          {s.size} — {s.stock} in stock
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
+          {product.variants && product.variants.length > 0 && (
 
-
-          {product.colors && (
             <div>
-              Color:{" "}
-              {Array.isArray(product.colors)
-                ? product.colors.join(", ")
-                : product.colors}
+              Variants:
+              <ul>
+                {product.variants.map((v, i) => (
+                  <li key={i}>
+                    Size: {v.size}, Color: {v.color} — {v.stock} in stock
+                  </li>
+                ))}
+              </ul>
+
             </div>
           )}
 

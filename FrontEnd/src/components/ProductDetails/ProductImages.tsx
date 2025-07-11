@@ -39,17 +39,17 @@ const CustomNextArrow: FC<ArrowProps> = ({ onClick }) => (
 
 
 const ProductImages: FC<ProductImagesProps> = ({ images }) => {
-const settings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  swipe: true,
-  touchMove: true,
-  nextArrow: <CustomNextArrow />,
-  prevArrow: <CustomPrevArrow />,
-};
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipe: true,
+    touchMove: true,
+    nextArrow: <CustomNextArrow />,
+    prevArrow: <CustomPrevArrow />,
+  };
 
 
   return (
@@ -61,15 +61,18 @@ const settings = {
         mb: { xs: 4, md: 0 },
       }}
     >
-<Box
-  sx={{
-    width: { xs: '95vw', sm: '90vw', md: '500px' },
-    maxWidth: '100%',
-overflow: 'hidden',
+      <Box
+        sx={{
+          width: { xs: '95vw', sm: '90vw', md: '500px' },
+          maxWidth: '100%',
+          overflow: 'hidden', // ❗ اسکرول عمودی رو حذف می‌کنه
+          position: 'relative',
+          touchAction: 'manipulation', // زوم فعال بمونه
+        }}
+      >
 
-    position: 'relative', // بسیار مهم برای موقعیت‌یابی فلش‌ها
-  }}
->
+
+
 
         <Slider {...settings}>
           {images.map((image, index) => (
@@ -82,11 +85,13 @@ overflow: 'hidden',
                 style={{
                   width: '100%',
                   height: 'auto',
-                  objectFit: 'cover',
+                  objectFit: 'contain', // نمایش کامل تصویر
                   borderRadius: 12,
                   display: 'block',
+                  touchAction: 'manipulation', // زوم فعال
                 }}
               />
+
             </Box>
           ))}
         </Slider>

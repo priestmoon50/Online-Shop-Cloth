@@ -16,14 +16,11 @@ export async function GET(req: NextRequest) {
       const numericId = Number(id);
       if (isNaN(numericId)) {
         return NextResponse.json({ message: 'invalidProductId' }, { status: 400 });
-
-        
       }
 
       const found = await collection.findOne({ id: numericId });
       if (!found) {
         return NextResponse.json({ message: 'productNotFound' }, { status: 404 });
-
       }
 
       return NextResponse.json(found, { status: 200 });
@@ -34,7 +31,6 @@ export async function GET(req: NextRequest) {
   } catch (error: any) {
     console.error('❌ GET Error:', error);
     return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
-
   }
 }
 
@@ -42,34 +38,38 @@ export async function POST(req: NextRequest) {
   try {
     const { db } = await connectToDatabase();
     const collection = db.collection<Product>('products');
-const body = await req.json();
-const newProduct: Product = {
-  ...body,
-  id: Date.now(),
-  isNew: !!body.isNew, 
-  createdAt: new Date(), 
-};
+    const body = await req.json();
+
+    const newProduct: Product = {
+      ...body,
+      id: Date.now(),
+      isNew: !!body.isNew,
+      createdAt: new Date(),
+      sizes: body.sizes || [],
+      colors: body.colors || [],
+    };
 
     await collection.insertOne(newProduct);
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error: any) {
     console.error('❌ POST Error:', error);
     return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
-
   }
 }
 
 export async function PUT(req: NextRequest) {
   try {
-const body = await req.json();
-const updatedProduct: Product = {
-  ...body,
-  isNew: !!body.isNew, // ✅ محکم‌کاری
-};
+    const body = await req.json();
+
+    const updatedProduct: Product = {
+      ...body,
+      isNew: !!body.isNew,
+      sizes: body.sizes || [],
+      colors: body.colors || [],
+    };
 
     if (!updatedProduct.id) {
       return NextResponse.json({ message: 'productIdRequired' }, { status: 400 });
-
     }
 
     const { db } = await connectToDatabase();
@@ -82,14 +82,12 @@ const updatedProduct: Product = {
 
     if (result.matchedCount === 0) {
       return NextResponse.json({ message: 'productNotFound' }, { status: 404 });
-
     }
 
     return NextResponse.json({ success: true, updated: updatedProduct }, { status: 200 });
   } catch (error: any) {
     console.error('❌ PUT Error:', error);
     return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
-
   }
 }
 
@@ -99,7 +97,6 @@ export async function DELETE(req: NextRequest) {
 
   if (!id || isNaN(Number(id))) {
     return NextResponse.json({ message: 'invalidProductId' }, { status: 400 });
-
   }
 
   const numericId = Number(id);
@@ -112,13 +109,11 @@ export async function DELETE(req: NextRequest) {
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ message: 'productNotFound' }, { status: 404 });
-
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
     console.error('❌ DELETE Error:', error);
     return NextResponse.json({ message: 'serverError', error: error.message }, { status: 500 });
-
   }
 }

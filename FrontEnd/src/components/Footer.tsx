@@ -149,15 +149,35 @@ const Footer: React.FC = () => {
         <Divider sx={{ my: 4, borderColor: '#555' }} />
 
         <Box textAlign="center">
-          <Typography variant="body2" gutterBottom>{t('paymentMethods')}</Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, my: 1 }}>
-            <FaPaypal color="#003087" size={32} />
-            <FaCcVisa color="#1a1f71" size={32} />
-            <FaCcMastercard color="#FF5F00" size={32} />
-          </Box>
-          <Typography variant="body2" color="#999" sx={{ mt: 2 }}>
+          <Divider sx={{ my: 4, borderColor: '#555' }} />
+
+          <Grid container spacing={2} justifyContent="center" alignItems="center" textAlign="center">
+            <Grid item xs={12} md={6} sx={{ mt: -3 }}>
+              <Typography variant="body2" gutterBottom sx={{ mb: 3 }}>
+                {t('paymentMethods')}
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mt: 1 }}>
+                <FaPaypal color="#003087" size={40} />
+                <FaCcVisa color="#1a1f71" size={40} />
+                <FaCcMastercard color="#FF5F00" size={40} />
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" gutterBottom>SSL Secure</Typography>
+              <Box
+                component="img"
+                src="/images/SSL.png"
+                alt="SSL Secure"
+                sx={{ width: 80, height: 'auto', mx: 'auto' }}
+              />
+            </Grid>
+          </Grid>
+
+          <Typography variant="body2" color="#999" sx={{ mt: 4, textAlign: 'center' }}>
             © 2024 Mopastyle.de | {t('allRightsReserved')}
           </Typography>
+
         </Box>
       </Container>
     </Box>

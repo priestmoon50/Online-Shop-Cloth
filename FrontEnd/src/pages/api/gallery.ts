@@ -91,8 +91,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const result = await cloudinary.search
         .expression('folder:modastyle-gallery')
         .sort_by('created_at', 'desc')
-        .max_results(30)
+        .max_results(500)
         .execute();
+
 
       const images = result.resources.map((file: any) => ({
         url: file.secure_url,

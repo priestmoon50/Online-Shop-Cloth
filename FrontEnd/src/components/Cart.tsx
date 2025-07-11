@@ -19,7 +19,7 @@ import { CartItem } from "@/data/types";
 import { convertToEuro } from "@/utils/convertCurrency";
 
 const Cart: React.FC = () => {
-  const { cart, removeItem } = useCart();
+  const { cart, removeItem, updateItem } = useCart();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -67,52 +67,52 @@ const Cart: React.FC = () => {
     window.location.href = "/checkout";
   };
 
-const handleApplyDiscount = async () => {
-  const hasDiscountedItem = cart.items.some(
-    (item) =>
-      typeof item.discountPrice === "number" &&
-      item.discountPrice > 0 &&
-      item.discountPrice < item.price
-  );
+  const handleApplyDiscount = async () => {
+    const hasDiscountedItem = cart.items.some(
+      (item) =>
+        typeof item.discountPrice === "number" &&
+        item.discountPrice > 0 &&
+        item.discountPrice < item.price
+    );
 
-  if (hasDiscountedItem) {
-    setDiscountPercent(0);
-    setError(t("discountErrorHasDiscountedItem"));
-
-    return;
-  }
-
-  try {
-    const res = await fetch(`/api/discounts/validate?code=${couponCode}`);
-    const data = await res.json();
-
-    if (data.valid) {
-      setDiscountPercent(data.percentage);
-      setError(null);
-    } else {
+    if (hasDiscountedItem) {
       setDiscountPercent(0);
-setError(data.error || t("invalidDiscountCode"));
+      setError(t("discountErrorHasDiscountedItem"));
+
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/discounts/validate?code=${couponCode}`);
+      const data = await res.json();
+
+      if (data.valid) {
+        setDiscountPercent(data.percentage);
+        setError(null);
+      } else {
+        setDiscountPercent(0);
+        setError(data.error || t("invalidDiscountCode"));
+
+      }
+    } catch {
+      setDiscountPercent(0);
+      setError(t("error.validatingDiscountCode"));
 
     }
-  } catch {
-    setDiscountPercent(0);
-   setError(t("error.validatingDiscountCode"));
-
-  }
-};
+  };
 
 
-const totalAmount = cart.items.reduce((total, item) => {
-  const variants = Array.isArray(item.variants) ? item.variants : [];
-  const rawPrice = item.discountPrice ?? item.price;
-const euroPrice = rawPrice;
+  const totalAmount = cart.items.reduce((total, item) => {
+    const variants = Array.isArray(item.variants) ? item.variants : [];
+    const rawPrice = item.discountPrice ?? item.price;
+    const euroPrice = rawPrice;
 
-  const itemTotal = variants.reduce(
-    (sum, variant) => sum + euroPrice * variant.quantity,
-    0
-  );
-  return total + itemTotal;
-}, 0);
+    const itemTotal = variants.reduce(
+      (sum, variant) => sum + euroPrice * variant.quantity,
+      0
+    );
+    return total + itemTotal;
+  }, 0);
 
   const discountedAmount = totalAmount * (1 - discountPercent / 100);
 
@@ -173,34 +173,41 @@ const euroPrice = rawPrice;
                       </Typography>
                     )}
 
-{typeof item.discountPrice === "number" &&
- item.discountPrice > 0 &&
- item.discountPrice < item.price ? (
-  <>
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      sx={{ textDecoration: "line-through" }}
-    >
-      €{Number(item.price).toFixed(2)}
-    </Typography>
-    <Typography variant="body2" color="error">
-      {t("discountedPrice")}: €{Number(item.discountPrice).toFixed(2)}
-    </Typography>
-  </>
-) : (
-  <Typography variant="body2" color="text.secondary">
-    €{Number(item.price).toFixed(2)}
-  </Typography>
-)}
+                    {typeof item.discountPrice === "number" &&
+                      item.discountPrice > 0 &&
+                      item.discountPrice < item.price ? (
+                      <>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ textDecoration: "line-through" }}
+                        >
+                          €{Number(item.price).toFixed(2)}
+                        </Typography>
+                        <Typography variant="body2" color="error">
+                          {t("discountedPrice")}: €{Number(item.discountPrice).toFixed(2)}
+                        </Typography>
+                      </>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        €{Number(item.price).toFixed(2)}
+                      </Typography>
+                    )}
 
 
                     {Array.isArray(item.variants) &&
                       item.variants.map((variant, idx) => (
                         <Box key={idx} mt={1} p={2} border="1px solid #ddd" borderRadius={2}>
                           <Typography variant="body2" color="text.secondary">
-                            {t("quantity")}: {variant.quantity}
+                            {t("quantity")}: {Math.min(variant.quantity, variant.stock || variant.quantity)}
                           </Typography>
+
+                          {variant.stock !== undefined && variant.quantity > variant.stock && (
+                            <Typography variant="caption" color="error">
+                              {t("error.stockExceededShort", { stock: variant.stock })}
+                            </Typography>
+                          )}
+
                           <Typography variant="body2" color="text.secondary">
                             {t("size")}: {variant.size || "N/A"}
                           </Typography>
@@ -283,8 +290,8 @@ const euroPrice = rawPrice;
           )}
 
           <Typography variant="h6" sx={{ mb: 2 }}>
-      
-{t("total")}: €{discountedAmount.toFixed(2)}
+
+            {t("total")}: €{discountedAmount.toFixed(2)}
 
           </Typography>
 

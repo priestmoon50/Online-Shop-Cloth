@@ -10,9 +10,10 @@ export interface Product {
   image: string;
   images?: string[];
   category?: string;
+  variants?: { color: string; size: string; stock: number }[];
+  colors?: { color: string; stock: number }[];
   sizes?: { size: string; stock: number }[];
 
-  colors?: Array<string | number>;
   description?: string;
   rating?: number;
   stock?: number;
@@ -37,6 +38,7 @@ export interface CartItem {
     size?: string | number;
     color?: string | number;
     quantity: number;
+    stock?: number;
   }[];
 }
 

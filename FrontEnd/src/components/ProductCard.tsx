@@ -23,10 +23,10 @@ const ProductCard: React.FC<Product> = ({
   const { t } = useTranslation();
   const imagesArray = images || [];
   const hasDiscount =
-  typeof discountPrice === "number" &&
-  !isNaN(discountPrice) &&
-  discountPrice > 0 &&
-  discountPrice < price;
+    typeof discountPrice === "number" &&
+    !isNaN(discountPrice) &&
+    discountPrice > 0 &&
+    discountPrice < price;
 
   const sliderSettings = {
     dots: true,
@@ -84,6 +84,33 @@ const ProductCard: React.FC<Product> = ({
               </Box>
             )}
 
+            {hasDiscount && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  bgcolor: "error.main",
+                  color: "white",
+                  px: 1.5,
+                  py: 0.5,
+                  fontSize: "0.75rem",
+                  borderRadius: "4px",
+                  fontWeight: 600,
+                  zIndex: 2,
+                }}
+              >
+                {t("saveLabel", {
+                  defaultValue: "Save €{{amount}}",
+                  amount:
+                    price - discountPrice! % 1 === 0
+                      ? (price - discountPrice!).toFixed(0)
+                      : (price - discountPrice!).toFixed(2),
+                })}
+              </Box>
+            )}
+
+
             {imagesArray.length > 1 ? (
               <Slider {...sliderSettings}>
                 {imagesArray.map((img, index) => (
@@ -129,47 +156,47 @@ const ProductCard: React.FC<Product> = ({
             {name}
           </Typography>
 
-           <Box>
-{hasDiscount ? (
-  <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
-    <Typography
-      variant="body2"
-      sx={{
-        textDecoration: "line-through",
-        color: "text.secondary",
-        fontSize: { xs: "0.95rem", sm: "0.85rem" },
-      }}
-    >
-      €{Number(price).toLocaleString()}
-    </Typography>
+          <Box>
+            {hasDiscount ? (
+              <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    textDecoration: "line-through",
+                    color: "text.secondary",
+                    fontSize: { xs: "0.95rem", sm: "0.85rem" },
+                  }}
+                >
+                  €{Number(price).toLocaleString()}
+                </Typography>
 
-    <Box
-      sx={{
-        backgroundColor: "error.main",
-        color: "white",
-        px: 1.5,
-        py: 0.5,
-        borderRadius: "12px",
-        fontWeight: "bold",
-        fontSize: { xs: "1rem", sm: "0.9rem" },
-        display: "inline-block",
-        minWidth: 65,
-        textAlign: "center",
-      }}
-    >
-      €{Number(discountPrice).toLocaleString()}
-    </Box>
-  </Box>
-) : (
-  <Typography
-    variant="body2"
-    color="text.secondary"
-    sx={{ fontSize: { xs: "1.25rem", sm: "1rem" } }}
-  >
-    €{Number(price).toLocaleString()}
-  </Typography>
-)}
-</Box>
+                <Box
+                  sx={{
+                    backgroundColor: "error.main",
+                    color: "white",
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: "12px",
+                    fontWeight: "bold",
+                    fontSize: { xs: "1rem", sm: "0.9rem" },
+                    display: "inline-block",
+                    minWidth: 65,
+                    textAlign: "center",
+                  }}
+                >
+                  €{Number(discountPrice).toLocaleString()}
+                </Box>
+              </Box>
+            ) : (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "1.25rem", sm: "1rem" } }}
+              >
+                €{Number(price).toLocaleString()}
+              </Typography>
+            )}
+          </Box>
 
 
         </CardContent>

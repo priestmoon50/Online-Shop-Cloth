@@ -63,7 +63,7 @@ body {
   min-height: 100%;
 }
 body {
-  margin-top: 50px;
+  margin-top: 56px; /* پیش‌فرض برای موبایل */
   position: relative;
   color: var(--foreground);
   background: var(--background);
@@ -71,6 +71,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
+
+@media (min-width: 768px) {
+  body {
+    margin-top: 12px; /* فاصله کمتر برای دسکتاپ */
+  }
+}
+
+
 body::before {
   content: '';
   position: absolute;
@@ -100,4 +108,5 @@ a {
   html {
     color-scheme: dark;
   }
+  
 }

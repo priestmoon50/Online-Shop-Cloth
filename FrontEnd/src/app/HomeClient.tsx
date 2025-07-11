@@ -12,8 +12,6 @@ import ProductGrid from './ProductGrid';
 import { HomeSlide } from '@/data/types';
 
 interface ArrowProps {
-  className?: string;
-  style?: React.CSSProperties;
   onClick?: () => void;
 }
 
@@ -58,7 +56,7 @@ export default function HomeClient() {
   }, []);
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, md: 4 } }}>
+    <Container maxWidth={false} disableGutters sx={{ p: 0, m: 0 }}>
       <Box className={styles.sliderContainer}>
         {images.length > 0 && (
           <Slider {...sliderSettings}>
@@ -66,10 +64,17 @@ export default function HomeClient() {
               <Box
                 key={index}
                 sx={{
-              
-aspectRatio: '16 / 9',
-maxHeight: '600px',
-width: '100%',
+                  width: '100%',
+                  height: {
+                    xs: '65vh',
+                    sm: '80vh',
+                    md: '90vh',
+                  },
+                  minHeight: {
+                    xs: '400px',
+                    sm: '500px',
+                    md: '600px',
+                  },
                   position: 'relative',
                   margin: 0,
                 }}
@@ -79,7 +84,11 @@ width: '100%',
                   alt={`Slide ${index + 1}`}
                   fill
                   sizes="100vw"
-                  style={{ objectFit: 'cover', objectPosition: 'center', borderRadius: '0px' }}
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                    borderRadius: 0,
+                  }}
                 />
               </Box>
             ))}
@@ -87,7 +96,7 @@ width: '100%',
         )}
       </Box>
 
-      <Box sx={{ mt: { xs: 2, sm: 4, md: 6 }, mb: 0, pb: 0 }}>
+      <Box sx={{ mt: { xs: 2, sm: 4, md: 6 } }}>
         <ProductGrid />
       </Box>
     </Container>

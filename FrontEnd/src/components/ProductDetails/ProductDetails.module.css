@@ -96,15 +96,19 @@
 }
 
 @media (max-width: 768px) {
-  .zoomableImageWrapper {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+.zoomableImageWrapper {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
+}
 
-  .zoomableImageWrapper img {
-    width: auto;
-    max-width: none;
-    height: auto;
-    touch-action: manipulation;
-  }
+.zoomableImageWrapper img {
+  width: auto;
+  max-width: none;
+  height: auto;
+  touch-action: auto;
+  object-fit: contain;
+  pointer-events: auto;
+}
+
 }
