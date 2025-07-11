@@ -103,9 +103,10 @@ const ProductCard: React.FC<Product> = ({
                 {t("saveLabel", {
                   defaultValue: "Save €{{amount}}",
                   amount:
-                    price - discountPrice! % 1 === 0
+                    ((price - discountPrice!) % 1 === 0
                       ? (price - discountPrice!).toFixed(0)
-                      : (price - discountPrice!).toFixed(2),
+                      : (price - discountPrice!).toFixed(2)),
+
                 })}
               </Box>
             )}

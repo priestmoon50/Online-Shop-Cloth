@@ -49,6 +49,20 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const { addItem, updateItem, cart } = useCart();
   const imagesArray = product.images ? product.images : [product.image];
 
+
+const hasDiscount =
+  typeof product.discountPrice === "number" &&
+  !isNaN(product.discountPrice) &&
+  product.discountPrice > 0 &&
+  product.discountPrice < product.price;
+
+const discountAmount = hasDiscount
+  ? ((product.price - product.discountPrice!) % 1 === 0
+      ? (product.price - product.discountPrice!).toFixed(0)
+      : (product.price - product.discountPrice!).toFixed(2))
+  : null;
+
+
   const toggleLike = () => {
     const productId = String(product.id || product._id);
     if (!productId) return;
@@ -209,9 +223,38 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
           sx={{ px: { xs: 0, md: 3 } }} // همینجا هم پدینگ رو صفر کن
         >
 
-          <div className={styles.zoomableImageWrapper}>
-            <ProductImages images={imagesArray} />
-          </div>
+    <Box sx={{ position: "relative" }}>
+  <div className={styles.zoomableImageWrapper}>
+    <ProductImages images={imagesArray} />
+  </div>
+
+  {hasDiscount && discountAmount && (
+    <Box
+      sx={{
+        position: "absolute",
+        top: 12,
+        left: 12,
+        backgroundColor: "error.main",
+        color: "white",
+        px: 1.5,
+        py: 0.5,
+        borderRadius: "5px",
+        fontSize: "12px",
+        fontWeight: "bold",
+        zIndex: 2,
+      }}
+    >
+      {t("saveLabel", {
+        defaultValue: "Save €{{amount}}",
+        amount: discountAmount,
+      })}
+    </Box>
+  )}
+</Box>
+
+
+
+
 
         </Grid>
 

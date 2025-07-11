@@ -41,6 +41,14 @@ function ProductCard({ product }: { product: Product }) {
     discountPrice > 0 &&
     discountPrice < price;
 
+
+  const discountAmount = hasDiscount
+    ? ((price - discountPrice!) % 1 === 0
+      ? (price - discountPrice!).toFixed(0)
+      : (price - discountPrice!).toFixed(2))
+    : null;
+
+
   return (
     <Link href={`/product/${id}`} passHref legacyBehavior>
       <a className={styles.productCard}>
@@ -52,6 +60,26 @@ function ProductCard({ product }: { product: Product }) {
             className={styles.productImage}
             sizes="100%"
           />
+
+          {hasDiscount && discountAmount && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 10,
+                left: 10,
+                backgroundColor: "error.main",
+                color: "white",
+                px: 1.5,
+                py: 0.5,
+                borderRadius: "5px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              Save €{discountAmount}
+            </Box>
+          )}
+
           {isNew && (
             <Box
               sx={{
