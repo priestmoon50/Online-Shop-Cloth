@@ -64,20 +64,12 @@ export default function HomeClient() {
               <Box
                 key={index}
                 sx={{
-                  width: '100%',
-                  height: {
-                    xs: '65vh',
-                    sm: '80vh',
-                    md: '90vh',
-                  },
-                  minHeight: {
-                    xs: '400px',
-                    sm: '500px',
-                    md: '600px',
-                  },
                   position: 'relative',
-                  margin: 0,
+                  width: '100%',
+                  paddingTop: '56.25%', // 16:9 aspect ratio
+                  overflow: 'hidden',
                 }}
+
               >
                 <Image
                   src={src}
