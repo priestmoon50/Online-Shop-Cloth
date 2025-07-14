@@ -114,7 +114,8 @@ export default function CategoryLinks() {
                     py: 0.5,
                   }}
                 >
-                  <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>
+                 <Typography variant="caption" sx={{ fontSize: '0.5rem' }}>
+
                     {t(category.title)}
                   </Typography>
                 </Box>
