@@ -36,16 +36,30 @@ export default function CategoryLinks() {
   };
 
   return (
-    <Box sx={{ mt: 4, overflowX: { xs: 'auto', md: 'unset' } }}>
+    <Box
+      sx={{
+        mt: { xs: 0, md: 4 },
+        px: { xs: 1, sm: 2 },
+        pt: 0,
+        pb: { xs: 1, md: 2 },
+        overflowX: { xs: 'auto', md: 'unset' },
+        overflowY: 'hidden',
+      }}
+    >
+
+
       <Grid
         container
         spacing={2}
         sx={{
           flexWrap: { xs: 'nowrap', md: 'wrap' },
-          width: '100%',
-          justifyContent: 'center',
+          width: 'max-content',
+          minWidth: '100%',
+          justifyContent: { xs: 'flex-start', md: 'center' },
         }}
       >
+
+
         {staticCategories.map((category) => (
           <Grid
             item

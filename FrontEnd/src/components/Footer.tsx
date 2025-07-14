@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
                 { label: 'Widerrufsbelehrung', path: '/widerrufsbelehrung' },
                 { label: 'Zahlung', path: '/zahlung' },
                 { label: 'Versand', path: '/versand' },
-                { label: 'Cookies rechtlinie', path: '/rueckgabe-umtausch' },
+                { label: 'Cookies Richtlinie', path: '/rueckgabe-umtausch' },
                 { label: 'Rückgabe & Umtausch', path: '/rueckgabe-umtausch2' },
 
               ].map(({ label, path }) => (

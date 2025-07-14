@@ -68,13 +68,13 @@ const ProductCard: React.FC<Product> = ({
               <Box
                 sx={{
                   position: "absolute",
-                  top: 8,
+                  bottom: 8,
                   left: 8,
-                  bgcolor: "error.main",
+                  bgcolor: "#bd19d2ff",
                   color: "white",
-                  px: 1.5,
-                  py: 0.5,
-                  fontSize: "0.75rem",
+                  fontSize: { xs: "0.6rem", sm: "0.75rem" },
+                  px: { xs: 1, sm: 1.5 },
+                  py: { xs: 0.25, sm: 0.5 },
                   borderRadius: "4px",
                   fontWeight: 600,
                   zIndex: 2,
@@ -84,6 +84,7 @@ const ProductCard: React.FC<Product> = ({
               </Box>
             )}
 
+
             {hasDiscount && (
               <Box
                 sx={{
@@ -92,14 +93,15 @@ const ProductCard: React.FC<Product> = ({
                   right: 8,
                   bgcolor: "error.main",
                   color: "white",
-                  px: 1.5,
-                  py: 0.5,
-                  fontSize: "0.75rem",
+                  fontSize: { xs: "0.7rem", sm: "0.75rem" },
+                  px: { xs: 1.25, sm: 1.5 },
+                  py: { xs: 0.4, sm: 0.5 },
                   borderRadius: "4px",
                   fontWeight: 600,
                   zIndex: 2,
                 }}
               >
+
                 {t("saveLabel", {
                   defaultValue: "Save €{{amount}}",
                   amount:
@@ -175,13 +177,13 @@ const ProductCard: React.FC<Product> = ({
                   sx={{
                     backgroundColor: "error.main",
                     color: "white",
-                    px: 1.5,
-                    py: 0.5,
                     borderRadius: "12px",
                     fontWeight: "bold",
-                    fontSize: { xs: "1rem", sm: "0.9rem" },
+                    fontSize: { xs: "0.9rem", sm: "0.95rem", md: "1rem" },
+                    px: { xs: 1, sm: 1.5 },
+                    py: { xs: 0.25, sm: 0.5 },
+                    minWidth: { xs: 55, sm: 65 },
                     display: "inline-block",
-                    minWidth: 65,
                     textAlign: "center",
                   }}
                 >

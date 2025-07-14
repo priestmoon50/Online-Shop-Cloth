@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Product } from "@/data/types";
 import styles from "./ProductGrid.module.css";
+import { useTranslation } from "react-i18next";
 
 const fetchProducts = async (): Promise<Product[]> => {
   try {
@@ -48,6 +49,7 @@ function ProductCard({ product }: { product: Product }) {
       : (price - discountPrice!).toFixed(2))
     : null;
 
+  const { t } = useTranslation();
 
   return (
     <Link href={`/product/${id}`} passHref legacyBehavior>
@@ -65,39 +67,44 @@ function ProductCard({ product }: { product: Product }) {
             <Box
               sx={{
                 position: "absolute",
-                top: 10,
-                left: 10,
+                left: 0,
                 backgroundColor: "error.main",
                 color: "white",
-                px: 1.5,
-                py: 0.5,
+                px: { xs: 1, sm: 1.5 },
+                py: { xs: 0.3, sm: 0.5 },
                 borderRadius: "5px",
-                fontSize: "12px",
+                fontSize: { xs: "11px", sm: "12px" },
                 fontWeight: "bold",
               }}
             >
-              Save €{discountAmount}
+              {t("saveLabel", {
+                defaultValue: "Save €{{amount}}",
+                amount: discountAmount,
+              })}
             </Box>
+
+
           )}
 
           {isNew && (
             <Box
               sx={{
                 position: "absolute",
-                top: 10,
-                right: 10,
-                backgroundColor: "#1976d2",
+                bottom: 10,
+                left: 10,
+                backgroundColor: "#d2197fff",
                 color: "white",
-                px: 1.5,
-                py: 0.5,
+                px: { xs: 1, sm: 1.5 },
+                py: { xs: 0.3, sm: 0.5 },
                 borderRadius: "5px",
-                fontSize: "12px",
+                fontSize: { xs: "11px", sm: "12px" },
                 fontWeight: "bold",
               }}
             >
-              NEW
+              {t("new")}
             </Box>
           )}
+
           {status && (
             <Box className={styles.productStatus}>
               {String(status).toUpperCase()}

@@ -69,7 +69,7 @@ export default function RueckgabeUmtauschPage() {
           gutterBottom
           sx={{ textAlign: 'center', mb: 3 }}
         >
-          Cookies rechtlinie
+          Cookies Richtlinie
         </Typography>
 
         <Divider sx={{ mb: 4, borderColor: '#ddd' }} />

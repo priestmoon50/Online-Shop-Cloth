@@ -47,6 +47,7 @@ const NavBar: React.FC = () => {
   return (
     <>
 <AppBar
+
   position="fixed"
   sx={{
     

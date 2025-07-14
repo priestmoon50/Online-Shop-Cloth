@@ -192,6 +192,7 @@
   "actions": "Acciones",
   "edit": "Editar",
   "delete": "Eliminar",
+  
   "confirm_delete": "Confirmar eliminación",
   "delete_confirm_text": "¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.",
   "cancel": "Cancelar",
