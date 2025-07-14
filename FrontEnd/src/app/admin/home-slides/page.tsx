@@ -75,14 +75,15 @@ export default function ManageHomeSlidesPage() {
         {slides.map((slide) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={slide._id}>
             <Card>
-              <CardMedia sx={{ aspectRatio: '16 / 9', position: 'relative' }}>
+              <Box sx={{ position: 'relative', width: '100%', paddingTop: '56.25%' }}>
                 <Image
                   src={slide.imageUrl}
                   alt="slider"
                   fill
                   style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
-              </CardMedia>
+              </Box>
+
               <CardActions>
                 <IconButton color="error" onClick={() => handleDelete(slide._id)}>
                   <DeleteIcon />
