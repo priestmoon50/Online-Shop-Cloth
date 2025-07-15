@@ -125,7 +125,8 @@ const ProductCard: React.FC<Product> = ({
                       src={img}
                       alt={`${name}-${index}`}
                       layout="fill"
-                      objectFit="cover"
+                      objectFit="contain"
+
                       priority={index === 0}
                     />
                   </Box>
@@ -136,7 +137,8 @@ const ProductCard: React.FC<Product> = ({
                 src={imagesArray[0] || "/placeholder.jpg"}
                 alt={name}
                 layout="fill"
-                objectFit="cover"
+               objectFit="contain"
+
                 priority
               />
             )}
