@@ -25,12 +25,12 @@ const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get("/api/products");
 
   if (Array.isArray(data)) {
-return data.map((product: any) => ({
-  ...product,
-  id: product.id || product._id?.toString(),
-  price: Number(product.price),
-  discountPrice: Number(product.discountPrice) || 0,
-}));
+    return data.map((product: any) => ({
+      ...product,
+      id: product.id || product._id?.toString(),
+      price: Number(product.price),
+      discountPrice: Number(product.discountPrice) || 0,
+    }));
   }
 
   return [];
@@ -42,6 +42,7 @@ export default function ProductsPage() {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const initialCategory = searchParams?.get("category") ?? "all";
+  const isNewOnly = searchParams?.get("new") === "true";
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [priceRange, setPriceRange] = useState<number[]>([1, 1000]);
@@ -63,27 +64,41 @@ export default function ProductsPage() {
     }
   }, [searchParams]);
 
-  const filteredProducts = allProducts.filter((product) => {
- const isInSelectedCategory =
-  selectedCategory === "all" ||
-  product.category === selectedCategory ||
-  (selectedCategory === "others" &&
-    product.category !== "men" &&
-    product.category !== "women") ||
-  (selectedCategory === "sale" &&
-    typeof product.discountPrice === "number" &&
-    product.discountPrice > 0 &&
-    product.discountPrice < product.price);
+  const filteredProducts = allProducts
+    .filter((product) => {
+      const isInSelectedCategory =
+        selectedCategory === "all" ||
+        product.category === selectedCategory ||
+        (selectedCategory === "others" &&
+          product.category !== "men" &&
+          product.category !== "women") ||
+        (selectedCategory === "sale" &&
+          typeof product.discountPrice === "number" &&
+          product.discountPrice > 0 &&
+          product.discountPrice < product.price);
 
-    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return (
-      isInSelectedCategory &&
-      product.price >= priceRange[0] &&
-      product.price <= priceRange[1] &&
-      matchesSearch
-    );
-  });
+      return (
+        isInSelectedCategory &&
+        product.price >= priceRange[0] &&
+        product.price <= priceRange[1] &&
+        matchesSearch
+      );
+    })
+    .filter((product) => !isNewOnly || product.isNew)
+    .sort((a, b) => {
+      const aTime = a.createdAt && typeof a.createdAt === "string"
+        ? new Date(a.createdAt).getTime()
+        : 0;
+
+      const bTime = b.createdAt && typeof b.createdAt === "string"
+        ? new Date(b.createdAt).getTime()
+        : 0;
+
+      return bTime - aTime;
+    });
+
 
   if (isLoading) return <div>{t("loading")}</div>;
   if (error) {
@@ -166,7 +181,7 @@ export default function ProductsPage() {
           {t("noProductsForFilters")}
         </Typography>
       )}
- 
+
       <Grid container spacing={2}>
         {filteredProducts.map((product) => (
           <Grid item key={product.id} xs={6} sm={4} md={4} lg={3}>

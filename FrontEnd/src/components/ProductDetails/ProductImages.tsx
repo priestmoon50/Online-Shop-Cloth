@@ -65,7 +65,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
         sx={{
           width: { xs: '95vw', sm: '90vw', md: '500px' },
           maxWidth: '100%',
-          overflow: 'hidden', // ❗ اسکرول عمودی رو حذف می‌کنه
+
           position: 'relative',
           touchAction: 'manipulation', // زوم فعال بمونه
         }}
@@ -76,7 +76,14 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
 
         <Slider {...settings}>
           {images.map((image, index) => (
-            <Box key={index}>
+            <Box
+              key={index}
+              sx={{
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pinch-zoom',
+              }}
+            >
               <Image
                 src={image}
                 alt={`Product image ${index + 1}`}
@@ -85,15 +92,16 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
                 style={{
                   width: '100%',
                   height: 'auto',
-                  objectFit: 'contain', // نمایش کامل تصویر
+                  objectFit: 'contain',
                   borderRadius: 12,
                   display: 'block',
-                  touchAction: 'manipulation', // زوم فعال
+                  touchAction: 'none',
+                  pointerEvents: 'auto',
                 }}
               />
-
             </Box>
           ))}
+
         </Slider>
       </Box>
     </Box>

@@ -6,22 +6,27 @@
                       http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
   <url>
-    <loc>https://www.mopastyle.de/</loc>
+    <loc>https://www.mopastyle.de/products?new=true</loc>
     <lastmod>2025-05-28</lastmod>
   </url>
 
   <url>
-    <loc>https://www.mopastyle.de/products</loc>
+    <loc>https://www.mopastyle.de/products?category=women</loc>
     <lastmod>2025-05-28</lastmod>
   </url>
 
   <url>
-    <loc>https://www.mopastyle.de/auth/login</loc>
+    <loc>https://www.mopastyle.de/products?category=sale</loc>
     <lastmod>2025-05-28</lastmod>
   </url>
 
   <url>
-    <loc>https://www.mopastyle.de/support</loc>
+    <loc>https://www.mopastyle.de/products?category=dress</loc>
+    <lastmod>2025-05-28</lastmod>
+  </url>
+
+  <url>
+    <loc>https://www.mopastyle.de/products?category=shoes</loc>
     <lastmod>2025-05-28</lastmod>
   </url>
 
