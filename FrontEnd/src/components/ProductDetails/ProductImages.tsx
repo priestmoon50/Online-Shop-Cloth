@@ -45,6 +45,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    draggable: false,
     swipe: true,
     touchMove: true,
     nextArrow: <CustomNextArrow />,
@@ -84,21 +85,20 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
                 touchAction: 'pinch-zoom',
               }}
             >
-              <Image
-                src={image}
-                alt={`Product image ${index + 1}`}
-                width={1200}
-                height={1600}
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'contain',
-                  borderRadius: 12,
-                  display: 'block',
-                  touchAction: 'none',
-                  pointerEvents: 'auto',
-                }}
-              />
+ <Image
+  src={image}
+  alt={`Product image ${index + 1}`}
+  width={1200}
+  height={1600}
+  style={{
+    width: '100%',
+    height: 'auto',
+    objectFit: 'contain',
+    borderRadius: 12,
+    display: 'block',
+  }}
+/>
+
             </Box>
           ))}
 

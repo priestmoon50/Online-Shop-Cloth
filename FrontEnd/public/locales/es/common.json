@@ -186,6 +186,7 @@
   "selected_image": "Imagen seleccionada:",
   "add": "Añadir",
   "stock": "Stock",
+  "es": "El costo de envío se ha añadido al total de tu pedido",
   "shippingFee": "Costo de envío: €{{value}} (aplica para pedidos menores de 60 €)",
   "freeShipping": "Envío gratuito aplicado (pedidos superiores a 60 €).",
   "normalShipping": "Costo de envío estándar: €3.99",

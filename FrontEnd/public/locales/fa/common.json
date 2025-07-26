@@ -24,7 +24,8 @@
     "subscribe": "عضویت",
     "paymentMethods": "روش‌های پرداخت",
     "shippingFee": "هزینه ارسال: €{{value}} (برای سفارش‌های زیر ۶۰ یورو)",
- 
+"addedShippingCost": "هزینه ارسال به مجموع خرید شما اضافه شده است"
+,
     "normalShipping": "هزینه معمول ارسال: €3.99",
     "allRightsReserved": "کلیه حقوق محفوظ است",
     "newArrivals": "تازه‌ترین محصولات",

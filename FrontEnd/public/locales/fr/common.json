@@ -76,6 +76,7 @@
   "addedToFavorites": "Ajouté aux favoris",
   "selectSize": "Sélectionner la taille :",
   "selectColor": "Sélectionner la couleur :",
+    "fr": "Les frais de livraison ont été ajoutés au total de votre commande",
   "howMany": "Combien ?",
   "pleaseSelectColorFirst": "Veuillez d'abord sélectionner une couleur.",
   "quantityUpdated": "Quantité mise à jour",

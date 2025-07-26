@@ -45,7 +45,8 @@ const Layout: React.FC<{ children: React.ReactNode; dehydratedState?: unknown }>
           name="keywords"
           content="women's fashion, Mopa, mopastyle, AHADI, clothing, high-class fashion, online shopping, dresses, ModaPersia"
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+
 
         <meta name="robots" content="index, follow" />
         <link rel="icon" href="/images/Logo.png" type="image/png" />

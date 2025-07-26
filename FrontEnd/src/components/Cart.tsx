@@ -193,7 +193,7 @@ const Cart: React.FC = () => {
                         €{Number(item.price).toFixed(2)}
                       </Typography>
                     )}
-
+ 
 
                     {Array.isArray(item.variants) &&
                       item.variants.map((variant, idx) => (

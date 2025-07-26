@@ -425,13 +425,25 @@ const CheckoutPage: React.FC = () => {
               <span>€{totalPriceWithShipping.toFixed(2)}</span>
             </Typography>
 
+            {shippingFee > 0 && (
+              <Typography
+                variant="body2"
+                sx={{ mt: 1, color: "#f44336", fontStyle: "italic" }}
+              >
+                + €{shippingFee.toFixed(2)} {t("addedShippingCost", "shipping cost added")}
+              </Typography>
+            )}
+
+
+
             {shippingFee > 0 ? (
               <>
                 <Typography
                   variant="body2"
                   sx={{ mt: 1, color: "#999", fontStyle: "italic" }}
                 >
-                  {t("shippingFee", `Shipping Fee: €${shippingFee.toFixed(2)} (applied for orders under €60)`)}
+                  {t("shippingFee", { value: shippingFee.toFixed(2) })}
+
                 </Typography>
               </>
             ) : (
