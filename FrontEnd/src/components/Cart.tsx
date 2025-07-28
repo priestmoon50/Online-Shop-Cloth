@@ -115,6 +115,7 @@ const Cart: React.FC = () => {
   }, 0);
 
   const discountedAmount = totalAmount * (1 - discountPercent / 100);
+  const shippingFee = discountedAmount < 60 ? 3.99 : 0;
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -193,7 +194,7 @@ const Cart: React.FC = () => {
                         €{Number(item.price).toFixed(2)}
                       </Typography>
                     )}
- 
+
 
                     {Array.isArray(item.variants) &&
                       item.variants.map((variant, idx) => (
@@ -291,9 +292,49 @@ const Cart: React.FC = () => {
 
           <Typography variant="h6" sx={{ mb: 2 }}>
 
-            {t("total")}: €{discountedAmount.toFixed(2)}
+            {t("total")}: €{(discountedAmount + shippingFee).toFixed(2)}
+
 
           </Typography>
+
+          {/* نمایش هزینه پست مشابه صفحه checkout */}
+          <Box
+            sx={{
+              mt: 2,
+              mb: 3,
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: discountedAmount < 60 ? "#fff3e0" : "#e8f5e9",
+              border: "1px solid",
+              borderColor: discountedAmount < 60 ? "#ffb74d" : "#66bb6a",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: "bold",
+                color: discountedAmount < 60 ? "#ef6c00" : "#2e7d32",
+              }}
+            >
+              {discountedAmount < 60
+                ? `+ €3.99 ${t("addedShippingCost", "shipping cost added")}`
+                : `✅ ${t("freeShipping", "Free shipping applied (orders over €60).")}`}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{ mt: 0.5, color: "#666", fontStyle: "italic" }}
+            >
+              {discountedAmount < 60
+                ? t("shippingFee", { value: "3.99" })
+                : t("normalShipping", `Normal shipping fee: €3.99`)}
+            </Typography>
+          </Box>
+
+
+
+
+
 
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
