@@ -31,14 +31,28 @@ const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
 
-  useEffect(() => {
-    if (!selectedColor && product.variants?.length) {
-      const firstColorWithStock = product.variants.find(v => v.stock > 0)?.color;
-      if (firstColorWithStock) {
-        setSelectedColor(firstColorWithStock);
-      }
+useEffect(() => {
+  if (!selectedColor && product.variants?.length) {
+    const firstColorWithStock = product.variants.find(v => v.stock > 0)?.color;
+    if (firstColorWithStock) {
+      setSelectedColor(firstColorWithStock);
     }
-  }, [product.variants, selectedColor]);
+  }
+
+  // اگر فقط یک سایز برای رنگ انتخاب‌شده موجود بود، آن را انتخاب کن
+  if (selectedColor && product.variants?.length) {
+    const sizesWithStock = product.variants
+      .filter(v => v.color === selectedColor && v.stock > 0)
+      .map(v => v.size);
+    
+    const uniqueSizes = Array.from(new Set(sizesWithStock));
+
+    if (uniqueSizes.length === 1) {
+      setSelectedSize(uniqueSizes[0]);
+    }
+  }
+}, [product.variants, selectedColor]);
+
 
 
   const [openModal, setOpenModal] = useState(false);
