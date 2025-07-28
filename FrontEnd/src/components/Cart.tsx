@@ -115,7 +115,8 @@ const Cart: React.FC = () => {
   }, 0);
 
   const discountedAmount = totalAmount * (1 - discountPercent / 100);
-  const shippingFee = discountedAmount < 60 ? 3.99 : 0;
+ const shippingFee = discountedAmount < 60 ? 3.99 : 0;
+
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>

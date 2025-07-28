@@ -122,11 +122,12 @@ const CheckoutPage: React.FC = () => {
     }, 0);
 
 
-  const shippingFee = calculateTotal() < 60 ? 3.99 : 0;
+  const discountedTotal = calculateTotal() * (1 - discountPercent / 100);
+  const shippingFee = discountedTotal < 60 ? 3.99 : 0;
 
-  const totalPriceWithShipping = Number((
-    calculateTotal() * (1 - discountPercent / 100) + shippingFee
-  ).toFixed(2));
+
+const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2));
+
 
 
   const renderField = (
