@@ -393,7 +393,7 @@ const CheckoutPage: React.FC = () => {
                   {item.variants.map((variant, idx) => (
                     <Box key={idx} ml={1}>
                       <Typography variant="body2" color="text.secondary">
-                        €{convertToEuro(item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price)} × {variant.quantity}
+                        €{(item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price).toFixed(2)} × {variant.quantity}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {t("size", "Size")}: {variant.size || "N/A"} |{" "}
