@@ -394,8 +394,8 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
                   {item.variants.map((variant, idx) => (
                     <Box key={idx} ml={1}>
                       <Typography variant="body2" color="text.secondary">
-                        €{(item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price).toFixed(2)} × {variant.quantity}
-                      </Typography>
+                      €{Number(item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price).toFixed(2)} × {variant.quantity}
+               </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {t("size", "Size")}: {variant.size || "N/A"} |{" "}
                         {t("color", "Color")}: {variant.color || "N/A"}

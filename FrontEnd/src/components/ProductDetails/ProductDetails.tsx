@@ -1,6 +1,6 @@
 'use client';
+import { FC, useState, useEffect } from "react";
 
-import { FC, useState } from "react";
 import {
   Container,
   Grid,
@@ -29,6 +29,18 @@ import { useSnackbar } from 'notistack';
 const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    if (!selectedColor && product.variants?.length) {
+      const firstColorWithStock = product.variants.find(v => v.stock > 0)?.color;
+      if (firstColorWithStock) {
+        setSelectedColor(firstColorWithStock);
+      }
+    }
+  }, [product.variants, selectedColor]);
+
+
   const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
   const { t } = useTranslation();
