@@ -95,6 +95,9 @@
   "normalShipping": "Standardversandkosten: €3.99",
   "address": "Adresse",
   "payment": "Zahlung",
+  "itemsTotal": "Artikelgesamtbetrag",
+"shipping": "Versand",
+
   "paid": "Bezahlt",
   "notPaid": "Nicht bezahlt",
   "items": "Artikel",

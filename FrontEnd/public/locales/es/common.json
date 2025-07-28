@@ -193,7 +193,9 @@
   "actions": "Acciones",
   "edit": "Editar",
   "delete": "Eliminar",
-  
+  "itemsTotal": "Total de artículos",
+"shipping": "Envío",
+
   "confirm_delete": "Confirmar eliminación",
   "delete_confirm_text": "¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.",
   "cancel": "Cancelar",

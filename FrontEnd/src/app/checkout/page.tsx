@@ -33,7 +33,7 @@ import { useTranslation } from "react-i18next";
 
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { convertToEuro } from "@/utils/convertCurrency";
+import { Stack } from "@mui/material";
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -407,64 +407,58 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
             </List>
           )}
 
-          <Box mt={2}>
-            <Typography
-              variant="h6"
-              sx={{
-                backgroundColor: "#f1f8e9",
-                padding: "12px 16px",
-                borderRadius: "8px",
-                fontWeight: "bold",
-                fontSize: "18px",
-                color: "#2e7d32",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              {t("total", "Total")}:
-              <span>€{totalPriceWithShipping.toFixed(2)}</span>
-            </Typography>
+ <Box
+  sx={{
+    p: 3,
+    borderRadius: 3,
+    border: "2px solid #e0e0e0",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+    mt: 3,
+  }}
+>
+  <Stack spacing={2}>
+    <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
+      <span>{t("itemsTotal", "Items Total")}</span>
+      <span>€{discountedTotal.toFixed(2)}</span>
+    </Typography>
 
-            {shippingFee > 0 && (
-              <Typography
-                variant="body2"
-                sx={{ mt: 1, color: "#f44336", fontStyle: "italic" }}
-              >
-                + €{shippingFee.toFixed(2)} {t("addedShippingCost", "shipping cost added")}
-              </Typography>
-            )}
+    <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
+      <span>{t("shipping", "Shipping")}</span>
+      <span>€{shippingFee.toFixed(2)}</span>
+    </Typography>
 
+    <Divider />
 
+    <Typography
+      variant="h5"
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        fontWeight: "bold",
+        mt: 1,
+        color: "#1976d2",
+      }}
+    >
+      <span>{t("total", "Total")}</span>
+      <span>€{totalPriceWithShipping.toFixed(2)}</span>
+    </Typography>
 
-            {shippingFee > 0 ? (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ mt: 1, color: "#999", fontStyle: "italic" }}
-                >
-                  {t("shippingFee", { value: shippingFee.toFixed(2) })}
+    <Typography
+      variant="body2"
+      sx={{
+        mt: 1,
+        color: discountedTotal < 60 ? "#d84315" : "#388e3c",
+        fontStyle: "italic",
+      }}
+    >
+      {discountedTotal < 60
+        ? `+ €3.99 ${t("addedShippingCost", "shipping cost added")}`
+        : `✅ ${t("freeShipping", "Free shipping applied (orders over €60).")}`}
+    </Typography>
+  </Stack>
+</Box>
 
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ mt: 1, color: "#4caf50", fontWeight: "medium" }}
-                >
-                  ✅ {t("freeShipping", "Free shipping applied (orders over €60).")}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ mt: 0.5, color: "#999", fontStyle: "italic" }}
-                >
-                  {t("normalShipping", `Normal shipping fee: €3.99`)}
-                </Typography>
-              </>
-            )}
-
-          </Box>
 
           <Link href="/cart" passHref legacyBehavior>
             <Button

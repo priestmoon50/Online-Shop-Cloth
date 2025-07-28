@@ -73,6 +73,9 @@
   "invalidDiscountCode": "Code de réduction invalide",
   "error.validatingDiscountCode": "Erreur lors de la vérification du code de réduction",
   "addToFavorites": "Ajouter aux favoris",
+  "itemsTotal": "Total des articles",
+"shipping": "Livraison",
+
   "addedToFavorites": "Ajouté aux favoris",
   "selectSize": "Sélectionner la taille :",
   "selectColor": "Sélectionner la couleur :",

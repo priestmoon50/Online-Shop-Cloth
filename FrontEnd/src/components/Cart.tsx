@@ -115,7 +115,7 @@ const Cart: React.FC = () => {
   }, 0);
 
   const discountedAmount = totalAmount * (1 - discountPercent / 100);
- const shippingFee = discountedAmount < 60 ? 3.99 : 0;
+  const shippingFee = discountedAmount < 60 ? 3.99 : 0;
 
 
   return (
@@ -139,69 +139,103 @@ const Cart: React.FC = () => {
                   mb: 4,
                 }}
               >
-                <Grid container spacing={3} alignItems="center">
-                  <Grid item xs={12} md={3}>
-                    <Box
-                      component="img"
-                      src={item.image || "/placeholder.jpg"}
-                      alt={item.name}
-                      sx={{
-                        width: "100%",
-                        height: { xs: 200, md: 240 },
-                        objectFit: "cover",
-                        borderRadius: 2,
-                        opacity: isValid === false ? 0.5 : 1,
-                        filter: isValid === false ? "grayscale(100%)" : "none",
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={9}>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", md: "row" }}
+                  gap={3}
+                  p={2}
+                  border="1px solid #e0e0e0"
+                  borderRadius={3}
+                  boxShadow="0 1px 6px rgba(0,0,0,0.05)"
+                  alignItems="center"
+                >
+                  <Box
+                    component="img"
+                    src={item.image?.trim() ? item.image : "/placeholder.jpg"}
+                    alt={item.name}
+                    sx={{
+                      width: { xs: "100%", sm: "100%", md: 160 },
+                      height: "auto",
+                      maxHeight: { xs: 260, sm: 300 },
+                      objectFit: "contain",
+                      borderRadius: 2,
+                      opacity: isValid === false ? 0.5 : 1,
+                      filter: isValid === false ? "grayscale(100%)" : "none",
+                    }}
+                  />
+
+
+                  <Box flex="1">
+                    <Typography fontWeight={600} fontSize="1.1rem" color="text.primary" mb={1}>
+                      {item.name}
+                    </Typography>
+
+                    <Typography fontWeight="bold" color="text.secondary" mb={1}>
+                      {typeof item.discountPrice === "number" &&
+                        item.discountPrice > 0 &&
+                        item.discountPrice < item.price ? (
+                        <>
+                          <span style={{ textDecoration: "line-through", marginRight: 8 }}>
+                            €{Number(item.price || 0).toFixed(2)}
+
+                          </span>
+                          <span style={{ color: "#d32f2f" }}>
+                            €{Number(item.discountPrice || 0).toFixed(2)}
+
+                          </span>
+                        </>
+                      ) : (
+                        <>€{Number(item.price || 0).toFixed(2)}</>
+
+                      )}
+                    </Typography>
+
                     {isValid === false && (
-                      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                      <>
+                        <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+                          ❌ {t("productNoLongerAvailable")}
+                        </Typography>
                         <Button
                           size="small"
                           color="error"
                           variant="outlined"
                           onClick={() => handleRemoveItem(String(item.id), "", undefined)}
+                          sx={{ mb: 2 }}
                         >
                           {t("remove")}
                         </Button>
-                      </Stack>
-                    )}
-
-                    {isValid === false && (
-                      <Typography variant="body2" color="error" sx={{ mb: 1 }}>
-                        ❌ {t("productNoLongerAvailable")}
-                      </Typography>
-                    )}
-
-                    {typeof item.discountPrice === "number" &&
-                      item.discountPrice > 0 &&
-                      item.discountPrice < item.price ? (
-                      <>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ textDecoration: "line-through" }}
-                        >
-                          €{Number(item.price).toFixed(2)}
-                        </Typography>
-                        <Typography variant="body2" color="error">
-                          {t("discountedPrice")}: €{Number(item.discountPrice).toFixed(2)}
-                        </Typography>
                       </>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        €{Number(item.price).toFixed(2)}
-                      </Typography>
                     )}
-
 
                     {Array.isArray(item.variants) &&
                       item.variants.map((variant, idx) => (
-                        <Box key={idx} mt={1} p={2} border="1px solid #ddd" borderRadius={2}>
-                          <Typography variant="body2" color="text.secondary">
-                            {t("quantity")}: {Math.min(variant.quantity, variant.stock || variant.quantity)}
+                        <Box
+                          key={`${item.id}-${variant.size}-${variant.color}`}
+                          mt={2}
+                          p={2}
+                          border="1px solid #ddd"
+                          borderRadius={2}
+                          bgcolor="#f9f9f9"
+                        >
+                          <Typography variant="body2">
+                            <strong>{t("quantity")}:</strong>{" "}
+                            {Math.min(variant.quantity, variant.stock ?? variant.quantity)}
                           </Typography>
 
                           {variant.stock !== undefined && variant.quantity > variant.stock && (
@@ -210,33 +244,34 @@ const Cart: React.FC = () => {
                             </Typography>
                           )}
 
-                          <Typography variant="body2" color="text.secondary">
-                            {t("size")}: {variant.size || "N/A"}
+                          <Typography variant="body2">
+                            <strong>{t("size")}:</strong> {variant.size || "N/A"}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" gutterBottom>
-                            {t("color")}: {variant.color || "N/A"}
+                          <Typography variant="body2">
+                            <strong>{t("color")}:</strong> {variant.color || "N/A"}
                           </Typography>
 
-                          <Stack direction="row" spacing={1} flexWrap="wrap">
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              color="error"
-                              onClick={() =>
-                                handleRemoveItem(
-                                  String(item.id),
-                                  String(variant.size),
-                                  variant.color ? String(variant.color) : undefined
-                                )
-                              }
-                            >
-                              {t("remove")}
-                            </Button>
-                          </Stack>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            sx={{ mt: 1 }}
+                            onClick={() =>
+                              handleRemoveItem(
+                                String(item.id),
+                                String(variant.size),
+                                variant.color ? String(variant.color) : undefined
+                              )
+                            }
+                          >
+                            {t("remove")}
+                          </Button>
                         </Box>
                       ))}
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
+
+
               </Box>
             );
           })}
@@ -291,14 +326,10 @@ const Cart: React.FC = () => {
             </Typography>
           )}
 
-          <Typography variant="h6" sx={{ mb: 2 }}>
-
-            {t("total")}: €{(discountedAmount + shippingFee).toFixed(2)}
 
 
-          </Typography>
 
-          {/* نمایش هزینه پست مشابه صفحه checkout */}
+
           <Box
             sx={{
               mt: 2,
