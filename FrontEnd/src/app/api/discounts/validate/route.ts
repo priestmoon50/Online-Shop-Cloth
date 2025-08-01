@@ -7,7 +7,7 @@ export async function GET(req: Request) {
   const cartRaw = searchParams.get("cart");
 
   if (!code) {
-    return NextResponse.json({ valid: false, error: "کد تخفیف وارد نشده است" }, { status: 400 });
+    return NextResponse.json({ valid: false, error: "discountCodeMissing" }, { status: 400 });
   }
 
   let cart: any[] = [];
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   try {
     cart = cartRaw ? JSON.parse(cartRaw) : [];
   } catch (e) {
-    return NextResponse.json({ valid: false, error: "فرمت سبد خرید نامعتبر است" }, { status: 400 });
+    return NextResponse.json({ valid: false, error: "invalidCartFormat" }, { status: 400 });
   }
 
   const hasDiscountedItem = cart.some(
@@ -28,7 +28,7 @@ export async function GET(req: Request) {
   if (hasDiscountedItem) {
     return NextResponse.json({
       valid: false,
-      error: "کد تخفیف فقط روی محصولات بدون تخفیف قابل استفاده است",
+      error: "discountOnlyForNonDiscountedItems",
     });
   }
 
@@ -36,11 +36,11 @@ export async function GET(req: Request) {
   const discount = await db.collection("discounts").findOne({ code });
 
   if (!discount) {
-    return NextResponse.json({ valid: false, error: "کد تخفیف نامعتبر است" }, { status: 404 });
+    return NextResponse.json({ valid: false, error: "invalidDiscountCode" }, { status: 404 });
   }
 
   if (discount.expiresAt && new Date(discount.expiresAt) < new Date()) {
-    return NextResponse.json({ valid: false, error: "کد تخفیف منقضی شده است" }, { status: 410 });
+    return NextResponse.json({ valid: false, error: "expiredDiscountCode" }, { status: 410 });
   }
 
   return NextResponse.json({

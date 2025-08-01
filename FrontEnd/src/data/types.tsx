@@ -86,6 +86,7 @@ export interface CategoryLink {
 
 export interface ProductImagesProps {
   images: string[];
+  activeIndex?: number;
 }
 
 // تایپ‌های مربوط به فرم‌ها

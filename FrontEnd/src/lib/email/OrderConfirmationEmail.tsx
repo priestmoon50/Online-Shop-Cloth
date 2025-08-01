@@ -125,5 +125,5 @@ const OrderConfirmationEmail = ({
     </Body>
   </Html>
 );
-
+ 
 export default OrderConfirmationEmail;

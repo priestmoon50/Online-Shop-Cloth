@@ -13,7 +13,7 @@ export async function sendVerificationEmail({
   verificationToken: string;
 }) {
   const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${verificationToken}`;
-
+ 
   try {
     await resend.emails.send({
       from: "noreply@mopastyle.de",

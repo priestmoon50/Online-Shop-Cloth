@@ -14,6 +14,7 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
+
 if (process.env.NODE_ENV === "development") {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri);

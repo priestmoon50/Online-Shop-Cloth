@@ -225,7 +225,13 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ initialProduct, onAddPr
       {variantMap.map((v, idx) => (
         <Box key={idx} mt={3} p={2} border="1px solid #ccc" borderRadius={2}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">{v.color}</Typography>
+            <Typography variant="h6">
+              {v.color} {" "}
+              <Typography component="span" variant="caption" color="text.secondary">
+                (تصویر شماره {idx + 1})
+              </Typography>
+            </Typography>
+
             <Button size="small" color="error" variant="outlined" onClick={() => onRemoveColor(idx)}>
               {t('remove')}
             </Button>

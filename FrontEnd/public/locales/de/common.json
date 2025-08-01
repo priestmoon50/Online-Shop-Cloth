@@ -96,8 +96,8 @@
   "address": "Adresse",
   "payment": "Zahlung",
   "itemsTotal": "Artikelgesamtbetrag",
-"shipping": "Versand",
-
+  "shipping": "Versand",
+  "addedShippingCost": "Versandkosten hinzugefügt",
   "paid": "Bezahlt",
   "notPaid": "Nicht bezahlt",
   "items": "Artikel",
@@ -145,7 +145,6 @@
   "lastName": "Nachname",
   "yourEmail": "Ihre E-Mail",
   "yourMessage": "Ihre Nachricht",
-  
   "send": "Senden",
   "sending": "Wird gesendet...",
   "total": "Gesamtsumme",
@@ -182,9 +181,8 @@
   "productAddedMessage": "Das Produkt wurde erfolgreich in Ihren Warenkorb gelegt.",
   "continueShopping": "Weiter einkaufen",
   "checkout": "Zur Kasse",
-    "pleaseSelectColorFirst": "Bitte wählen Sie zuerst eine Farbe aus.",
+  "pleaseSelectColorFirst": "Bitte wählen Sie zuerst eine Farbe aus.",
   "quantityUpdated": "Menge aktualisiert",
-
   "noSizeAvailable": "Keine Größen verfügbar für diese Farbe.",
   "percentage": "Prozentsatz",
   "noExpiration": "Kein Ablaufdatum",
@@ -195,6 +193,14 @@
   "invalidDiscountCode": "Ungültiger Rabattcode",
   "error.validatingDiscountCode": "Fehler bei der Überprüfung des Rabattcodes",
   "invalidProductId": "Ungültige Produkt-ID",
+
+  "discountCodeMissing": "Rabattcode fehlt",
+  "invalidCartFormat": "Ungültiges Warenkorbformat",
+  "discountOnlyForNonDiscountedItems": "Rabattcode kann nur für nicht reduzierte Artikel verwendet werden",
+
+  "expiredDiscountCode": "Rabattcode ist abgelaufen",
+  "discountApplied": "Rabattcode erfolgreich angewendet",
+  "unknownError": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
   "productNotFound": "Produkt nicht gefunden",
   "productIdRequired": "Produkt-ID ist für die Aktualisierung erforderlich",
   "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer mit Ländervorwahl ein.",

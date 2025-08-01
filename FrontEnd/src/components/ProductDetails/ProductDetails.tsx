@@ -29,29 +29,35 @@ import { useSnackbar } from 'notistack';
 const ProductDetails: FC<{ product: Product }> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
 
-useEffect(() => {
-  if (!selectedColor && product.variants?.length) {
-    const firstColorWithStock = product.variants.find(v => v.stock > 0)?.color;
-    if (firstColorWithStock) {
-      setSelectedColor(firstColorWithStock);
+
+
+  useEffect(() => {
+    if (!selectedColor && product.variants?.length) {
+      const firstColorWithStock = product.variants.find(v => v.stock > 0)?.color;
+      if (firstColorWithStock) {
+        setSelectedColor(firstColorWithStock);
+
+        const colorIndex = [...new Set(product.variants.map(v => v.color))].indexOf(firstColorWithStock);
+        setActiveImageIndex(colorIndex);
+      }
     }
-  }
 
-  // اگر فقط یک سایز برای رنگ انتخاب‌شده موجود بود، آن را انتخاب کن
-  if (selectedColor && product.variants?.length) {
-    const sizesWithStock = product.variants
-      .filter(v => v.color === selectedColor && v.stock > 0)
-      .map(v => v.size);
-    
-    const uniqueSizes = Array.from(new Set(sizesWithStock));
+    if (selectedColor && product.variants?.length) {
+      const sizesWithStock = product.variants
+        .filter(v => v.color === selectedColor && v.stock > 0)
+        .map(v => v.size);
 
-    if (uniqueSizes.length === 1) {
-      setSelectedSize(uniqueSizes[0]);
+      const uniqueSizes = Array.from(new Set(sizesWithStock));
+
+      if (uniqueSizes.length === 1) {
+        setSelectedSize(uniqueSizes[0]);
+      }
     }
-  }
-}, [product.variants, selectedColor]);
+  }, [product.variants, selectedColor]);
+
 
 
 
@@ -62,10 +68,12 @@ useEffect(() => {
   const { favorites, addFavorite, removeFavorite, isMounted } = useFavorites();
   const productId = String(product.id || product._id);
   const isLiked = favorites.items.some((item) => String(item.id) === productId);
-  const selectedVariant = product.variants?.find(
+  const selectedVariant = product.variants!.find(
+
     (v) => v.size === selectedSize && v.color === selectedColor
   );
   const availableStock = selectedVariant?.stock ?? 0;
+
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -251,7 +259,21 @@ useEffect(() => {
 
           <Box sx={{ position: "relative" }}>
             <div className={styles.zoomableImageWrapper}>
-              <ProductImages images={imagesArray} />
+              <ProductImages
+                images={imagesArray}
+                activeIndex={activeImageIndex}
+                onSlideChange={(index) => {
+                  const colors = [...new Set((product.variants ?? []).map(v => v.color))];
+                  const newColor = colors[index];
+                  if (newColor) {
+                    setSelectedColor(newColor);
+                    setSelectedSize(null);
+                    setQuantity(1);
+                  }
+                }}
+              />
+
+
             </div>
 
             {hasDiscount && discountAmount && (
@@ -348,27 +370,48 @@ useEffect(() => {
               {t("selectColor")}
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={1}>
-              {[...new Set(product.variants?.map((v) => v.color))].map((color) => {
-                const hasStock = product.variants?.some((v) => v.color === color && v.stock > 0);
-                return (
-                  <Button
-                    key={color}
-                    variant={selectedColor === color ? "contained" : "outlined"}
-                    onClick={() => {
-                      setSelectedColor(color);
-                      setSelectedSize(null);
-                      setQuantity(1);
-                    }}
+              {[...new Set((product.variants ?? []).map((v) => v.color))].map((color) => {
+                const hasStock = (product.variants ?? []).some((v) => v.color === color && v.stock > 0);
+                const imageIndex = [...new Set((product.variants ?? []).map(v => v.color))].indexOf(color);
 
-                    disabled={!hasStock}
-                    sx={{ minWidth: 40, px: 2 }}
-                  >
-                    {color}
-                  </Button>
+                return (
+                  <Box key={color} display="flex" flexDirection="column" alignItems="center">
+                    <Button
+                      variant={selectedColor === color ? "contained" : "outlined"}
+                      onClick={() => {
+                        setSelectedColor(color);
+                        setActiveImageIndex(imageIndex);
+                        setQuantity(1);
+
+                        const sizesWithStock = product.variants
+                          ?.filter(v => v.color === color && v.stock > 0)
+                          .map(v => v.size);
+
+                        const uniqueSizes = Array.from(new Set(sizesWithStock));
+
+                        if (uniqueSizes.length === 1) {
+                          setSelectedSize(uniqueSizes[0]);
+                        } else {
+                          setSelectedSize(null);
+                        }
+                      }}
+
+
+
+                      disabled={!hasStock}
+                      sx={{ minWidth: 40, px: 2 }}
+                    >
+                      {color}
+                    </Button>
+                    <Typography variant="caption" color="textSecondary">
+                      {t("", { index: imageIndex + 1 })}
+                    </Typography>
+                  </Box>
                 );
               })}
             </Box>
           </Box>
+
           {/* انتخاب سایز */}
           <Box className={styles.selectWrapper} mt={2}>
             <Typography variant="body2" className={styles.selectLabel}>

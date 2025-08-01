@@ -1,12 +1,13 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useRef, useEffect } from 'react';
 import { Box } from '@mui/material';
 import Image from 'next/image';
 import Slider from 'react-slick';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import { ProductImagesProps } from '@/data/types';
 import styles from './ProductImages.module.css';
+import type { Settings } from 'react-slick';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -16,7 +17,6 @@ interface ArrowProps {
   className?: string;
   style?: React.CSSProperties;
 }
-
 
 const CustomPrevArrow: FC<ArrowProps> = ({ onClick }) => (
   <div
@@ -36,10 +36,11 @@ const CustomNextArrow: FC<ArrowProps> = ({ onClick }) => (
   </div>
 );
 
+const ProductImages: FC<ProductImagesProps & { onSlideChange?: (index: number) => void }> = ({ images, activeIndex, onSlideChange }) => {
 
+  const sliderRef = useRef<Slider>(null);
 
-const ProductImages: FC<ProductImagesProps> = ({ images }) => {
-  const settings = {
+  const settings: Settings = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -50,8 +51,17 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
     touchMove: true,
     nextArrow: <CustomNextArrow />,
     prevArrow: <CustomPrevArrow />,
+    beforeChange: (_oldIndex, newIndex) => {
+      if (onSlideChange) onSlideChange(newIndex);
+    },
   };
 
+  useEffect(() => {
+    if (typeof activeIndex === 'number' && sliderRef.current) {
+      sliderRef.current.slickGoTo(activeIndex, true); 
+
+    }
+  }, [activeIndex]);
 
   return (
     <Box
@@ -66,16 +76,11 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
         sx={{
           width: { xs: '95vw', sm: '90vw', md: '500px' },
           maxWidth: '100%',
-
           position: 'relative',
-          touchAction: 'manipulation', // زوم فعال بمونه
+          touchAction: 'manipulation',
         }}
       >
-
-
-
-
-        <Slider {...settings}>
+        <Slider {...settings} ref={sliderRef}>
           {images.map((image, index) => (
             <Box
               key={index}
@@ -85,23 +90,21 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
                 touchAction: 'pinch-zoom',
               }}
             >
- <Image
-  src={image}
-  alt={`Product image ${index + 1}`}
-  width={1200}
-  height={1600}
-  style={{
-    width: '100%',
-    height: 'auto',
-    objectFit: 'contain',
-    borderRadius: 12,
-    display: 'block',
-  }}
-/>
-
+              <Image
+                src={image}
+                alt={`Product image ${index + 1}`}
+                width={1200}
+                height={1600}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  objectFit: 'contain',
+                  borderRadius: 12,
+                  display: 'block',
+                }}
+              />
             </Box>
           ))}
-
         </Slider>
       </Box>
     </Box>
