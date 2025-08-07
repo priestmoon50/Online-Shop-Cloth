@@ -126,7 +126,7 @@ const CheckoutPage: React.FC = () => {
   const shippingFee = discountedTotal < 60 ? 3.99 : 0;
 
 
-const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2));
+  const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2));
 
 
 
@@ -167,16 +167,19 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
     const itemsWithAdjustedPrices = cart.items.map((item) => {
       const isDiscounted =
         item.discountPrice !== undefined && item.discountPrice < item.price;
-      const basePrice = isDiscounted
+
+      const discountedPrice = isDiscounted
         ? item.discountPrice!
-        : item.price * (1 - discountPercent / 100);
+        : item.price;
+
+      const finalPrice = discountedPrice * (1 - discountPercent / 100);
 
       return {
         ...item,
         priceBeforeDiscount: item.price,
         variants: item.variants.map((variant) => ({
           ...variant,
-          price: basePrice,
+          price: finalPrice,
         })),
       };
     });
@@ -307,13 +310,7 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
                   isAuthenticated
                 )}
               </Grid>
-              <Grid item xs={12}>
-                {renderField(
-                  "address",
-                  t("address", "Address"),
-                  <HomeIcon sx={{ color: "#6d4c41" }} />
-                )}
-              </Grid>
+
               <Grid item xs={12}>
                 {renderField(
                   "street",
@@ -326,6 +323,13 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
                   "postalCode",
                   t("postalCode", "Postal Code"),
                   <LocalPostOfficeIcon sx={{ color: "#fbc02d" }} />
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                {renderField(
+                  "address",
+                  t("address", "Address"),
+                  <HomeIcon sx={{ color: "#6d4c41" }} />
                 )}
               </Grid>
             </Grid>
@@ -394,8 +398,9 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
                   {item.variants.map((variant, idx) => (
                     <Box key={idx} ml={1}>
                       <Typography variant="body2" color="text.secondary">
-                      €{Number(item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price).toFixed(2)} × {variant.quantity}
-               </Typography>
+                        €{((item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price) * (1 - discountPercent / 100)).toFixed(2)} × {variant.quantity}
+                      </Typography>
+
                       <Typography variant="body2" color="text.secondary">
                         {t("size", "Size")}: {variant.size || "N/A"} |{" "}
                         {t("color", "Color")}: {variant.color || "N/A"}
@@ -407,57 +412,57 @@ const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2)
             </List>
           )}
 
- <Box
-  sx={{
-    p: 3,
-    borderRadius: 3,
-    border: "2px solid #e0e0e0",
-    backgroundColor: "#fff",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
-    mt: 3,
-  }}
->
-  <Stack spacing={2}>
-    <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
-      <span>{t("itemsTotal", "Items Total")}</span>
-      <span>€{discountedTotal.toFixed(2)}</span>
-    </Typography>
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              border: "2px solid #e0e0e0",
+              backgroundColor: "#fff",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+              mt: 3,
+            }}
+          >
+            <Stack spacing={2}>
+              <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
+                <span>{t("itemsTotal", "Items Total")}</span>
+                <span>€{discountedTotal.toFixed(2)}</span>
+              </Typography>
 
-    <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
-      <span>{t("shipping", "Shipping")}</span>
-      <span>€{shippingFee.toFixed(2)}</span>
-    </Typography>
+              <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
+                <span>{t("shipping", "Shipping")}</span>
+                <span>€{shippingFee.toFixed(2)}</span>
+              </Typography>
 
-    <Divider />
+              <Divider />
 
-    <Typography
-      variant="h5"
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        fontWeight: "bold",
-        mt: 1,
-        color: "#1976d2",
-      }}
-    >
-      <span>{t("total", "Total")}</span>
-      <span>€{totalPriceWithShipping.toFixed(2)}</span>
-    </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontWeight: "bold",
+                  mt: 1,
+                  color: "#1976d2",
+                }}
+              >
+                <span>{t("total", "Total")}</span>
+                <span>€{totalPriceWithShipping.toFixed(2)}</span>
+              </Typography>
 
-    <Typography
-      variant="body2"
-      sx={{
-        mt: 1,
-        color: discountedTotal < 60 ? "#d84315" : "#388e3c",
-        fontStyle: "italic",
-      }}
-    >
-      {discountedTotal < 60
-        ? `+ €3.99 ${t("addedShippingCost", "shipping cost added")}`
-        : `✅ ${t("freeShipping", "Free shipping applied (orders over €60).")}`}
-    </Typography>
-  </Stack>
-</Box>
+              <Typography
+                variant="body2"
+                sx={{
+                  mt: 1,
+                  color: discountedTotal < 60 ? "#d84315" : "#388e3c",
+                  fontStyle: "italic",
+                }}
+              >
+                {discountedTotal < 60
+                  ? `+ €3.99 ${t("addedShippingCost", "shipping cost added")}`
+                  : `✅ ${t("freeShipping", "Free shipping applied (orders over €60).")}`}
+              </Typography>
+            </Stack>
+          </Box>
 
 
           <Link href="/cart" passHref legacyBehavior>

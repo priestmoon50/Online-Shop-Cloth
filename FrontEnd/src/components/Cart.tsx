@@ -24,8 +24,16 @@ const Cart: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const [discountPercent, setDiscountPercent] = useState(0);
+  const {
+    couponCode,
+    setCouponCode,
+    discountPercent,
+    setDiscountPercent,
+  } = useCart();
+
+  const { manuallyApplied } = useCart();
+
+
   const [validProducts, setValidProducts] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
@@ -89,7 +97,8 @@ const Cart: React.FC = () => {
       if (data.valid) {
         setDiscountPercent(data.percentage);
         setError(null);
-      } else {
+      }
+      else {
         setDiscountPercent(0);
         setError(data.error || t("invalidDiscountCode"));
 
@@ -114,7 +123,10 @@ const Cart: React.FC = () => {
     return total + itemTotal;
   }, 0);
 
-  const discountedAmount = totalAmount * (1 - discountPercent / 100);
+  const discountedAmount = manuallyApplied
+    ? totalAmount * (1 - discountPercent / 100)
+    : totalAmount;
+
   const shippingFee = discountedAmount < 60 ? 3.99 : 0;
 
 
@@ -185,26 +197,41 @@ const Cart: React.FC = () => {
                     <Typography fontWeight={600} fontSize="1.1rem" color="text.primary" mb={1}>
                       {item.name}
                     </Typography>
-
                     <Typography fontWeight="bold" color="text.secondary" mb={1}>
-                      {typeof item.discountPrice === "number" &&
-                        item.discountPrice > 0 &&
-                        item.discountPrice < item.price ? (
+                      {discountPercent > 0 ? (
                         <>
                           <span style={{ textDecoration: "line-through", marginRight: 8 }}>
-                            €{Number(item.price || 0).toFixed(2)}
-
+                            €
+                            {(Number(item.discountPrice) && Number(item.discountPrice) < Number(item.price)
+                              ? Number(item.discountPrice)
+                              : Number(item.price)
+                            ).toFixed(2)}
+                          </span>
+                          <span style={{ color: "#2e7d32" }}>
+                            €
+                            {(
+                              (Number(item.discountPrice) && Number(item.discountPrice) < Number(item.price)
+                                ? Number(item.discountPrice)
+                                : Number(item.price)) *
+                              (1 - discountPercent / 100)
+                            ).toFixed(2)}
+                          </span>
+                        </>
+                      ) : item.discountPrice && item.discountPrice < item.price ? (
+                        <>
+                          <span style={{ textDecoration: "line-through", marginRight: 8 }}>
+                            €{Number(item.price).toFixed(2)}
                           </span>
                           <span style={{ color: "#d32f2f" }}>
-                            €{Number(item.discountPrice || 0).toFixed(2)}
-
+                            €{Number(item.discountPrice).toFixed(2)}
                           </span>
                         </>
                       ) : (
-                        <>€{Number(item.price || 0).toFixed(2)}</>
-
+                        <>€{Number(item.price).toFixed(2)}</>
                       )}
                     </Typography>
+
+
 
                     {isValid === false && (
                       <>
@@ -292,7 +319,8 @@ const Cart: React.FC = () => {
               <input
                 type="text"
                 placeholder={t("enterDiscountCode")}
-                value={couponCode}
+                value={couponCode ?? ""}
+
                 onChange={(e) => setCouponCode(e.target.value)}
                 style={{
                   flex: 1,
@@ -320,13 +348,11 @@ const Cart: React.FC = () => {
             </Stack>
           </Box>
 
-          {discountPercent > 0 && (
+          {manuallyApplied && discountPercent > 0 && (
             <Typography color="success.main" sx={{ mb: 1 }}>
-              ✅ {discountPercent}% تخفیف اعمال شد!
+              ✅ {discountPercent}% {t("discountApplied")}
             </Typography>
           )}
-
-
 
 
 

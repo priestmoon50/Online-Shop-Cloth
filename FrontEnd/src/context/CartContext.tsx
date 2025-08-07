@@ -24,7 +24,10 @@ interface CartContextProps {
   setCouponCode: (code: string | null) => void;
   discountPercent: number;
   setDiscountPercent: (percent: number) => void;
+  manuallyApplied: boolean;
 }
+
+
 
 // ============ Initial State ============
 const initialState: CartState = {
@@ -60,10 +63,10 @@ const cartReducer = (state: CartState, action: Action): CartState => {
         );
 
         if (variantIndex === -1) {
-       mergedVariants.push({
-  ...incomingVariant,
-stock: incomingVariant.stock ?? 9999,
-});
+          mergedVariants.push({
+            ...incomingVariant,
+            stock: incomingVariant.stock ?? 9999,
+          });
 
         } else {
           const maxAllowed =
@@ -143,27 +146,77 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isMounted, setIsMounted] = useState(false);
   const [couponCode, setCouponCode] = useState<string | null>(null);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [manuallyApplied, setManuallyApplied] = useState(false);
+  const setManualDiscountPercent = (percent: number) => {
+    setManuallyApplied(true);
+    setDiscountPercent(percent);
+  };
+
+  const setManualCouponCode = (code: string | null) => {
+    setManuallyApplied(true);
+    setCouponCode(code);
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const localData = localStorage.getItem('cart');
+      const savedDiscount = localStorage.getItem("discountPercent");
+      const savedCoupon = localStorage.getItem("couponCode");
+
+      let parsed: CartItem[] = [];
+
       if (localData) {
         try {
-          const parsed = JSON.parse(localData);
+          parsed = JSON.parse(localData);
           dispatch({ type: 'SET_ITEMS', payload: parsed });
         } catch (err) {
           console.error('Error parsing cart from localStorage:', err);
         }
       }
+
+      if (parsed.length === 0) {
+        localStorage.removeItem("discountPercent");
+        localStorage.removeItem("couponCode");
+        setDiscountPercent(0);
+        setCouponCode(null);
+        setManuallyApplied(false);
+      } else if (savedDiscount && savedCoupon) {
+        setDiscountPercent(Number(savedDiscount));
+        setCouponCode(savedCoupon);
+        setManuallyApplied(true);
+      }
+
+
       setIsMounted(true);
     }
   }, []);
+
+
 
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem('cart', JSON.stringify(cart.items));
     }
   }, [cart.items, isMounted]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isMounted && manuallyApplied) {
+      localStorage.setItem("discountPercent", discountPercent.toString());
+      localStorage.setItem("couponCode", couponCode ?? "");
+    }
+  }, [discountPercent, couponCode, isMounted, manuallyApplied]);
+
+  useEffect(() => {
+    if (isMounted && cart.items.length === 0) {
+      localStorage.removeItem("discountPercent");
+      localStorage.removeItem("couponCode");
+      setCouponCode(null);
+      setDiscountPercent(0);
+      setManuallyApplied(false);
+    }
+  }, [cart.items, isMounted]);
+
+
 
   const addItem = async (item: CartItem) => {
     try {
@@ -193,11 +246,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
+      // ✅ Reset discount if manually applied
+      if (manuallyApplied) {
+        setDiscountPercent(0);
+        setCouponCode(null);
+        setManuallyApplied(false);
+        localStorage.removeItem("discountPercent");
+        localStorage.removeItem("couponCode");
+      }
+
       dispatch({ type: 'ADD_ITEM', payload: item });
     } catch (err) {
       console.error('Failed to add item:', err);
     }
   };
+
 
   const removeItem = (id: string, size?: string, color?: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { id, size, color } });
@@ -210,7 +273,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
     localStorage.removeItem('cart');
+    localStorage.removeItem('couponCode');
+    localStorage.removeItem('discountPercent');
+    setCouponCode(null);
+    setDiscountPercent(0);
+    setManuallyApplied(false); // ✅ این خط رو اضافه کن
   };
+
+
 
   if (!isMounted) return null;
 
@@ -223,11 +293,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateItem,
         clearCart,
         couponCode,
-        setCouponCode,
+        setCouponCode: setManualCouponCode,
         discountPercent,
-        setDiscountPercent,
+        setDiscountPercent: setManualDiscountPercent,
+        manuallyApplied,
       }}
     >
+
       {children}
     </CartContext.Provider>
   );
