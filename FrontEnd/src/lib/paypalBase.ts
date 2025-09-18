@@ -1,17 +1,19 @@
-export const paypalBase = () =>
-  process.env.PAYPAL_ENV === "live"
-    ? "https://api-m.paypal.com"
-    : "https://api-m.sandbox.paypal.com";
+// src/lib/paypalBase.ts — Force Live only
+const LIVE_BASE = "https://api-m.paypal.com";
+
+export const paypalBase = () => LIVE_BASE;
 
 export async function getAccessToken() {
   const CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
   const SECRET = process.env.PAYPAL_SECRET;
-  if (!CLIENT_ID || !SECRET) throw new Error("Missing PayPal credentials");
 
-  const base = paypalBase();
+  if (!CLIENT_ID || !SECRET) {
+    throw new Error("Missing PayPal live credentials (PAYPAL_CLIENT_ID / PAYPAL_SECRET)");
+  }
+
   const auth = Buffer.from(`${CLIENT_ID}:${SECRET}`).toString("base64");
 
-  const res = await fetch(`${base}/v1/oauth2/token`, {
+  const res = await fetch(`${LIVE_BASE}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${auth}`,
@@ -22,8 +24,9 @@ export async function getAccessToken() {
   });
 
   const data = await res.json();
-  if (!res.ok || !data?.access_token)
-    throw new Error(`PayPal token error: ${JSON.stringify(data)}`);
+  if (!res.ok || !data?.access_token) {
+    throw new Error(`PayPal token error (live): ${JSON.stringify(data)}`);
+  }
 
   return data.access_token as string;
 }

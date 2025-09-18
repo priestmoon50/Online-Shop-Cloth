@@ -56,3 +56,4 @@ export async function sendVerificationEmail({
     throw new Error("Failed to send verification email");
   }
 }
+ 

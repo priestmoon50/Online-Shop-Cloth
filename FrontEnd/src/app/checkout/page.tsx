@@ -186,7 +186,7 @@ const CheckoutPage: React.FC = () => {
 
 
     const rawTotal = calculateRawTotal();
-    const totalPrice = totalPriceWithShipping;
+   const totalPrice = Number(totalPriceWithShipping.toFixed(2));
 
 
 
@@ -207,15 +207,15 @@ const CheckoutPage: React.FC = () => {
     };
 
     try {
-      const saveRes = await fetch("/api/orders/save", {
+      const saveRes = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
-      });
+      }); 
 
       const saveResult = await saveRes.json();
 
-      if (!saveRes.ok || !saveResult.insertedId) {
+     if (!saveRes.ok || !saveResult.orderId) {
         toast.error(t("orderSaveError", "Failed to save order"));
         return;
       }
