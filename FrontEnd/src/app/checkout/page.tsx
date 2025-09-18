@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -14,7 +14,6 @@ import {
   Container,
   TextField,
   InputAdornment,
-  CircularProgress,
 } from "@mui/material";
 import {
   Person as PersonIcon,
@@ -36,7 +35,19 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { Stack } from "@mui/material";
 
-/* --------------------------------- Types --------------------------------- */
+const validationSchema = yup.object().shape({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phone: yup.string().required("Phone is required"),
+  address: yup.string().required("Address is required"),
+  postalCode: yup
+    .string()
+    .required("Postal code is required")
+    .matches(/^[0-9]{4,10}$/, "Invalid postal code"),
+  street: yup.string().required("Street is required"),
+});
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -47,49 +58,11 @@ interface FormData {
   postalCode: string;
 }
 
-/* ------------------------------- Validators ------------------------------- */
-const validationSchema: yup.ObjectSchema<FormData> = yup
-  .object({
-    firstName: yup.string().required("First name is required"),
-    lastName: yup.string().required("Last name is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    phone: yup.string().required("Phone is required"),
-    address: yup.string().required("Address is required"),
-    postalCode: yup
-      .string()
-      .required("Postal code is required")
-      .matches(/^[0-9]{4,10}$/, "Invalid postal code"),
-    street: yup.string().required("Street is required"),
-  })
-  .required();
-
-/* --------------------------- Safe JSON fetch helper ----------------------- */
-async function safeFetchJSON<T = any>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, init);
-  const ct = res.headers.get("content-type") || "";
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.error("Request failed:", url, res.status, text);
-    throw new Error(text || `HTTP ${res.status}`);
-  }
-  if (!ct.includes("application/json")) {
-    const text = await res.text().catch(() => "");
-    console.error("Non-JSON response:", url, text);
-    throw new Error("Server did not return JSON");
-  }
-  return res.json();
-}
-
-/* -------------------------------- Component ------------------------------- */
 const CheckoutPage: React.FC = () => {
-  const router = useRouter();
-  const { t } = useTranslation();
-
   const { cart, discountPercent, couponCode } = useCart();
+  const router = useRouter();
   const { token, isAuthenticated, ready } = useAuth();
-
-  const [submitting, setSubmitting] = useState(false);
-  const [prefillLoading, setPrefillLoading] = useState(false);
+  const { t } = useTranslation();
 
   const {
     handleSubmit,
@@ -98,81 +71,65 @@ const CheckoutPage: React.FC = () => {
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      street: "",
-      address: "",
-      postalCode: "",
-    },
   });
 
-  /* -------------------------- Prefill user information -------------------------- */
   useEffect(() => {
-    let ignore = false;
-    (async () => {
-      if (!ready || !isAuthenticated || !token) return;
-      setPrefillLoading(true);
-      try {
-        const res = await fetch("/api/user/me", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-          cache: "no-store",
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!ignore && data?.user) {
+    if (!ready || !isAuthenticated || !token) return;
+
+    fetch("/api/user/me", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.user) {
           const { firstName, lastName, email, phone } = data.user;
-          if (firstName) setValue("firstName", firstName);
-          if (lastName) setValue("lastName", lastName);
-          if (email) setValue("email", email);
-          if (phone) setValue("phone", phone);
+          setValue("firstName", firstName);
+          setValue("lastName", lastName);
+          setValue("email", email);
+          setValue("phone", phone);
         }
-      } catch {
-        toast.error(t("failedToLoadUser", { defaultValue: "Failed to load user info." }));
-      } finally {
-        setPrefillLoading(false);
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-  }, [ready, isAuthenticated, token, setValue, t]);
+      })
+      .catch(() => toast.error("Failed to load user info."));
+  }, [ready, isAuthenticated, token, setValue]);
 
-  /* ------------------------------ Price helpers ------------------------------ */
-  const calculateRawTotal = useMemo(() => {
-    return cart.items.reduce((acc, item) => {
-      const add = item.variants.reduce((sum, variant) => sum + item.price * variant.quantity, 0);
-      return acc + add;
-    }, 0);
-  }, [cart.items]);
+  const calculateRawTotal = () =>
+    cart.items.reduce(
+      (acc, item) =>
+        acc +
+        item.variants.reduce(
+          (sum, variant) => sum + item.price * variant.quantity,
+          0
+        ),
+      0
+    );
 
-  const calculateDiscountedItemsTotal = useMemo(() => {
-    return cart.items.reduce((acc, item) => {
+  const calculateTotal = () =>
+    cart.items.reduce((acc, item) => {
       const isDiscounted =
         item.discountPrice !== undefined && item.discountPrice < item.price;
-      const basePrice = isDiscounted ? item.discountPrice! : item.price;
-      const add = item.variants.reduce(
-        (sum, variant) => sum + basePrice * variant.quantity,
-        0
+      const basePrice = isDiscounted
+        ? item.discountPrice!
+        : item.price;
+
+      return (
+        acc +
+        item.variants.reduce(
+          (sum, variant) => sum + basePrice * variant.quantity,
+          0
+        )
       );
-      return acc + add;
     }, 0);
-  }, [cart.items]);
 
-  const discountedTotal = useMemo(() => {
-    const val = calculateDiscountedItemsTotal * (1 - discountPercent / 100);
-    return Number(val.toFixed(2));
-  }, [calculateDiscountedItemsTotal, discountPercent]);
 
-  const shippingFee = useMemo(() => (discountedTotal < 60 ? 3.99 : 0), [discountedTotal]);
+  const discountedTotal = calculateTotal() * (1 - discountPercent / 100);
+  const shippingFee = discountedTotal < 60 ? 3.99 : 0;
 
-  const totalPriceWithShipping = useMemo(() => {
-    return Number((discountedTotal + shippingFee).toFixed(2));
-  }, [discountedTotal, shippingFee]);
 
-  /* ---------------------------- Field render helper --------------------------- */
+  const totalPriceWithShipping = Number((discountedTotal + shippingFee).toFixed(2));
+
+
+
   const renderField = (
     name: keyof FormData,
     label: string,
@@ -182,13 +139,14 @@ const CheckoutPage: React.FC = () => {
     <Controller
       name={name}
       control={control}
+      defaultValue=""
       render={({ field }) => (
         <TextField
           {...field}
           fullWidth
           label={label}
           error={!!errors[name]}
-          helperText={(errors[name]?.message as string) || ""}
+          helperText={errors[name]?.message}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">{icon}</InputAdornment>
@@ -200,112 +158,93 @@ const CheckoutPage: React.FC = () => {
     />
   );
 
-  /* --------------------------------- Submit --------------------------------- */
   const handlePlaceOrder = async (data: FormData) => {
     if (cart.items.length === 0) {
-      toast.error(t("emptyCart", { defaultValue: "Your cart is empty!" }));
+      toast.error("Your cart is empty!");
       return;
     }
 
-    setSubmitting(true);
-    try {
-      // Normalize per-variant unit prices with two decimals (client-side snapshot)
-      const itemsWithAdjustedPrices = cart.items.map((item) => {
-        const isDiscounted =
-          item.discountPrice !== undefined && item.discountPrice < item.price;
-        const discountedPrice = isDiscounted ? item.discountPrice! : item.price;
-        const finalUnit = discountedPrice * (1 - discountPercent / 100);
+    const itemsWithAdjustedPrices = cart.items.map((item) => {
+      const isDiscounted =
+        item.discountPrice !== undefined && item.discountPrice < item.price;
 
-        return {
-          ...item,
-          priceBeforeDiscount: Number(item.price.toFixed(2)),
-          variants: item.variants.map((variant) => ({
-            ...variant,
-            price: Number(finalUnit.toFixed(2)),
-          })),
-        };
+      const discountedPrice = isDiscounted
+        ? item.discountPrice!
+        : item.price;
+
+      const finalPrice = discountedPrice * (1 - discountPercent / 100);
+
+      return {
+        ...item,
+        priceBeforeDiscount: item.price,
+        variants: item.variants.map((variant) => ({
+          ...variant,
+          price: finalPrice,
+        })),
+      };
+    });
+
+
+    const rawTotal = calculateRawTotal();
+    const totalPrice = totalPriceWithShipping;
+
+
+
+    const orderData = {
+      name: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      phone: data.phone,
+      street: data.street,
+      discountCode: couponCode,
+      discountPercent,
+      address: data.address,
+      postalCode: data.postalCode,
+      totalPrice,
+      rawTotal,
+      items: itemsWithAdjustedPrices,
+      createdAt: new Date().toISOString(),
+      status: "Pending",
+    };
+
+    try {
+      const saveRes = await fetch("/api/orders/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
       });
 
-      const rawTotal = calculateRawTotal;
-      const totalPrice = totalPriceWithShipping; // number
-      const totalForGateway = totalPriceWithShipping.toFixed(2); // string (PayPal wants string)
+      const saveResult = await saveRes.json();
 
-      const orderData = {
-        name: `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        phone: data.phone,
-        street: data.street,
-        discountCode: couponCode,
-        discountPercent,
-        address: data.address,
-        postalCode: data.postalCode,
-        totalPrice, // number (backend آن را به صورت عدد می‌پذیرد و نرمال می‌کند)
-        rawTotal,
-        items: itemsWithAdjustedPrices,
-        createdAt: new Date().toISOString(),
-        status: "Pending",
-      };
-
-      // 1) Save order
-      const saveResult = await safeFetchJSON<{ insertedId: string; success: boolean }>(
-        "/api/orders/save",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify(orderData),
-        }
-      );
-
-      if (!saveResult?.insertedId) {
-        toast.error(t("orderSaveError", { defaultValue: "Failed to save order" }));
+      if (!saveRes.ok || !saveResult.insertedId) {
+        toast.error(t("orderSaveError", "Failed to save order"));
         return;
       }
 
       localStorage.setItem("orderId", saveResult.insertedId);
       localStorage.setItem("savedOrderData", JSON.stringify(orderData));
 
-      // 2) Create PayPal order (amount as string with 2 decimals)
-      const paypalResult = await safeFetchJSON<{ approvalUrl: string; paypalOrderId?: string }>(
-        "/api/paypal/create-order",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ totalPrice: totalForGateway }),
-        }
-      );
+      const paypalRes = await fetch("/api/paypal/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ totalPrice }),
+      });
 
-      if (!paypalResult?.approvalUrl) {
-        toast.error(t("paypalError", { defaultValue: "Error connecting to payment gateway" }));
+      const paypalResult = await paypalRes.json();
+
+      if (!paypalRes.ok || !paypalResult.approvalUrl) {
+        toast.error(t("paypalError", "Error connecting to payment gateway"));
         return;
       }
 
-      toast.success(t("redirectingToPaypal", { defaultValue: "Redirecting to PayPal..." }));
-      if (paypalResult.paypalOrderId) {
-        localStorage.setItem("paypalOrderId", paypalResult.paypalOrderId);
-      }
-
-      // 3) Redirect to PayPal
+      toast.success(t("redirectingToPaypal", "Redirecting to PayPal..."));
+      localStorage.setItem("paypalOrderId", paypalResult.paypalOrderId);
       router.push(paypalResult.approvalUrl);
-    } catch (error: any) {
-      console.error("Checkout error:", error);
-      toast.error(
-        t("checkoutError", { defaultValue: "Checkout failed" }) +
-          (error?.message ? `: ${error.message}` : "")
-      );
-    } finally {
-      setSubmitting(false);
+    } catch (error) {
+      toast.error(t("checkoutError", "Checkout failed"));
     }
   };
 
-  /* --------------------------------- Render -------------------------------- */
-  if (!ready) {
-    return <p>{t("loadingUser", { defaultValue: "Loading user info..." })}</p>;
-  }
-
-  const readOnly = isAuthenticated && !prefillLoading;
+  if (!ready) return <p>{t("loadingUser", "Loading user info...")}</p>;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -322,18 +261,16 @@ const CheckoutPage: React.FC = () => {
           gutterBottom
         >
           <ShoppingCartCheckoutIcon sx={{ color: "#1976d2", fontSize: 32 }} />
-          {t("checkoutTitle", { defaultValue: "Checkout" })}
+          {t("checkoutTitle", "Checkout")}
         </Typography>
 
         <Typography variant="body1">
           {isAuthenticated
-            ? t("userInfoLoaded", {
-                defaultValue: "Your account information has been loaded.",
-              })
-            : t("enterInfoOrLogin", {
-                defaultValue:
-                  "To complete your purchase, enter your information or log in.",
-              })}
+            ? t("userInfoLoaded", "Your account information has been loaded.")
+            : t(
+              "enterInfoOrLogin",
+              "To complete your purchase, enter your information or log in."
+            )}
         </Typography>
       </Box>
 
@@ -344,54 +281,54 @@ const CheckoutPage: React.FC = () => {
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "firstName",
-                  t("firstName", { defaultValue: "First Name" }),
+                  t("firstName", "First Name"),
                   <PersonIcon sx={{ color: "#1976d2" }} />,
-                  readOnly
+                  isAuthenticated
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "lastName",
-                  t("lastName", { defaultValue: "Last Name" }),
+                  t("lastName", "Last Name"),
                   <PersonIcon sx={{ color: "#1976d2" }} />,
-                  readOnly
+                  isAuthenticated
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "email",
-                  t("email", { defaultValue: "Email" }),
+                  t("email", "Email"),
                   <EmailIcon sx={{ color: "#d81b60" }} />,
-                  readOnly
+                  isAuthenticated
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "phone",
-                  t("phone", { defaultValue: "Phone" }),
+                  t("phone", "Phone"),
                   <PhoneIcon sx={{ color: "#43a047" }} />,
-                  readOnly
+                  isAuthenticated
                 )}
               </Grid>
 
               <Grid item xs={12}>
                 {renderField(
                   "street",
-                  t("street", { defaultValue: "Street" }),
+                  t("street", "Street"),
                   <LocationOnIcon sx={{ color: "#5c6bc0" }} />
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "postalCode",
-                  t("postalCode", { defaultValue: "Postal Code" }),
+                  t("postalCode", "Postal Code"),
                   <LocalPostOfficeIcon sx={{ color: "#fbc02d" }} />
                 )}
               </Grid>
               <Grid item xs={12}>
                 {renderField(
                   "address",
-                  t("address", { defaultValue: "Address" }),
+                  t("address", "Address"),
                   <HomeIcon sx={{ color: "#6d4c41" }} />
                 )}
               </Grid>
@@ -401,7 +338,6 @@ const CheckoutPage: React.FC = () => {
               variant="contained"
               type="submit"
               fullWidth
-              disabled={submitting || prefillLoading || cart.items.length === 0}
               sx={{
                 mt: 3,
                 backgroundColor: "#ffc439",
@@ -409,15 +345,12 @@ const CheckoutPage: React.FC = () => {
                 fontWeight: "bold",
                 fontSize: "16px",
                 py: 1.5,
-                "&:hover": { backgroundColor: "#ffb347" },
+                "&:hover": {
+                  backgroundColor: "#ffb347",
+                },
               }}
-              startIcon={
-                submitting ? <CircularProgress size={20} color="inherit" /> : undefined
-              }
             >
-              {submitting
-                ? t("processing", { defaultValue: "Processing..." })
-                : t("payWithPaypal", { defaultValue: "PAY WITH PAYPAL" })}
+              {t("payWithPaypal", "PAY WITH PAYPAL")}
             </Button>
           </form>
         </Grid>
@@ -437,12 +370,12 @@ const CheckoutPage: React.FC = () => {
             gap={1}
           >
             <ReceiptLongIcon sx={{ color: "#1976d2" }} />
-            {t("orderSummary", { defaultValue: "Order Summary" })}
+            {t("orderSummary", "Order Summary")}
           </Typography>
 
           {cart.items.length === 0 ? (
             <Typography variant="h6">
-              {t("cartEmpty", { defaultValue: "Your cart is currently empty." })}
+              {t("cartEmpty", "Your cart is currently empty.")}
             </Typography>
           ) : (
             <List>
@@ -462,26 +395,18 @@ const CheckoutPage: React.FC = () => {
                     variant="rounded"
                     sx={{ width: 64, height: 64 }}
                   />
-                  <Box ml={1}>
-                    {item.variants.map((variant, idx) => {
-                      const base = (item.discountPrice !== undefined &&
-                        item.discountPrice < item.price)
-                        ? item.discountPrice!
-                        : item.price;
-                      const unit = Number((base * (1 - discountPercent / 100)).toFixed(2));
-                      return (
-                        <Box key={`${item.id}-${idx}`} mb={0.5}>
-                          <Typography variant="body2" color="text.secondary">
-                            €{unit.toFixed(2)} × {variant.quantity}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {t("size", { defaultValue: "Size" })}: {variant.size || "N/A"} |{" "}
-                            {t("color", { defaultValue: "Color" })}: {variant.color || "N/A"}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
-                  </Box>
+                  {item.variants.map((variant, idx) => (
+                    <Box key={idx} ml={1}>
+                      <Typography variant="body2" color="text.secondary">
+                        €{((item.discountPrice !== undefined && item.discountPrice < item.price ? item.discountPrice : item.price) * (1 - discountPercent / 100)).toFixed(2)} × {variant.quantity}
+                      </Typography>
+
+                      <Typography variant="body2" color="text.secondary">
+                        {t("size", "Size")}: {variant.size || "N/A"} |{" "}
+                        {t("color", "Color")}: {variant.color || "N/A"}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
               ))}
             </List>
@@ -499,12 +424,12 @@ const CheckoutPage: React.FC = () => {
           >
             <Stack spacing={2}>
               <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{t("itemsTotal", { defaultValue: "Items Total" })}</span>
+                <span>{t("itemsTotal", "Items Total")}</span>
                 <span>€{discountedTotal.toFixed(2)}</span>
               </Typography>
 
               <Typography variant="h6" sx={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{t("shipping", { defaultValue: "Shipping" })}</span>
+                <span>{t("shipping", "Shipping")}</span>
                 <span>€{shippingFee.toFixed(2)}</span>
               </Typography>
 
@@ -520,7 +445,7 @@ const CheckoutPage: React.FC = () => {
                   color: "#1976d2",
                 }}
               >
-                <span>{t("total", { defaultValue: "Total" })}</span>
+                <span>{t("total", "Total")}</span>
                 <span>€{totalPriceWithShipping.toFixed(2)}</span>
               </Typography>
 
@@ -533,17 +458,21 @@ const CheckoutPage: React.FC = () => {
                 }}
               >
                 {discountedTotal < 60
-                  ? `+ €3.99 ${t("addedShippingCost", { defaultValue: "shipping cost added" })}`
-                  : `✅ ${t("freeShipping", {
-                      defaultValue: "Free shipping applied (orders over €60).",
-                    })}`}
+                  ? `+ €3.99 ${t("addedShippingCost", "shipping cost added")}`
+                  : `✅ ${t("freeShipping", "Free shipping applied (orders over €60).")}`}
               </Typography>
             </Stack>
           </Box>
 
+
           <Link href="/cart" passHref legacyBehavior>
-            <Button variant="outlined" color="secondary" sx={{ mt: 2 }} fullWidth>
-              {t("backToCart", { defaultValue: "Back to Cart" })}
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{ mt: 2 }}
+              fullWidth
+            >
+              {t("backToCart", "Back to Cart")}
             </Button>
           </Link>
         </Grid>
