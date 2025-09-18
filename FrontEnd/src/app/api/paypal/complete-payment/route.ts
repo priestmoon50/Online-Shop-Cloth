@@ -1,81 +1,43 @@
 // 📁 src/app/api/paypal/complete-payment/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { getAccessToken, paypalBase } from "../../../../lib/paypalBase";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
     const { orderId } = await req.json();
-
     if (!orderId) {
-      console.error("❌ Missing orderId in request body");
       return NextResponse.json({ error: "Missing orderId" }, { status: 400 });
     }
 
-    const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
-    const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
+    const accessToken = await getAccessToken();
+    const base = paypalBase();
 
-    if (!PAYPAL_CLIENT_ID || !PAYPAL_SECRET) {
-      console.error("❌ Missing PayPal credentials");
-      return NextResponse.json({ error: "Missing PayPal credentials" }, { status: 500 });
-    }
-
-    const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString("base64");
-
-    const tokenRes = await fetch("https://api-m.paypal.com/v1/oauth2/token", {
-
+    const captureRes = await fetch(`${base}/v2/checkout/orders/${orderId}/capture`, {
       method: "POST",
       headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
-      body: "grant_type=client_credentials",
     });
 
-    const tokenData = await tokenRes.json();
-    const accessToken = tokenData.access_token;
-
-    if (!accessToken) {
-      console.error("❌ Failed to get access token:", tokenData);
-      return NextResponse.json({ error: "Access token fetch failed" }, { status: 500 });
-    }
-
-  const captureRes = await fetch(
-  `https://api-m.paypal.com/v2/checkout/orders/${orderId}/capture`,
-
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log("🔴 PayPal capture response status:", captureRes.status);
-    console.log("🔴 PayPal capture response headers:", JSON.stringify(captureRes.headers));
-
-    const captureText = await captureRes.text();
-    console.log("📦 PayPal Capture Response Raw:", captureText);
-
-    let captureData;
+    const text = await captureRes.text();
+    let data: any;
     try {
-      captureData = JSON.parse(captureText);
-    } catch (err) {
-      console.error("❌ Failed to parse PayPal capture response:", err);
-      return NextResponse.json({ error: "Invalid capture response", raw: captureText }, { status: 500 });
+      data = JSON.parse(text);
+    } catch {
+      return NextResponse.json({ error: "Invalid capture response", raw: text }, { status: 500 });
     }
 
     if (!captureRes.ok) {
-      console.error("❌ Capture failed:", JSON.stringify(captureData, null, 2));
-      return NextResponse.json({ error: "Capture failed", details: captureData }, { status: 500 });
+      console.error("❌ Capture failed:", JSON.stringify(data, null, 2));
+      return NextResponse.json({ error: "Capture failed", details: data }, { status: 500 });
     }
 
-    console.log("✅ Payment captured successfully:", captureData);
-
-    return NextResponse.json({ success: true, data: captureData });
+    return NextResponse.json({ success: true, data });
   } catch (err: any) {
-    console.error("❌ Unexpected server error:", err.message || err);
+    console.error("🔥 complete-payment error:", err?.message || err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

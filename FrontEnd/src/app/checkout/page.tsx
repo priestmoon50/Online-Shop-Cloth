@@ -220,7 +220,7 @@ const CheckoutPage: React.FC = () => {
         return;
       }
 
-      localStorage.setItem("orderId", saveResult.insertedId);
+      localStorage.setItem("orderId", saveResult.orderId);
       localStorage.setItem("savedOrderData", JSON.stringify(orderData));
 
       const paypalRes = await fetch("/api/paypal/create-order", {
