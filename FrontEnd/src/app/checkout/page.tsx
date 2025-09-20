@@ -47,6 +47,14 @@ interface FormData {
   postalCode: string;
 }
 
+
+
+const toNum = (v: unknown): number => {
+  const n = typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
+  return Number.isFinite(n) ? n : 0;
+};
+
+
 /* ------------------------------- Validators ------------------------------- */
 const validationSchema: yup.ObjectSchema<FormData> = yup
   .object({
@@ -143,18 +151,22 @@ const CheckoutPage: React.FC = () => {
   /* ------------------------------ Price helpers ------------------------------ */
   const calculateRawTotal = useMemo(() => {
     return cart.items.reduce((acc, item) => {
-      const add = item.variants.reduce((sum, variant) => sum + item.price * variant.quantity, 0);
+      const price = toNum(item.price);
+      const add = item.variants.reduce(
+        (sum, variant) => sum + price * Number(variant.quantity || 0),
+        0
+      );
       return acc + add;
     }, 0);
   }, [cart.items]);
 
   const calculateDiscountedItemsTotal = useMemo(() => {
     return cart.items.reduce((acc, item) => {
-      const isDiscounted =
-        item.discountPrice !== undefined && item.discountPrice < item.price;
-      const basePrice = isDiscounted ? item.discountPrice! : item.price;
+      const price = toNum(item.price);
+      const discount = item.discountPrice != null ? toNum(item.discountPrice) : undefined;
+      const basePrice = discount !== undefined && discount < price ? discount : price;
       const add = item.variants.reduce(
-        (sum, variant) => sum + basePrice * variant.quantity,
+        (sum, variant) => sum + basePrice * Number(variant.quantity || 0),
         0
       );
       return acc + add;
@@ -211,20 +223,22 @@ const CheckoutPage: React.FC = () => {
     try {
       // Normalize per-variant unit prices with two decimals (client-side snapshot)
       const itemsWithAdjustedPrices = cart.items.map((item) => {
-        const isDiscounted =
-          item.discountPrice !== undefined && item.discountPrice < item.price;
-        const discountedPrice = isDiscounted ? item.discountPrice! : item.price;
-        const finalUnit = discountedPrice * (1 - discountPercent / 100);
+        const price = toNum(item.price);
+        const discount = item.discountPrice != null ? toNum(item.discountPrice) : undefined;
+        const isDiscounted = discount !== undefined && discount < price;
+        const base = isDiscounted ? discount : price;
+        const finalUnit = base * (1 - discountPercent / 100);
 
         return {
           ...item,
-          priceBeforeDiscount: Number(item.price.toFixed(2)),
+          priceBeforeDiscount: Number(price.toFixed(2)),
           variants: item.variants.map((variant) => ({
             ...variant,
             price: Number(finalUnit.toFixed(2)),
           })),
         };
       });
+
 
       const rawTotal = calculateRawTotal;
       const totalPrice = totalPriceWithShipping; // number
@@ -293,7 +307,7 @@ const CheckoutPage: React.FC = () => {
       console.error("Checkout error:", error);
       toast.error(
         t("checkoutError", { defaultValue: "Checkout failed" }) +
-          (error?.message ? `: ${error.message}` : "")
+        (error?.message ? `: ${error.message}` : "")
       );
     } finally {
       setSubmitting(false);
@@ -328,12 +342,12 @@ const CheckoutPage: React.FC = () => {
         <Typography variant="body1">
           {isAuthenticated
             ? t("userInfoLoaded", {
-                defaultValue: "Your account information has been loaded.",
-              })
+              defaultValue: "Your account information has been loaded.",
+            })
             : t("enterInfoOrLogin", {
-                defaultValue:
-                  "To complete your purchase, enter your information or log in.",
-              })}
+              defaultValue:
+                "To complete your purchase, enter your information or log in.",
+            })}
         </Typography>
       </Box>
 
@@ -464,11 +478,12 @@ const CheckoutPage: React.FC = () => {
                   />
                   <Box ml={1}>
                     {item.variants.map((variant, idx) => {
-                      const base = (item.discountPrice !== undefined &&
-                        item.discountPrice < item.price)
-                        ? item.discountPrice!
-                        : item.price;
+                      const base = (item.discountPrice !== undefined && toNum(item.discountPrice) < toNum(item.price))
+                        ? toNum(item.discountPrice)
+                        : toNum(item.price);
+
                       const unit = Number((base * (1 - discountPercent / 100)).toFixed(2));
+
                       return (
                         <Box key={`${item.id}-${idx}`} mb={0.5}>
                           <Typography variant="body2" color="text.secondary">
@@ -535,8 +550,8 @@ const CheckoutPage: React.FC = () => {
                 {discountedTotal < 60
                   ? `+ €3.99 ${t("addedShippingCost", { defaultValue: "shipping cost added" })}`
                   : `✅ ${t("freeShipping", {
-                      defaultValue: "Free shipping applied (orders over €60).",
-                    })}`}
+                    defaultValue: "Free shipping applied (orders over €60).",
+                  })}`}
               </Typography>
             </Stack>
           </Box>
