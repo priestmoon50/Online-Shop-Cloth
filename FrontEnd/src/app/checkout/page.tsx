@@ -22,6 +22,7 @@ import {
   Phone as PhoneIcon,
   Home as HomeIcon,
   LocationOn as LocationOnIcon,
+  Numbers as NumbersIcon,
   LocalPostOffice as LocalPostOfficeIcon,
   ShoppingCartCheckout as ShoppingCartCheckoutIcon,
   ReceiptLong as ReceiptLongIcon,
@@ -43,6 +44,7 @@ interface FormData {
   email: string;
   phone: string;
   street: string;
+  houseNumber: string;
   address: string;
   postalCode: string;
 }
@@ -56,20 +58,21 @@ const toNum = (v: unknown): number => {
 
 
 /* ------------------------------- Validators ------------------------------- */
-const validationSchema: yup.ObjectSchema<FormData> = yup
-  .object({
-    firstName: yup.string().required("First name is required"),
-    lastName: yup.string().required("Last name is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    phone: yup.string().required("Phone is required"),
-    address: yup.string().required("Address is required"),
-    postalCode: yup
-      .string()
-      .required("Postal code is required")
-      .matches(/^[0-9]{4,10}$/, "Invalid postal code"),
-    street: yup.string().required("Street is required"),
-  })
-  .required();
+const validationSchema: yup.ObjectSchema<FormData> = yup.object({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phone: yup.string().required("Phone is required"),
+  address: yup.string().required("Address is required"),
+  postalCode: yup.string().required("Postal code is required").matches(/^[0-9]{4,10}$/, "Invalid postal code"),
+  street: yup.string().required("Street is required"),
+  houseNumber: yup
+    .string()
+    .required("House number is required")
+    // آلمان معمولاً حروف هم دارد (مثل 12a)، پس فقط فاصله‌های ابتدا/انتها را حذف می‌کنیم
+    .transform(v => (v ?? "").toString().trim()),
+}).required();
+
 
 /* --------------------------- Safe JSON fetch helper ----------------------- */
 async function safeFetchJSON<T = any>(url: string, init?: RequestInit): Promise<T> {
@@ -112,6 +115,7 @@ const CheckoutPage: React.FC = () => {
       email: "",
       phone: "",
       street: "",
+      houseNumber: "",
       address: "",
       postalCode: "",
     },
@@ -248,17 +252,24 @@ const CheckoutPage: React.FC = () => {
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
         phone: data.phone,
-        street: data.street,
+
+   
+        street: `${data.street} ${data.houseNumber}`.trim(),
+
+        streetName: data.street,
+        houseNumber: data.houseNumber,
+
         discountCode: couponCode,
         discountPercent,
         address: data.address,
         postalCode: data.postalCode,
-        totalPrice, // number (backend آن را به صورت عدد می‌پذیرد و نرمال می‌کند)
+        totalPrice,
         rawTotal,
         items: itemsWithAdjustedPrices,
         createdAt: new Date().toISOString(),
         status: "Pending",
       };
+
 
       // 1) Save order
       const saveResult = await safeFetchJSON<{ insertedId: string; success: boolean }>(
@@ -388,13 +399,22 @@ const CheckoutPage: React.FC = () => {
                 )}
               </Grid>
 
-              <Grid item xs={12}>
+
+              <Grid item xs={12} sm={9}>
                 {renderField(
                   "street",
                   t("street", { defaultValue: "Street" }),
                   <LocationOnIcon sx={{ color: "#5c6bc0" }} />
                 )}
               </Grid>
+              <Grid item xs={12} sm={3}>
+                {renderField(
+                  "houseNumber",
+                  t("houseNumber", { defaultValue: "Nr." }),
+                  <NumbersIcon sx={{ color: "#5c6bc0" }} />
+                )}
+              </Grid>
+
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "postalCode",

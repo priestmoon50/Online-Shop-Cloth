@@ -93,7 +93,7 @@
   "shippingFee": "Versandkosten: €{{value}} (gilt für Bestellungen unter 60 €)",
   "freeShipping": "Kostenloser Versand angewendet (für Bestellungen über 60 €).",
   "normalShipping": "Standardversandkosten: €3.99",
-  "address": "Adresse",
+  "address": "Stadt",
   "payment": "Zahlung",
   "itemsTotal": "Artikelgesamtbetrag",
   "shipping": "Versand",
