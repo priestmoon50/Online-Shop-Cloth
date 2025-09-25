@@ -253,7 +253,7 @@ const CheckoutPage: React.FC = () => {
         email: data.email,
         phone: data.phone,
 
-   
+
         street: `${data.street} ${data.houseNumber}`.trim(),
 
         streetName: data.street,
@@ -408,12 +408,21 @@ const CheckoutPage: React.FC = () => {
                 )}
               </Grid>
               <Grid item xs={12} sm={3}>
-                {renderField(
-                  "houseNumber",
-                  t("houseNumber", { defaultValue: "Nr." }),
-                  <NumbersIcon sx={{ color: "#5c6bc0" }} />
-                )}
+                <Controller
+                  name="houseNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={t("houseNumber", { defaultValue: "Number" })}
+                      error={!!errors.houseNumber}
+                      helperText={(errors.houseNumber?.message as string) || ""}
+                    />
+                  )}
+                />
               </Grid>
+
 
               <Grid item xs={12} sm={6}>
                 {renderField(
