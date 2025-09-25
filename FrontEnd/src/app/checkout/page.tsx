@@ -415,7 +415,7 @@ const CheckoutPage: React.FC = () => {
                     <TextField
                       {...field}
                       fullWidth
-                      label={t("houseNumber", { defaultValue: "Number" })}
+                      label={t("houseNumber", { defaultValue: "Nummer" })}
                       error={!!errors.houseNumber}
                       helperText={(errors.houseNumber?.message as string) || ""}
                     />
