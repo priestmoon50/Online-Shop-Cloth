@@ -124,7 +124,7 @@ const AccountMenu: React.FC = () => {
             {t("support")}
           </MenuItem>
         </Link>
-
+ 
         <Link href="/products" passHref>
           <MenuItem onClick={handleClose} className={styles.menuItemHover}>
             <ShoppingBag sx={{ mr: 1 }} />

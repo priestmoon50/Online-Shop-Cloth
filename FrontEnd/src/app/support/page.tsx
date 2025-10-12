@@ -23,7 +23,7 @@ export default function SupportPage() {
       <div
         className={`${styles.navbar} ${isMobile && active ? styles.active : ""}`}
         onClick={handleClick}
-      >
+      > 
         Click
         <ul className={styles.menu}>
           <li><a href="#"><Facebook style={{ color: "#1877F2" }} fontSize="large" /></a></li>

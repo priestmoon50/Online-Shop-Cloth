@@ -83,7 +83,7 @@ const Footer: React.FC = () => {
                 { label: 'Versand', path: '/versand' },
                 { label: 'Cookies Richtlinie', path: '/rueckgabe-umtausch' },
                 { label: 'Rückgabe & Umtausch', path: '/rueckgabe-umtausch2' },
-
+ 
               ].map(({ label, path }) => (
                 <Typography key={label} variant="body2">
                   <Link href={path} color="inherit" underline="hover">
