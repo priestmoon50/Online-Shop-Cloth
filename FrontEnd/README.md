@@ -1,3 +1,13 @@
+tree src /F
+
+
+
+
+
+
+
+
+
 # Online Shop - Clothing and General Products
 
 This project is a fully responsive online shop built to support selling clothing items but can be adapted for any product. Designed with an intuitive user interface and powerful backend, it provides a seamless shopping experience for users and robust management capabilities for admins.

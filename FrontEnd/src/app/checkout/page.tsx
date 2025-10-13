@@ -15,6 +15,7 @@ import {
   TextField,
   InputAdornment,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import {
   Person as PersonIcon,
@@ -22,7 +23,6 @@ import {
   Phone as PhoneIcon,
   Home as HomeIcon,
   LocationOn as LocationOnIcon,
-  Numbers as NumbersIcon,
   LocalPostOffice as LocalPostOfficeIcon,
   ShoppingCartCheckout as ShoppingCartCheckoutIcon,
   ReceiptLong as ReceiptLongIcon,
@@ -35,7 +35,6 @@ import { useTranslation } from "react-i18next";
 
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { Stack } from "@mui/material";
 
 /* --------------------------------- Types --------------------------------- */
 interface FormData {
@@ -49,30 +48,31 @@ interface FormData {
   postalCode: string;
 }
 
-
-
 const toNum = (v: unknown): number => {
   const n = typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
   return Number.isFinite(n) ? n : 0;
 };
 
-
 /* ------------------------------- Validators ------------------------------- */
-const validationSchema: yup.ObjectSchema<FormData> = yup.object({
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  phone: yup.string().required("Phone is required"),
-  address: yup.string().required("Address is required"),
-  postalCode: yup.string().required("Postal code is required").matches(/^[0-9]{4,10}$/, "Invalid postal code"),
-  street: yup.string().required("Street is required"),
-  houseNumber: yup
-    .string()
-    .required("House number is required")
-    // آلمان معمولاً حروف هم دارد (مثل 12a)، پس فقط فاصله‌های ابتدا/انتها را حذف می‌کنیم
-    .transform(v => (v ?? "").toString().trim()),
-}).required();
-
+// NL: 1234 AB  — علاوه بر الگوی عددی 5 تا 10 رقمی برای بقیه
+const validationSchema: yup.ObjectSchema<FormData> = yup
+  .object({
+    firstName: yup.string().required("First name is required"),
+    lastName: yup.string().required("Last name is required"),
+    email: yup.string().email("Invalid email").required("Email is required"),
+    phone: yup.string().required("Phone is required"),
+    address: yup.string().required("Address is required"),
+    postalCode: yup
+      .string()
+      .required("Postal code is required")
+      .matches(/^[0-9]{4}\s?[A-Za-z]{2}$|^[0-9]{5,10}$/, "Invalid postal code"),
+    street: yup.string().required("Street is required"),
+    houseNumber: yup
+      .string()
+      .required("House number is required")
+      .transform((v) => (v ?? "").toString().trim()),
+  })
+  .required();
 
 /* --------------------------- Safe JSON fetch helper ----------------------- */
 async function safeFetchJSON<T = any>(url: string, init?: RequestInit): Promise<T> {
@@ -206,9 +206,7 @@ const CheckoutPage: React.FC = () => {
           error={!!errors[name]}
           helperText={(errors[name]?.message as string) || ""}
           InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">{icon}</InputAdornment>
-            ),
+            startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
             readOnly,
           }}
         />
@@ -225,7 +223,7 @@ const CheckoutPage: React.FC = () => {
 
     setSubmitting(true);
     try {
-      // Normalize per-variant unit prices with two decimals (client-side snapshot)
+      // 1) Snapshot قیمت‌های واحد هر واریانت با دو رقم اعشار
       const itemsWithAdjustedPrices = cart.items.map((item) => {
         const price = toNum(item.price);
         const discount = item.discountPrice != null ? toNum(item.discountPrice) : undefined;
@@ -243,19 +241,17 @@ const CheckoutPage: React.FC = () => {
         };
       });
 
-
       const rawTotal = calculateRawTotal;
       const totalPrice = totalPriceWithShipping; // number
       const totalForGateway = totalPriceWithShipping.toFixed(2); // string (PayPal wants string)
 
+      // 2) ذخیره سفارش (Pending)
       const orderData = {
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
         phone: data.phone,
 
-
         street: `${data.street} ${data.houseNumber}`.trim(),
-
         streetName: data.street,
         houseNumber: data.houseNumber,
 
@@ -270,8 +266,6 @@ const CheckoutPage: React.FC = () => {
         status: "Pending",
       };
 
-
-      // 1) Save order
       const saveResult = await safeFetchJSON<{ insertedId: string; success: boolean }>(
         "/api/orders/save",
         {
@@ -292,27 +286,45 @@ const CheckoutPage: React.FC = () => {
       localStorage.setItem("orderId", saveResult.insertedId);
       localStorage.setItem("savedOrderData", JSON.stringify(orderData));
 
-      // 2) Create PayPal order (amount as string with 2 decimals)
-      const paypalResult = await safeFetchJSON<{ approvalUrl: string; paypalOrderId?: string }>(
-        "/api/paypal/create-order",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ totalPrice: totalForGateway }),
-        }
+      // 3) آماده‌سازی آیتم‌ها برای PayPal (LIVE-safe)
+      const paypalItems = itemsWithAdjustedPrices.flatMap((i) =>
+        i.variants.map((v) => ({
+          name: i.name ?? i.id, // ✅ به‌جای title از name استفاده کن
+          unit_amount: Number(v.price).toFixed(2),
+          quantity: Number(v.quantity || 0),
+        }))
       );
+
+
+      // 4) ساخت سفارش PayPal با مبلغ/ارز/هزینه ارسال/آیتم‌ها
+      const paypalResult = await safeFetchJSON<{
+        approvalUrl: string;
+        paypalOrderId?: string;
+      }>("/api/paypal/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalForGateway,
+          currency: "EUR",
+          shipping: shippingFee.toFixed(2),
+          items: paypalItems,
+          returnPath: "/confirmation",
+          cancelPath: "/checkout",
+        }),
+      });
 
       if (!paypalResult?.approvalUrl) {
         toast.error(t("paypalError", { defaultValue: "Error connecting to payment gateway" }));
         return;
       }
 
-      toast.success(t("redirectingToPaypal", { defaultValue: "Redirecting to PayPal..." }));
       if (paypalResult.paypalOrderId) {
         localStorage.setItem("paypalOrderId", paypalResult.paypalOrderId);
       }
 
-      // 3) Redirect to PayPal
+      toast.success(t("redirectingToPaypal", { defaultValue: "Redirecting to PayPal..." }));
+
+      // 5) هدایت به PayPal
       router.push(paypalResult.approvalUrl);
     } catch (error: any) {
       console.error("Checkout error:", error);
@@ -399,7 +411,6 @@ const CheckoutPage: React.FC = () => {
                 )}
               </Grid>
 
-
               <Grid item xs={12} sm={9}>
                 {renderField(
                   "street",
@@ -423,7 +434,6 @@ const CheckoutPage: React.FC = () => {
                 />
               </Grid>
 
-
               <Grid item xs={12} sm={6}>
                 {renderField(
                   "postalCode",
@@ -432,11 +442,7 @@ const CheckoutPage: React.FC = () => {
                 )}
               </Grid>
               <Grid item xs={12}>
-                {renderField(
-                  "address",
-                  t("address", { defaultValue: "Address" }),
-                  <HomeIcon sx={{ color: "#6d4c41" }} />
-                )}
+                {renderField("address", t("address", { defaultValue: "Address" }), <HomeIcon sx={{ color: "#6d4c41" }} />)}
               </Grid>
             </Grid>
 
@@ -454,9 +460,7 @@ const CheckoutPage: React.FC = () => {
                 py: 1.5,
                 "&:hover": { backgroundColor: "#ffb347" },
               }}
-              startIcon={
-                submitting ? <CircularProgress size={20} color="inherit" /> : undefined
-              }
+              startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : undefined}
             >
               {submitting
                 ? t("processing", { defaultValue: "Processing..." })
@@ -465,20 +469,10 @@ const CheckoutPage: React.FC = () => {
           </form>
         </Grid>
 
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ display: { xs: "none", md: "block" }, mx: 2 }}
-        />
+        <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" }, mx: 2 }} />
 
         <Grid item xs={12} md={4}>
-          <Typography
-            variant="h5"
-            gutterBottom
-            display="flex"
-            alignItems="center"
-            gap={1}
-          >
+          <Typography variant="h5" gutterBottom display="flex" alignItems="center" gap={1}>
             <ReceiptLongIcon sx={{ color: "#1976d2" }} />
             {t("orderSummary", { defaultValue: "Order Summary" })}
           </Typography>
@@ -500,16 +494,13 @@ const CheckoutPage: React.FC = () => {
                   borderRadius="8px"
                   bgcolor="#fafafa"
                 >
-                  <Avatar
-                    src={item.image || "/placeholder.jpg"}
-                    variant="rounded"
-                    sx={{ width: 64, height: 64 }}
-                  />
+                  <Avatar src={item.image || "/placeholder.jpg"} variant="rounded" sx={{ width: 64, height: 64 }} />
                   <Box ml={1}>
                     {item.variants.map((variant, idx) => {
-                      const base = (item.discountPrice !== undefined && toNum(item.discountPrice) < toNum(item.price))
-                        ? toNum(item.discountPrice)
-                        : toNum(item.price);
+                      const base =
+                        item.discountPrice !== undefined && toNum(item.discountPrice) < toNum(item.price)
+                          ? toNum(item.discountPrice)
+                          : toNum(item.price);
 
                       const unit = Number((base * (1 - discountPercent / 100)).toFixed(2));
 
@@ -556,13 +547,7 @@ const CheckoutPage: React.FC = () => {
 
               <Typography
                 variant="h5"
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontWeight: "bold",
-                  mt: 1,
-                  color: "#1976d2",
-                }}
+                sx={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", mt: 1, color: "#1976d2" }}
               >
                 <span>{t("total", { defaultValue: "Total" })}</span>
                 <span>€{totalPriceWithShipping.toFixed(2)}</span>
@@ -578,9 +563,7 @@ const CheckoutPage: React.FC = () => {
               >
                 {discountedTotal < 60
                   ? `+ €3.99 ${t("addedShippingCost", { defaultValue: "shipping cost added" })}`
-                  : `✅ ${t("freeShipping", {
-                    defaultValue: "Free shipping applied (orders over €60).",
-                  })}`}
+                  : `✅ ${t("freeShipping", { defaultValue: "Free shipping applied (orders over €60)." })}`}
               </Typography>
             </Stack>
           </Box>
