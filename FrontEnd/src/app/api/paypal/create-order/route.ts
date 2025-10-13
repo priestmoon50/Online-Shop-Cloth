@@ -3,35 +3,66 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-// ===== Required ENV =====
-// PAYPAL_CLIENT_ID= live client id
-// PAYPAL_SECRET=     live client secret
-// PAYPAL_BASE=       https://api-m.paypal.com     (لایو)
-// BASE_URL=          https://your-domain.com      (بدون / آخر)
-// NEXT_PUBLIC_BRAND_NAME= Avenjor (اختیاری)
+// ===== ENV (Live) =====
+// PAYPAL_CLIENT_ID = ...
+// PAYPAL_SECRET    = ...
+// BASE_URL         = https://your-domain.com   (بدون اسلش آخر)
+// (اختیاری) PAYPAL_BASE = https://api-m.paypal.com  ← اگر ست نباشد، پیش‌فرض همین است
+// (اختیاری) NEXT_PUBLIC_BRAND_NAME = Avenjor
 
 const CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const CLIENT_SECRET = process.env.PAYPAL_SECRET;
-const PAYPAL_BASE = process.env.PAYPAL_BASE;
+const PAYPAL_BASE = process.env.PAYPAL_BASE || "https://api-m.paypal.com"; // ✅ default live
 const BASE_URL = process.env.BASE_URL;
 const BRAND_NAME = process.env.NEXT_PUBLIC_BRAND_NAME || "Avenjor";
 
+// ---------- Types ----------
+type IncomingItem = {
+  name?: string;
+  unit_amount?: number | string;
+  quantity?: number | string;
+};
+
+type CreateOrderBody =
+  | {
+      // سبک جدید
+      amount?: number | string;
+      currency?: string;
+      items?: IncomingItem[];
+      shipping?: number | string;
+      returnPath?: string;
+      cancelPath?: string;
+      totalPrice?: never; // جلوگیری از تداخل
+    }
+  | {
+      // سازگاری با کد قدیمی
+      totalPrice: number | string;
+      amount?: never;
+      currency?: string;
+      items?: IncomingItem[];
+      shipping?: number | string;
+      returnPath?: string;
+      cancelPath?: string;
+    };
+
+// ---------- Helpers ----------
+function toNumberSafe(v: unknown, fallback = 0): number {
+  if (typeof v === "number") return Number.isFinite(v) ? v : fallback;
+  const parsed = parseFloat(String(v ?? "").replace(",", "."));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function asMoney(v: unknown): string {
-  const n =
-    typeof v === "number"
-      ? v
-      : parseFloat(String(v ?? "").replace(",", "."));
-  const safe = Number.isFinite(n) && n > 0 ? n : 0;
+  const n = toNumberSafe(v, 0);
+  const safe = n > 0 ? n : 0;
   return safe.toFixed(2);
 }
 
-async function getAccessToken() {
+async function getAccessToken(): Promise<string> {
   if (!CLIENT_ID || !CLIENT_SECRET) {
     throw new Error("Missing PayPal credentials (PAYPAL_CLIENT_ID / PAYPAL_SECRET)");
   }
-  if (!PAYPAL_BASE || !PAYPAL_BASE.includes("api-m.paypal.com")) {
-    throw new Error("PAYPAL_BASE must be set to LIVE endpoint: https://api-m.paypal.com");
-  }
+
   const auth = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64");
   const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
     method: "POST",
@@ -43,6 +74,7 @@ async function getAccessToken() {
     body: "grant_type=client_credentials",
     cache: "no-store" as any,
   });
+
   const data = await res.json().catch(async () => ({ raw: await res.text() }));
   if (!res.ok || !(data as any)?.access_token) {
     console.error("❌ PayPal OAuth error:", data);
@@ -51,9 +83,10 @@ async function getAccessToken() {
   return (data as any).access_token as string;
 }
 
+// ---------- Route ----------
 export async function POST(req: NextRequest) {
   try {
-    // --- Validate BASE_URL (must be https on LIVE)
+    // BASE_URL باید https باشد در لایو
     if (!BASE_URL || !/^https:\/\//i.test(BASE_URL)) {
       return NextResponse.json(
         { error: "Invalid BASE_URL. Set e.g. https://your-domain.com" },
@@ -61,58 +94,64 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Accept both: { totalPrice } (your current client) OR { amount, currency, items, shipping }
-    const body = (await req.json().catch(() => ({}))) || {};
-    const {
-      totalPrice,                   // legacy from your client
-      amount,                       // optional new style
-      currency = "EUR",
-      items = [] as Array<{ name?: string; unit_amount?: number | string; quantity?: number | string }>,
-      shipping = "0.00",
-      returnPath = "/confirmation",
-      cancelPath = "/checkout",
-    } = body;
+    const body = ((await req.json().catch(() => ({}))) || {}) as CreateOrderBody;
 
-    // Determine amount string
-    let amountStr: string | undefined =
-      typeof amount === "number" || typeof amount === "string"
-        ? asMoney(amount)
-        : typeof totalPrice === "number" || typeof totalPrice === "string"
-        ? asMoney(totalPrice)
-        : undefined;
+    const currency = (body as any).currency || "EUR";
+    const returnPath = (body as any).returnPath || "/confirmation";
+    const cancelPath = (body as any).cancelPath || "/checkout";
 
-    if (!amountStr || Number(amountStr) <= 0) {
-      return NextResponse.json({ error: "Missing or invalid amount/totalPrice" }, { status: 400 });
+    // مقدار مبلغ (از amount یا totalPrice)
+    let amountStr: string | undefined;
+    if ("amount" in body && body.amount !== undefined) {
+      amountStr = asMoney(body.amount);
+    } else if ("totalPrice" in body && body.totalPrice !== undefined) {
+      amountStr = asMoney(body.totalPrice);
     }
 
-    // Optional: normalize items for breakdown (if provided)
+    if (!amountStr || Number(amountStr) <= 0) {
+      return NextResponse.json(
+        { error: "Missing or invalid amount/totalPrice" },
+        { status: 400 }
+      );
+    }
+
+    const itemsIn: IncomingItem[] = Array.isArray((body as any).items)
+      ? ((body as any).items as IncomingItem[])
+      : [];
+
+    // Normalize items (اختیاری)
     let itemTotal = 0;
     const normalizedItems =
-      Array.isArray(items) && items.length
-        ? items.map((it) => {
-            const qty = Number(it.quantity ?? 1);
-            const unit = Number(
+      itemsIn.length > 0
+        ? itemsIn.map((it) => {
+            const qtyRaw = toNumberSafe(it.quantity ?? 1, 1);
+            const qty = qtyRaw > 0 ? qtyRaw : 1;
+
+            const unitRaw =
               typeof it.unit_amount === "number"
                 ? it.unit_amount
-                : parseFloat(String(it.unit_amount ?? "0").replace(",", "."))
-            );
-            const q = Number.isFinite(qty) && qty > 0 ? qty : 1;
-            const u = Number.isFinite(unit) && unit >= 0 ? unit : 0;
-            itemTotal += u * q;
+                : toNumberSafe(it.unit_amount ?? 0, 0);
+            const unit = unitRaw >= 0 ? unitRaw : 0;
+
+            itemTotal += unit * qty;
+
             return {
-              name: (it.name || "Item").toString().slice(0, 120),
-              quantity: String(q),
-              unit_amount: { currency_code: currency, value: asMoney(u) },
+              name: String(it.name || "Item").slice(0, 120),
+              quantity: String(qty), // PayPal expects string
+              unit_amount: {
+                currency_code: currency,
+                value: asMoney(unit),
+              },
             };
           })
         : [];
 
-    const shippingStr = asMoney(shipping);
-    const computed = (itemTotal + Number(shippingStr)).toFixed(2);
+    const shippingStr = asMoney((body as any).shipping ?? "0.00");
+    const computedTotal = (itemTotal + Number(shippingStr)).toFixed(2);
 
-    // Keep client amount if close enough, otherwise use computed to avoid PayPal mismatch errors
-    if (Math.abs(Number(amountStr) - Number(computed)) > 0.02) {
-      amountStr = computed;
+    // اگر اختلاف محسوس بود، جهت جلوگیری از mismatch PayPal، computed را جایگزین کن
+    if (Math.abs(Number(amountStr) - Number(computedTotal)) > 0.02) {
+      amountStr = computedTotal;
     }
 
     const application_context = {
@@ -157,9 +196,7 @@ export async function POST(req: NextRequest) {
       cache: "no-store" as any,
     });
 
-    const createData = await createRes
-      .json()
-      .catch(async () => ({ raw: await createRes.text() }));
+    const createData = await createRes.json().catch(async () => ({ raw: await createRes.text() }));
     if (!createRes.ok) {
       console.error("❌ PayPal order creation failed:", createData);
       return NextResponse.json(
